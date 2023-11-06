@@ -1,4 +1,5 @@
 import Card from "../Card/index";
+import Chip from "../Chip/index";
 import List from "../List/index";
 import {
   DragDropContext,
@@ -6,9 +7,52 @@ import {
   DraggableProvided,
   DraggableStateSnapshot,
 } from "react-beautiful-dnd";
-import { useState } from "react";
+import { useCallback, useEffect, useState} from "react";
+import { GET_tablesCols } from "../../api/api_funcs";
+import type { TtablesObj } from "../../types/types";
+// import {
+//   useQuery,
+// } from '@tanstack/react-query'
+
+
 
 const Incorporate = () => {
+const [tablesData, setTablesData] = useState<TtablesObj>()
+const SUBDOMAIN = "taricov"
+const API_KEY = "24b476fdd8aa43091e0963ba01b98762155c9dd4"
+const method = "GET"
+const table = "invoice"
+  
+//   const { status, data, error, isFetching, isLoading } = useQuery({ 
+//   queryKey: ['TABLES_DATA'], 
+//   queryFn: ()=> GET_tablesCols({SUBDOMAIN, API_KEY, method, table})
+// })
+
+const GETtablesData = useCallback(async()=>{
+  const SUBDOMAIN = "taricov"
+  const API_KEY = "24b476fdd8aa43091e0963ba01b98762155c9dd4"
+  const method = "GET"
+  const table = "invoice"
+
+  const data = await GET_tablesCols({SUBDOMAIN, API_KEY, method, table})
+  const allAttrs = await Object.keys(data.data[0])
+    setTablesData({...tablesData, [table]: allAttrs})
+    console.log(tablesData)
+}, [])
+// useEffect(() => {
+//   setTablesData({...tablesData, [table]: data})
+
+
+// },[status, data, tablesData]);
+
+useEffect(() => {
+  GETtablesData()
+
+    
+    
+  },[tablesData]);
+
+
   const itemsNormal = {
     available: [
       {
@@ -61,7 +105,7 @@ const Incorporate = () => {
   };
 
   const addToList = (list: any, index: any, element: any) => {
-    const result = Array.from(list);
+    const result = Array.from(list); 
     result.splice(index, 0, element);
     return result;
   };
@@ -91,8 +135,8 @@ const Incorporate = () => {
   return (
     <>
       <DragDropContext onDragEnd={onDragEnd}>
-        <div className="flex p-12">
-          <List title="Disponíveis" onDragEnd={onDragEnd} name="available">
+        <div className="flex row p-12">
+          <List title="All Attrs" onDragEnd={onDragEnd} name="available">
             {items.available.map((item, index) => (
               <Draggable key={item.id} draggableId={item.id + ""} index={index}>
                 {(
@@ -105,14 +149,14 @@ const Incorporate = () => {
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
                     >
-                      <Card data={item} />
+                      <Chip data={tablesData?.invoices ?? []} />
                     </div>
                   </div>
                 )}
               </Draggable>
             ))}
           </List>
-          <List title="Atribuídos" onDragEnd={onDragEnd} name="assigned">
+          <List title="Used Attrs" onDragEnd={onDragEnd} name="assigned">
             {items.assigned.map((item, index) => (
               <Draggable draggableId={item.uuid} index={index} key={item.id}>
                 {(provided, snapshot) => (
