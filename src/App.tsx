@@ -1,20 +1,19 @@
 import Footer from "./components/Footer";
 import Incorporate from "./components/Incorporate";
 
-// import {
-//   QueryClient,
-//   QueryClientProvider
+import {
+  QueryClient,
+  QueryClientProvider
 
-// } from '@tanstack/react-query'
+} from 'react-query'
 
-// Create a client
-// const queryClient = new QueryClient()
+const queryClient = new QueryClient()
 
 
 function App() {
   return (
     <>
-        {/* <QueryClientProvider client={queryClient}> */}
+        <QueryClientProvider client={queryClient}>
       <div className="flex flex-col items-center bg-gray-100 min-h-screen">
         <h1 className="text-3xl font-bold mt-12 mb-14">
           D-Report 
@@ -25,7 +24,7 @@ function App() {
         <Incorporate />
       </div>
     <Footer/>
-    {/* </QueryClientProvider> */}
+    </QueryClientProvider>
 
     </>
   );
