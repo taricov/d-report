@@ -67,10 +67,10 @@ const [reportVariables, setReportVariables] = useState<TreportVariables>({joins:
   // setTablesData({[table]: Object.keys(data?.data[0] || {})})
   // console.log(status, data)
 
-  const [loading, setLoading] = useState<boolean>(false)
+  const [loading, setLoading] = useState<{[key:string]: boolean}>({fetching: false, building: false})
 const GETtablesVariables = () => {
-  setLoading(true)
-  setTimeout(()=>setLoading(false),3000)
+  setLoading((prev:{[key: string]: boolean})=>({...prev, fetching: true}))
+  setTimeout(()=>setLoading((prev:{[key: string]: boolean})=>({...prev, fetching: false})),3000)
   const tables: string[]= [reportVariables.from_table, ...Object.keys(reportVariables.joins)]
   console.log(tables)
     const SUBDOMAIN: string = "taricov"
@@ -87,6 +87,13 @@ const GETtablesVariables = () => {
   })
 
   }
+
+const buildReport = () => {
+  setLoading((prev:{[key: string]: boolean})=>({...prev, building: true}))
+  setTimeout(()=>setLoading((prev:{[key: string]: boolean})=>({...prev, building: false})),8000)
+  // const redirectURL = ""
+  // window.open(redirectURL.toString())
+}
 
   const [conditions, setConditions] = useState<Object[]>([{first_table: "", expression:"", input_type: "", value: ""}])
 
@@ -269,7 +276,10 @@ useEffect(() => {
     </ul>
     </div>
 
-<Button onClickFunc={()=>GETtablesVariables()} loading={loading} text="Check Available Columns" />
+
+<div className="mt-9">
+<Button color="bg-slate-500 hover:bg-slate-500/90" btnFor="fetching" onClickFunc={()=>GETtablesVariables()} loading={loading.fetching} text="Check Available Columns" />
+</div>
 
       <DragDropContext onDragEnd={onDragEnd}>
         <div className="flex row w-full p-12 gap-x-4">
@@ -359,7 +369,7 @@ useEffect(() => {
 <button onClick={()=>addMoreConditions()} className="underline text-blue-600 ">Add more conditions</button>
         </div>
 
-      <Button onClickFunc={()=>GETtablesVariables()} loading={loading} text="Build Report" /> 
+      <Button color="bg-emerald-600 hover:bg-emerald-600/90" btnFor="building" onClickFunc={()=>buildReport()} loading={loading.building} text="Build Report" /> 
     </>
   );
 };
