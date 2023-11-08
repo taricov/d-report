@@ -5,9 +5,20 @@ export interface RootObject {
     join_2: string;
     join_3: string;
   }
+
+ export type TtableVariables = {
+    available: string[],
+    selected: string[]
+  }
+  
+  export interface Texpressions {
+        label: string;
+        symbol: string;
+        val: string;
+  }
   export interface TreportVariables {
-    joins: {[key: string]: string};
-    conditions: string[];
+    // joins: {table_name: string, join_type: string, on: string}[];
+    joins: {[key:string]: string}[];
     report_title: string;
     from_table: string
   }

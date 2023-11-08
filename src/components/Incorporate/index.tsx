@@ -1,19 +1,18 @@
-import Card from "../Card/index";
+import { tables } from "../../data/tables";
 import Chip from "../Chip/index";
 import List from "../List/index";
-import { tables } from "../../data/tables"
 // import { report } from "../../logic/report"
+import { ChangeEvent, useEffect, useState } from "react";
 import {
   DragDropContext,
   Draggable,
   DraggableProvided,
   DraggableStateSnapshot,
 } from "react-beautiful-dnd";
-import { ChangeEvent, useCallback, useEffect, useState} from "react";
 import { GET_tablesCols } from "../../api/api_funcs";
-import type { RootObject, TreportVariables, TtablesObj } from "../../types/types";
-import CardsList from "../CardsList";
+import type { Texpressions, TreportVariables } from "../../types/types";
 import { Button } from "../Button";
+import CardsList from "../CardsList";
 // import {
 //   useQuery,
 // } from 'react-query'
@@ -25,41 +24,47 @@ import { Button } from "../Button";
 //   return result
 // }
 
-const expressions = [
-  {label: "Greater Than", symbol: ">", val: "gt"},
-  {label: "Greater Than or Equals", symbol: ">=", val: "gte"},
-  {label: "Less Than", symbol: "<", val: "lt"},
-  {label: "Less Than or Equals", symbol: "<=", val: "lte"},
-  {label: "Equals", symbol: "=", val: "eq"},
-  {label: "Not Equal", symbol: "!==", val: "neq"},
-]
 
-type TtableVariables = {
-  available: string[],
-  selected: string[]
-}
+
+// const expressions: Texpressions[] = [
+//   {label: "Greater Than", symbol: ">", val: "gt"},
+//   {label: "Greater Than or Equals", symbol: ">=", val: "gte"},
+//   {label: "Less Than", symbol: "<", val: "lt"},
+//   {label: "Less Than or Equals", symbol: "<=", val: "lte"},
+//   {label: "Equals", symbol: "=", val: "eq"},
+//   {label: "Not Equal", symbol: "!==", val: "neq"},
+// ]
+
 
 const Incorporate = () => {
 const [tablesVariables, setTablesVariables] = useState<any>({available:[], selected: []})
+const [loading, setLoading] = useState<{[key:string]: boolean}>({fetching: false, building: false})
+
 // const [tablesVariables, setTablesVariables] = useState<TtableVariables>({available:[], selected: []})
 // const [selectedTables, setSelectedTable] = useState<RootObject>({base_table:"", join_1: "", join_2: "", join_3: ""})
-const [reportVariables, setReportVariables] = useState<TreportVariables>({joins:{}, conditions: [], report_title: "", from_table: ""})
+const [reportVariables, setReportVariables] = useState<TreportVariables>({joins:[], report_title: "", from_table: ""})
 
 
-const removeCondition = (index:number) => {
-  setConditions((prev:Object[])=>{
-    return prev.filter((_, i: number)=> i !== +index)
-  })
-}
-  // const { status, data, error, isError, isLoading } = useQuery('TABLES_DATA',allTables)
+// ============ CONDI-start-TIONS ===============
+// const [conditions, setConditions] = useState<Object[]>([{first_table: "", expression:"", input_type: "", value: ""}])
 
-// if (status === 'success') {
-//   setTablesData({...tablesData, [table]: Object.keys(data.data[0] ?? {})})
+// const addMoreConditions = () => { 
+  // setConditions((prev:any)=>[...prev, {first_table: "", expression:"", input_type: "", value: ""}])
+  // }
+// const removeCondition = (index:number) => {
+  //   setConditions((prev:Object[])=>{
+    //     return prev.filter((_, i: number)=> i !== +index)
+    //   })
+    // }
+    // ============ CONDI-end-TIONS ===============
+
+
+// ============ React-start-Query ===============
+    // const { status, data, error, isError, isLoading } = useQuery('TABLES_DATA',allTables)
+    
+    // if (status === 'success') {
+      //   setTablesData({...tablesData, [table]: Object.keys(data.data[0] ?? {})})
 //   console.log(status, tablesData)
-// }
-
-// const newFUNC = () => {
-
 // }
 
 //   const SUBDOMAIN: string = "taricov"
@@ -74,7 +79,10 @@ const removeCondition = (index:number) => {
   // setTablesData({[table]: Object.keys(data?.data[0] || {})})
   // console.log(status, data)
 
-  const [loading, setLoading] = useState<{[key:string]: boolean}>({fetching: false, building: false})
+  // ============ React-end-Query ===============
+
+
+// ============ GET-start-Variables ===============
 const GETtablesVariables = () => {
   setLoading((prev:{[key: string]: boolean})=>({...prev, fetching: true}))
   setTimeout(()=>setLoading((prev:{[key: string]: boolean})=>({...prev, fetching: false})),3000)
@@ -89,7 +97,6 @@ const GETtablesVariables = () => {
       setTablesVariables((prev:any)=>({"available":[...prev.available,
         ...Object.keys(data.data[0]).map((b:string)=>({name:b, table})
       )], "selected": []}))
-      // setTablesVariables(()=>({"available":[...Object.keys(data.data[0] ?? {})], "selected": []}))
     })
   })
 
@@ -102,11 +109,7 @@ const buildReport = () => {
   // window.open(redirectURL.toString())
 }
 
-  const [conditions, setConditions] = useState<Object[]>([{first_table: "", expression:"", input_type: "", value: ""}])
 
-const addMoreConditions = () => { 
-setConditions((prev:any)=>[...prev, {first_table: "", expression:"", input_type: "", value: ""}])
-}
   // const itemsNormal = {
   //   available: [
   //     {
@@ -187,19 +190,21 @@ setConditions((prev:any)=>[...prev, {first_table: "", expression:"", input_type:
   };
 
 
-const selectTable = (e: ChangeEvent<HTMLInputElement>) => {
-setReportVariables((prev:any)=> ({...prev, joins: {}, from_table: e.target.value}))
-}
+// const selectTable = () => (e: ChangeEvent<HTMLInputElement>) => {
+//   console.log("fe")
+// setReportVariables((prev:TreportVariables)=> ({...prev, joins: [], from_table: e.target.value}))
+// }
 
 
-const selectJoinTable = (e: ChangeEvent<HTMLInputElement>) => {
+const selectJoinTable = (index:number) => (e: ChangeEvent<HTMLInputElement>) => {
   
   if(e.target.checked) {
-  setReportVariables((prev:TreportVariables)=> ({...prev, joins: {...prev.joins, [e.target.value]: "left"}})) }
+  setReportVariables((prev:TreportVariables)=> ({...prev, joins: [...prev.joins, {table_name: e.target.value, join_type: "left", on: e.target.dataset["foreig-key"] || ""}]})) 
+}
   else{ 
     // const {[e.target.value], ...rest} = reportVariables.joins
-    delete reportVariables.joins[e.target.value]
-    setReportVariables((prev:TreportVariables)=> ({...prev, joins:reportVariables.joins
+    const newJoins = reportVariables.joins.filter((_,i:number)=>index !== i)
+    setReportVariables((prev:TreportVariables)=> ({...prev, joins: newJoins
       // {...prev.joins.filter((j:string)=> j !== e.target.value)}
     }))
   }
@@ -213,9 +218,8 @@ const selectJoinRelation = (e: ChangeEvent<HTMLInputElement>) => {
 useEffect(() => {
       console.log(tablesVariables)
       console.log(reportVariables)
-      console.log(conditions)
 
-},[reportVariables, tablesVariables, conditions])
+},[reportVariables, tablesVariables])
   return (
     <>
 <div className="w-[100%] m-auto flex justify-center items-start gap-4">
@@ -223,7 +227,7 @@ useEffect(() => {
   <h2 className="bg-slate-500/30 m-auto rounded-md w-fit px-5 py-3 font-bold text-slate-600">Select 1st Table</h2>
     {Object.entries(tables).map((table, idx) =>(
 <li key={idx}>
-        <input name="from-table" type="radio" id={table[0]+"-"+table} value={table[0]} onChange={selectTable} className="hidden peer" required={true} />
+        <input name="from-table" type="radio" id={JSON.stringify(idx)} value={table[0]} onChange={()=>""} className="hidden peer" required={true} />
         <label htmlFor={table[0]+"-"+table} className="inline-flex items-center justify-between w-full p-5 text-gray-500 bg-white border-2 border-gray-200 rounded-lg cursor-pointer dark:hover:text-gray-300 dark:border-gray-700 peer-checked:bg-slate-600 peer-checked:text-slate-200 hover:text-gray-600 dark:peer-checked:text-gray-300  hover:bg-gray-50 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700">                           
             <div className="block">
                 <div className="w-full text-lg font-semibold capitalize">{table[0].split("_").join(" ")}</div>
@@ -245,7 +249,7 @@ useEffect(() => {
 
     {tables[reportVariables?.from_table]?.rels.map((table, idx) =>(
 <li key={idx} className="flex">
-        <input type="checkbox" checked={Object.keys(reportVariables.joins).includes(table)} id={table} value={table} onChange={selectJoinTable} className="hidden peer" />
+        <input type="checkbox" checked={Object.keys(reportVariables.joins).includes(table)} id={table} value={table} data-foreign-key={table+"_id"} onChange={()=>selectJoinTable(idx)} className="hidden peer" />
         <label htmlFor={table} className="inline-flex items-center justify-between w-full p-5 text-gray-500 bg-white border-2 border-gray-200 rounded-lg cursor-pointer dark:hover:text-gray-300 dark:border-gray-700 peer-checked:bg-slate-600 peer-checked:text-slate-200 hover:text-gray-600 dark:peer-checked:text-gray-300hover:bg-gray-50 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700">                           
             <div className="block">
                 <div className="w-full text-lg font-semibold capitalize">{table.split("_").join(" ")}</div>
@@ -258,21 +262,21 @@ useEffect(() => {
 
             {/* relations */}
             <div className="flex flex-col items-center justify-center">
-            <input type="radio" name={"join-rel-"+table} required={true}  checked={reportVariables.joins[table] === "outer"} disabled={!Object.keys(reportVariables.joins).includes(table)} id={"outer-"+table} value={table} onChange={selectJoinRelation} className="hidden disabled peer" />
+            <input type="radio" name={"join-rel-"+table} required={true}  checked={reportVariables.joins[idx].join_type !== "outer"} disabled={!Object.keys(reportVariables.joins).includes(table)} id={"outer-"+table} value={table} onChange={selectJoinRelation} className="hidden disabled peer" />
         <label htmlFor={"outer-"+table} className="peer-disabled:opacity-50 inline-flex items-center justify-between p-[4px] text-gray-500 bg-white border-2 border-gray-200 rounded-lg cursor-pointer dark:hover:text-gray-300 dark:border-gray-700 peer-checked:bg-slate-600 peer-checked:text-slate-200 hover:text-gray-600 dark:peer-checked:text-gray-300 hover:bg-gray-50 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700">                           
   
             <svg className="fill-slate-600"  width="20" viewBox="0 0 24 24"><path fill="currentColor" d="M9 5c1.04 0 2.06.24 3 .68c.94-.44 1.96-.68 3-.68a7 7 0 0 1 7 7a7 7 0 0 1-7 7c-1.04 0-2.06-.24-3-.68c-.94.44-1.96.68-3 .68a7 7 0 0 1-7-7a7 7 0 0 1 7-7m-.5 7c0 1.87.79 3.56 2.06 4.75l1-.46c-1.25-1-2.06-2.55-2.06-4.29c0-1.74.81-3.29 2.06-4.29l-1-.46A6.491 6.491 0 0 0 8.5 12m7 0c0-1.87-.79-3.56-2.06-4.75l-1 .46c1.25 1 2.06 2.55 2.06 4.29c0 1.74-.81 3.29-2.06 4.29l1 .46A6.491 6.491 0 0 0 15.5 12Z"/></svg>
             </label>
-            <input type="radio" name={"join-rel-"+table} required={true}  checked={reportVariables.joins[table] === "left"} id={"left-"+table} value={table} onChange={selectJoinRelation} disabled={!Object.keys(reportVariables.joins).includes(table)} className="hidden disabled peer" />
+            <input type="radio" name={"join-rel-"+table} required={true}  checked={reportVariables.joins[idx].join_type !== "left"} id={"left-"+table} value={table} onChange={selectJoinRelation} disabled={!Object.keys(reportVariables.joins).includes(table)} className="hidden disabled peer" />
         <label htmlFor={"left-"+table} className="peer-disabled:opacity-50 inline-flex items-center justify-between p-[4px] text-gray-500 bg-white border-2 border-gray-200 rounded-lg cursor-pointer dark:hover:text-gray-300 dark:border-gray-700 peer-checked:bg-slate-600 peer-checked:text-slate-200 hover:text-gray-600 dark:peer-checked:text-gray-300hover:bg-gray-50 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700">  
             <svg className="fill-slate-600" width="20" viewBox="0 0 24 24"><path fill="currentColor" d="M9 5c1.04 0 2.06.24 3 .68c.94-.44 1.96-.68 3-.68a7 7 0 0 1 7 7a7 7 0 0 1-7 7c-1.04 0-2.06-.24-3-.68c-.94.44-1.96.68-3 .68a7 7 0 0 1-7-7a7 7 0 0 1 7-7m6 2l-1 .11c1.28 1.3 2 3.06 2 4.89c0 1.83-.72 3.59-2 4.9l1 .1a5 5 0 0 0 5-5a5 5 0 0 0-5-5m-6.5 5c0 1.87.79 3.56 2.06 4.75l1-.46c-1.25-1-2.06-2.55-2.06-4.29c0-1.74.81-3.29 2.06-4.29l-1-.46A6.491 6.491 0 0 0 8.5 12Z"/></svg>
 
             </label>
-            <input type="radio" name={"join-rel-"+table} required={true} disabled={!Object.keys(reportVariables.joins).includes(table)} checked={reportVariables.joins[table] === "right"} id={"right-"+table} value={table} onChange={selectJoinRelation} className="hidden disabled peer" />
+            <input type="radio" name={"join-rel-"+table} required={true} disabled={!Object.keys(reportVariables.joins).includes(table)} checked={reportVariables.joins[idx].join_type !== "right"} id={"right-"+table} value={table} onChange={selectJoinRelation} className="hidden disabled peer" />
         <label htmlFor={"right-"+table} className="peer-disabled:opacity-50 inline-flex items-center justify-between p-[4px] text-gray-500 bg-white border-2 border-gray-200 rounded-lg cursor-pointer dark:hover:text-gray-300 dark:border-gray-700 peer-checked:bg-slate-600 peer-checked:text-slate-200 hover:text-gray-600 dark:peer-checked:text-gray-300hover:bg-gray-50 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700">  
             <svg className="fill-slate-600"  width="20" viewBox="0 0 24 24"><path fill="currentColor" d="M15 19c-1.04 0-2.06-.24-3-.68c-.94.44-1.96.68-3 .68a7 7 0 0 1-7-7a7 7 0 0 1 7-7c1.04 0 2.06.24 3 .68c.94-.44 1.96-.68 3-.68a7 7 0 0 1 7 7a7 7 0 0 1-7 7m-6-2l1-.11c-1.28-1.3-2-3.06-2-4.89c0-1.83.72-3.59 2-4.9L9 7a5 5 0 0 0-5 5a5 5 0 0 0 5 5m6.5-5c0-1.87-.79-3.56-2.06-4.75l-1 .46c1.25 1 2.06 2.55 2.06 4.29c0 1.74-.81 3.29-2.06 4.29l1 .46A6.491 6.491 0 0 0 15.5 12Z"/></svg>
             </label>
-            <input type="radio" name={"join-rel-"+table} disabled={!Object.keys(reportVariables.joins).includes(table)} required={true}  checked={reportVariables.joins[table] === "inner"} id={"inner-"+table} value={table} onChange={selectJoinRelation} className="hidden disabled peer" />
+            <input type="radio" name={"join-rel-"+table} disabled={!Object.keys(reportVariables.joins).includes(table)} required={true}  checked={reportVariables.joins[idx].join_type !== "inner"} id={"inner-"+table} value={table} onChange={selectJoinRelation} className="hidden disabled peer" />
         <label htmlFor={"inner-"+table} className="peer-disabled:opacity-50 inline-flex items-center justify-between p-[4px] text-gray-500 bg-white border-2 border-gray-200 rounded-lg cursor-pointer dark:hover:text-gray-300 dark:border-gray-700 peer-checked:bg-slate-600 peer-checked:text-slate-200 hover:text-gray-600 dark:peer-checked:text-gray-300hover:bg-gray-50 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700">  
             <svg className="fill-slate-600"  width="20" viewBox="0 0 24 24"><path fill="currentColor" d="M9 5a7 7 0 0 0-7 7a7 7 0 0 0 7 7c1.04 0 2.06-.24 3-.68c.94.44 1.96.68 3 .68a7 7 0 0 0 7-7a7 7 0 0 0-7-7c-1.04 0-2.06.24-3 .68c-.94-.44-1.96-.68-3-.68m0 2c.34 0 .67.03 1 .1c-1.28 1.31-2 3.07-2 4.9c0 1.83.72 3.59 2 4.89c-.33.07-.66.11-1 .11a5 5 0 0 1-5-5a5 5 0 0 1 5-5m6 0a5 5 0 0 1 5 5a5 5 0 0 1-5 5c-.34 0-.67-.03-1-.1c1.28-1.31 2-3.07 2-4.9c0-1.83-.72-3.59-2-4.89c.33-.07.66-.11 1-.11Z"/></svg>
 
@@ -332,7 +336,7 @@ useEffect(() => {
 
       </DragDropContext>
 
-
+{/* 
       <h3 className="text-xl font-bold">Add Conditions</h3>
         <ul className="w-10/12">
           {conditions.map((c:any, i:number)=> (
@@ -374,7 +378,7 @@ useEffect(() => {
         <div className="w-10/12">
 
 <button onClick={()=>addMoreConditions()} className="underline text-blue-600 ">Add more conditions</button>
-        </div>
+        </div> */}
 
       <Button color="bg-emerald-600 hover:bg-emerald-600/90" btnFor="building" onClickFunc={()=>buildReport()} loading={loading.building} text="Build Report" /> 
     </>
