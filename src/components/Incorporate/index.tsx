@@ -31,6 +31,7 @@ const expressions = [
   {label: "Less Than", symbol: "<", val: "lt"},
   {label: "Less Than or Equals", symbol: "<=", val: "lte"},
   {label: "Equals", symbol: "=", val: "eq"},
+  {label: "Not Equal", symbol: "!==", val: "neq"},
 ]
 
 type TtableVariables = {
@@ -44,6 +45,12 @@ const [tablesVariables, setTablesVariables] = useState<any>({available:[], selec
 // const [selectedTables, setSelectedTable] = useState<RootObject>({base_table:"", join_1: "", join_2: "", join_3: ""})
 const [reportVariables, setReportVariables] = useState<TreportVariables>({joins:{}, conditions: [], report_title: "", from_table: ""})
 
+
+const removeCondition = (index:number) => {
+  setConditions((prev:Object[])=>{
+    return prev.filter((_, i: number)=> i !== +index)
+  })
+}
   // const { status, data, error, isError, isLoading } = useQuery('TABLES_DATA',allTables)
 
 // if (status === 'success') {
@@ -211,7 +218,7 @@ useEffect(() => {
 },[reportVariables, tablesVariables, conditions])
   return (
     <>
-<div className="w-[100%] m-auto flex justify-center items-center gap-4">
+<div className="w-[100%] m-auto flex justify-center items-start gap-4">
 <ul className="flex flex-col gap-2 w-[40%]">
   <h2 className="bg-slate-500/30 m-auto rounded-md w-fit px-5 py-3 font-bold text-slate-600">Select 1st Table</h2>
     {Object.entries(tables).map((table, idx) =>(
@@ -230,7 +237,8 @@ useEffect(() => {
     ))}
     </ul>
 
-    <svg width="100" viewBox="0 0 24 24" className="fill-slate-600"><path  d="M4 15V9h8V4.16L19.84 12L12 19.84V15H4Z"/></svg>
+    <svg width="100" viewBox="0 0 24 24" className="self-center fill-slate-600"><path  d="M4 15V9h8V4.16L19.84 12L12 19.84V15H4Z"/></svg>
+
 
 <ul className="flex flex-col gap-2 w-[40%]">
 <h2 className="bg-slate-500/30 m-auto rounded-md w-fit px-5 py-3 font-bold text-slate-600">Select Tables To Join</h2>
@@ -330,7 +338,7 @@ useEffect(() => {
           {conditions.map((c:any, i:number)=> (
 
      <li key={"key-"+i} className="relative flex w-full justify-around py-4 px-8 mb-2 text-slate-800 bg-slate-300 mx-auto rounded-lg dark:bg-gray-800 dark:text-blue-400">
-      <button id={JSON.stringify(i)} className="absolute p-1 top-2 left-2 cursor-pointer bg-slate-500/30 hover:bg-slate-500/70 transition duration-150 rounded-md"><svg xmlns="http://www.w3.org/2000/svg" className="" width="15"  viewBox="0 0 24 24"><path fill="currentColor" d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41Z"/></svg></button>
+      <button id={JSON.stringify(i)} onClick={()=>removeCondition(i)} className="absolute p-1 top-2 left-2 cursor-pointer bg-slate-500/30 hover:bg-slate-500/70 transition duration-150 rounded-md"><svg xmlns="http://www.w3.org/2000/svg" className="" width="15"  viewBox="0 0 24 24"><path fill="currentColor" d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41Z"/></svg></button>
 <div>
         <label htmlFor="countries" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select Column</label>
 <select id="countries" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
@@ -344,7 +352,6 @@ useEffect(() => {
 <select id="countries" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
   <option selected>Choose Expression</option>
   {expressions.map(ex => <option value={ex.val}>{ex.label}</option>)}
-  <option value="US">f</option>
 </select>
 </div>
 <div>
