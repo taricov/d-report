@@ -1,6 +1,6 @@
 import { useState } from "react"
 
-export const Button = (onClickFunc: () => void, text: string, loading: boolean) => {
+export const Button = ({onClickFunc, text, loading}:{onClickFunc: () => void, text: string, loading: boolean}) => {
 
     // const [loading, setLoading] = useState<boolean>(false)
     return (
