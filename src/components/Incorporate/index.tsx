@@ -13,6 +13,7 @@ import { ChangeEvent, useCallback, useEffect, useState} from "react";
 import { GET_tablesCols } from "../../api/api_funcs";
 import type { RootObject, TreportVariables, TtablesObj } from "../../types/types";
 import CardsList from "../CardsList";
+import { Button } from "../Button";
 // import {
 //   useQuery,
 // } from 'react-query'
@@ -24,8 +25,22 @@ import CardsList from "../CardsList";
 //   return result
 // }
 
+const expressions = [
+  {label: "Greater Than", symbol: ">", val: "gt"},
+  {label: "Greater Than or Equals", symbol: ">=", val: "gte"},
+  {label: "Less Than", symbol: "<", val: "lt"},
+  {label: "Less Than or Equals", symbol: "<=", val: "lte"},
+  {label: "Equals", symbol: "=", val: "eq"},
+]
+
+type TtableVariables = {
+  available: string[],
+  selected: string[]
+}
+
 const Incorporate = () => {
-const [tablesVariables, setTablesVariables] = useState<string[]>([])
+const [tablesVariables, setTablesVariables] = useState<any>({available:[], selected: []})
+// const [tablesVariables, setTablesVariables] = useState<TtableVariables>({available:[], selected: []})
 // const [selectedTables, setSelectedTable] = useState<RootObject>({base_table:"", join_1: "", join_2: "", join_3: ""})
 const [reportVariables, setReportVariables] = useState<TreportVariables>({joins:{}, conditions: [], report_title: "", from_table: ""})
 
@@ -64,57 +79,64 @@ const GETtablesVariables = () => {
   tables.map(async(table) =>{
     GET_tablesCols({SUBDOMAIN, API_KEY, method, table}).then((data)=>{
       
-      setTablesVariables((prev:string[])=>[...prev, ...Object.keys(data.data[0] ?? {})])
+      setTablesVariables((prev:any)=>({"available":[...prev.available,
+        ...Object.keys(data.data[0]).map((b:string)=>({name:b, table})
+      )], "selected": []}))
+      // setTablesVariables(()=>({"available":[...Object.keys(data.data[0] ?? {})], "selected": []}))
     })
   })
 
   }
 
+  const [conditions, setConditions] = useState<Object[]>([{first_table: "", expression:"", input_type: "", value: ""}])
 
-  const itemsNormal = {
-    available: [
-      {
-        id: 1,
-        uuid: "52f9df20-9393-4c4d-b72c-7bfa4398a4477",
-        title: "What is Lorem Ipsum?",
-        subtitle: "Lorem Ipsum is simply dummy",
-        updatedAt: "6 days ago",
-      },
-      {
-        id: 2,
-        uuid: "52f9df20-9393-4c4d-b72c-7bfa4398a448",
-        title: "Why do we use it?",
-        subtitle: "The point of using at its layout",
-        updatedAt: "2 days ago",
-      },
-      {
-        id: 3,
-        uuid: "52f9df20-9393-4c4d-b72c-7bfa4398a449",
-        title: "Where does it come from?",
-        subtitle: "Contrary to popular belief, Lorem Ipsum is not simply",
-        updatedAt: "3 days ago",
-      },
-    ],
+const addMoreConditions = () => { 
+setConditions((prev:any)=>[...prev, {first_table: "", expression:"", input_type: "", value: ""}])
+}
+  // const itemsNormal = {
+  //   available: [
+  //     {
+  //       id: 1,
+  //       uuid: "52f9df20-9393-4c4d-b72c-7bfa4398a4477",
+  //       title: "What is Lorem Ipsum?",
+  //       subtitle: "Lorem Ipsum is simply dummy",
+  //       updatedAt: "6 days ago",
+  //     },
+  //     {
+  //       id: 2,
+  //       uuid: "52f9df20-9393-4c4d-b72c-7bfa4398a448",
+  //       title: "Why do we use it?",
+  //       subtitle: "The point of using at its layout",
+  //       updatedAt: "2 days ago",
+  //     },
+  //     {
+  //       id: 3,
+  //       uuid: "52f9df20-9393-4c4d-b72c-7bfa4398a449",
+  //       title: "Where does it come from?",
+  //       subtitle: "Contrary to popular belief, Lorem Ipsum is not simply",
+  //       updatedAt: "3 days ago",
+  //     },
+  //   ],
 
-    assigned: [
-      {
-        id: 5,
-        uuid: "52f9df20-9393-4c4d-b72c-7bfa4398a450",
-        title: "Where can I get some?",
-        subtitle: "There are many variations",
-        updatedAt: "6 days ago",
-      },
-      {
-        id: 6,
-        uuid: "52f9df20-9393-4c4d-b72c-7bfa4398a451",
-        title: "Morbi sagittis tellus a efficitur",
-        subtitle: "Etiam mollis eros eget mi.",
-        updatedAt: "2 days ago",
-      },
-    ],
-  };
+  //   assigned: [
+  //     {
+  //       id: 5,
+  //       uuid: "52f9df20-9393-4c4d-b72c-7bfa4398a450",
+  //       title: "Where can I get some?",
+  //       subtitle: "There are many variations",
+  //       updatedAt: "6 days ago",
+  //     },
+  //     {
+  //       id: 6,
+  //       uuid: "52f9df20-9393-4c4d-b72c-7bfa4398a451",
+  //       title: "Morbi sagittis tellus a efficitur",
+  //       subtitle: "Etiam mollis eros eget mi.",
+  //       updatedAt: "2 days ago",
+  //     },
+  //   ],
+  // };
 
-  const [items, setItems] = useState(itemsNormal);
+  // const [items, setItems] = useState(itemsNormal);
 
   const removeFromList = (list: any, index: any) => {
     const result = Array.from(list);
@@ -133,7 +155,7 @@ const GETtablesVariables = () => {
       console.log(result);
       return;
     }
-    const listCopy: any = { ...items };
+    const listCopy: any = { ...tablesVariables };
     const sourceList = listCopy[result.source.droppableId];
     const [removedElement, newSourceList] = removeFromList(
       sourceList,
@@ -147,7 +169,7 @@ const GETtablesVariables = () => {
       result.destination.index,
       removedElement
     );
-    setItems(listCopy);
+    setTablesVariables(listCopy);
   };
 
 
@@ -177,6 +199,7 @@ const selectJoinRelation = (e: ChangeEvent<HTMLInputElement>) => {
 useEffect(() => {
       console.log(tablesVariables)
       console.log(reportVariables)
+      console.log(conditions)
 
 },[reportVariables, tablesVariables])
   return (
@@ -248,7 +271,7 @@ useEffect(() => {
 
 <div>
 
-{/* <Button onClickFunc={()=>consoleData()} loading={loading} text="Check Available Columns" /> */}
+{/* <Button onClickFunc={()=>GETtablesVariables()} loading={loading} text="Check Available Columns" /> */}
 
 
 <button onClick={()=>GETtablesVariables()} type="button" className="my-10 transition duration-150 text-white bg-[#2557D6] hover:bg-[#2557D6]/90  font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center outline-none">
@@ -266,11 +289,11 @@ useEffect(() => {
 
 
       <DragDropContext onDragEnd={onDragEnd}>
-        <div className="flex row p-12 gap-x-4">
+        <div className="flex row w-full p-12 gap-x-4">
           <List title="Available Columns" onDragEnd={onDragEnd} name="available">
             {
-              tablesVariables.map((v,i) =>(
-              <Draggable key={v + "-" + i} draggableId={v+ ""} index={i}>
+              tablesVariables.available.map((v:any,i:number) =>(
+              <Draggable key={v.table+"-"+v.name} draggableId={v+ "-"+i} index={i}>
                 {(
                   provided: DraggableProvided | any,
                   snapshot: DraggableStateSnapshot
@@ -281,7 +304,7 @@ useEffect(() => {
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
                     >
-                      <Chip text={v} />
+                      <Chip text={v.table+"-"+v.name} />
                     </div>
                   </div>
                 )}
@@ -290,20 +313,64 @@ useEffect(() => {
             }
           </List>
           <CardsList title="Selected Columns" onDragEnd={onDragEnd} name="assigned">
-            {tablesVariables.map((v, i) => (
-              <Draggable draggableId={v+"-"+i} index={i} key={v+"-"+i}>
+            {Object.values(tablesVariables.selected).map((v, i) => (
+              <Draggable draggableId={v+"-"+i} index={i} key={"selected-"+v}>
                 {(provided, snapshot) => (
                   <div
                     ref={provided.innerRef}
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
                   >
-                    <Card text={v} />
+                    {/* <Card text={v.name} /> */}
                   </div>
                 )}
               </Draggable>
             ))}
           </CardsList>
+        </div>
+
+<h3 className="text-xl font-bold">Add Conditions</h3>
+        <ul className="w-10/12">
+          {conditions.map((c:any, i:number)=> (
+
+     <li key={"key-"+i} className="relative flex w-full justify-around py-4 px-8 mb-2 text-slate-800 bg-slate-300 mx-auto rounded-lg dark:bg-gray-800 dark:text-blue-400">
+      <button id={JSON.stringify(i)} className="absolute p-1 top-2 left-2 cursor-pointer bg-slate-500/30 hover:bg-slate-500/70 transition duration-150 rounded-md"><svg xmlns="http://www.w3.org/2000/svg" className="" width="15"  viewBox="0 0 24 24"><path fill="currentColor" d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41Z"/></svg></button>
+<div>
+        <label htmlFor="countries" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select Column</label>
+<select id="countries" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+  <option selected>Choose Table</option>           
+{tablesVariables.selected?.map((col:{[key:string]:string}) => <option value={col.val}>{col.name}</option>)}
+</select>
+</div>
+
+<div>
+<label htmlFor="countries" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select Expression</label>
+<select id="countries" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+  <option selected>Choose Expression</option>
+  {expressions.map(ex => <option value={ex.val}>{ex.label}</option>)}
+  <option value="US">f</option>
+</select>
+</div>
+<div>
+<label htmlFor="countries" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select Input Type</label>
+<select id="countries" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+  <option selected>Choose Input Type</option>
+  <option value="text">Text</option>
+  <option value="number">Number</option>
+  <option value="date">Date</option>
+</select>
+</div>
+<div>
+            <label htmlFor="expreassion_value" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Value</label>
+            <input type={c.input_type} id="expreassion_value" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="John" required/>
+        </div>
+</li>
+))
+}
+        </ul>
+        <div className="w-10/12">
+
+<button onClick={()=>addMoreConditions()} className="underline text-blue-600 ">Add more conditions</button>
         </div>
       </DragDropContext>
     </>
