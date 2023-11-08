@@ -47,9 +47,11 @@ const [reportVariables, setReportVariables] = useState<TreportVariables>({joins:
 
 
 const removeCondition = (index:number) => {
+  // console.log(e.currentTarget.id)
   setConditions((prev:Object[])=>{
     return prev.filter((_, i: number)=> i !== +index)
   })
+
 }
   // const { status, data, error, isError, isLoading } = useQuery('TABLES_DATA',allTables)
 

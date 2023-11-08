@@ -5,6 +5,11 @@ export interface RootObject {
     join_2: string;
     join_3: string;
   }
+
+  type TtableVariables = {
+    available: string[],
+    selected: string[]
+  }
   export interface TreportVariables {
     joins: {[key: string]: string};
     conditions: string[];
