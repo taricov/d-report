@@ -11,19 +11,19 @@ type Props = {
   };
 };
 
-const Card = ({ data }: Props) => {
+const Card = ({text}:{text:string}) => {
   return (
     <div className="shadow-lg flex w-full cursor-pointer">
-      <div className="rounded-l-md p-5 w-36 bg-blue-200">
+      {/* <div className="rounded-l-md p-5 w-36 bg-blue-200">
         <img src="./card.svg" alt="Ícone padrão de item do card" />
-      </div>
+      </div> */}
 
-      <main className="py-7 px-5 rounded-r-md w-full bg-white">
+      <main className="py-3 rounded-md shadow px-5 rounded-r-md w-full bg-white">
         <span className="flex flex-row justify-between">
-          <h4 className="uppercase font-normal">{data.subtitle}</h4>
-          <p>{data.updatedAt}</p>
+          {/* <h4 className="uppercase font-normal">{data.subtitle}</h4>
+          <p>{data.updatedAt}</p> */}
         </span>
-        <h1 className="font-bold text-xl">{data.title}</h1>
+        <h1 className="font-bold text-md">{text}</h1>
       </main>
     </div>
   );
