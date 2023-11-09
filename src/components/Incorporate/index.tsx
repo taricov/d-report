@@ -17,7 +17,7 @@ import CardsList from "../CardsList";
 import Spinner from "../Spinner";
 
 const Incorporate = () => {
-  const [loading, setLoading] = useState<Tloading>({fetching: true, building: false})
+  const [loading, setLoading] = useState<Tloading>({fetching: false, building: false})
 const [tablesVariables, setTablesVariables] = useState<TtableVariables>({available:[], selected: []})
 
 const [reportVariables, setReportVariables] = useState<TreportVariables>({joins:{}, report_title: "", from_table: ""})
@@ -57,51 +57,6 @@ const buildReport = () => {
   // window.open(redirectURL.toString())
 }
 
-
-  // const itemsNormal = {
-  //   available: [
-  //     {
-  //       id: 1,
-  //       uuid: "52f9df20-9393-4c4d-b72c-7bfa4398a4477",
-  //       title: "What is Lorem Ipsum?",
-  //       subtitle: "Lorem Ipsum is simply dummy",
-  //       updatedAt: "6 days ago",
-  //     },
-  //     {
-  //       id: 2,
-  //       uuid: "52f9df20-9393-4c4d-b72c-7bfa4398a448",
-  //       title: "Why do we use it?",
-  //       subtitle: "The point of using at its layout",
-  //       updatedAt: "2 days ago",
-  //     },
-  //     {
-  //       id: 3,
-  //       uuid: "52f9df20-9393-4c4d-b72c-7bfa4398a449",
-  //       title: "Where does it come from?",
-  //       subtitle: "Contrary to popular belief, Lorem Ipsum is not simply",
-  //       updatedAt: "3 days ago",
-  //     },
-  //   ],
-
-  //   assigned: [
-  //     {
-  //       id: 5,
-  //       uuid: "52f9df20-9393-4c4d-b72c-7bfa4398a450",
-  //       title: "Where can I get some?",
-  //       subtitle: "There are many variations",
-  //       updatedAt: "6 days ago",
-  //     },
-  //     {
-  //       id: 6,
-  //       uuid: "52f9df20-9393-4c4d-b72c-7bfa4398a451",
-  //       title: "Morbi sagittis tellus a efficitur",
-  //       subtitle: "Etiam mollis eros eget mi.",
-  //       updatedAt: "2 days ago",
-  //     },
-  //   ],
-  // };
-
-  // const [items, setItems] = useState(itemsNormal);
 
   const removeFromList = (list: any, index: any) => {
     const result = Array.from(list);
@@ -208,7 +163,13 @@ useEffect(() => {
     </div>
 
 
-<div className="mt-9">
+<div className="mt-9 py-4 bg-slate-200/60 w-10/12 flex flex-col items-center justify-center rounded-md">
+<div className="w-full flex items-center justify-center rounded-md">
+You selected the&nbsp;<b>{reportVariables.from_table.split("_").join(" ").toUpperCase()}</b>&nbsp;table in joint with the&nbsp;<b>{Object.keys(reportVariables.joins).map(j=>j.split("_").join(" ").toUpperCase()).map((t,i,arr)=> arr[i+1] ? t : " and " + t).join(", ")}</b>&nbsp;
+</div>
+<div className="flex items-center justify-center px-5 text-slate-200 w-fit bg-slate-500 rounded-full">
+Now you can start building your report by checking the available variables (columns)
+</div>
 <Button color="bg-slate-500 hover:bg-slate-500/90" btnFor="fetching" onClickFunc={()=>GETtablesVariables()} loading={loading.fetching} text="Check Available Columns" />
 </div>
 
