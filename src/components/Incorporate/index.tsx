@@ -11,40 +11,48 @@ import {
   DraggableStateSnapshot,
 } from "react-beautiful-dnd";
 import { GET_tablesCols } from "../../api/api_funcs";
-import type { TreportVariables, TtableVariables } from "../../types/types";
+import type { Tloading, TreportVariables, TtableVariables } from "../../types/types";
 import { Button } from "../Button";
 import CardsList from "../CardsList";
+import Spinner from "../Spinner";
 
 const Incorporate = () => {
-  const [loading, setLoading] = useState<{[key:string]: boolean}>({fetching: false, building: false})
+  const [loading, setLoading] = useState<Tloading>({fetching: true, building: false})
 const [tablesVariables, setTablesVariables] = useState<TtableVariables>({available:[], selected: []})
 
 const [reportVariables, setReportVariables] = useState<TreportVariables>({joins:{}, report_title: "", from_table: ""})
 
 
 
-const GETtablesVariables = () => {
-  setLoading((prev:{[key: string]: boolean})=>({...prev, fetching: true}))
-  setTimeout(()=>setLoading((prev:{[key: string]: boolean})=>({...prev, fetching: false})),3000)
+const GETtablesVariables = async () => {
+  const allVars: string[] = []
+  setLoading((prev:Tloading) => ({...prev, fetching: true}))
+
   const tables: string[]= [reportVariables.from_table, ...Object.keys(reportVariables.joins)]
   console.log(tables)
-    const SUBDOMAIN: string = "taricov"
+  const SUBDOMAIN: string = "taricov"
   const API_KEY: string = "24b476fdd8aa43091e0963ba01b98762155c9dd4"
   const method: string = "GET"
-  tables.map(async(table) =>{
-    GET_tablesCols({SUBDOMAIN, API_KEY, method, table}).then((data)=>{
-      
-      setTablesVariables((prev:any)=>({"available":[...prev.available,
-        ...Object.keys(data.data[0]).map((b:string)=>({title:b, table})
-      )], "selected": []}))
-    })
+
+  return await Promise.all(tables.map(async(table) =>{
+    const data = await GET_tablesCols({SUBDOMAIN, API_KEY, method, table})
+    allVars.push(...Object.keys(data.data[0]))
   })
+  ).then(() => {
+    console.log(allVars)
+    setTablesVariables((prev:any)=>({"available":[...prev.available,
+      ...allVars.map((b:string)=>({title:b})
+    )], "selected": []}))
+  setLoading((prev:Tloading) => ({...prev, fetching: false}))
+
+  });
+
 
   }
 
 const buildReport = () => {
-  setLoading((prev:{[key: string]: boolean})=>({...prev, building: true}))
-  setTimeout(()=>setLoading((prev:{[key: string]: boolean})=>({...prev, building: false})),8000)
+  // setLoading((prev:{[key: string]: boolean})=>({...prev, building: true}))
+  // setTimeout(()=>setLoading((prev:{[key: string]: boolean})=>({...prev, building: false})),8000)
   // const redirectURL = ""
   // window.open(redirectURL.toString())
 }
@@ -209,6 +217,7 @@ useEffect(() => {
       <DragDropContext onDragEnd={onDragEnd}>
         <div className="flex row w-full p-12 gap-x-4">
           <List title="Available Columns" onDragEnd={onDragEnd} name="available">
+          {loading.fetching && <Spinner/>}
               {tablesVariables.available.map((v:any, i:number) => (
               // {tablesVariables.available.map((v:any,i:number) =>(
               <Draggable key={v.title+"-"+i} draggableId={v.title+ "-"+i} index={i}>
@@ -223,7 +232,6 @@ useEffect(() => {
                       {...provided.dragHandleProps}
                     >
                       <Chip text={v.title} />
-                      {/* <Chip text={v.table+"-"+v.name} /> */}
                     </div>
                 )}
               </Draggable>

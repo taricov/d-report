@@ -1,4 +1,7 @@
-
+export type Tloading = {
+    fetching: boolean;
+    building: boolean;
+}
   export interface TtableVariables {
     available: {[key: string]: string}[];
     selected: {[key: string]: string}[];
