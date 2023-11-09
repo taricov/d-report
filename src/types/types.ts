@@ -1,13 +1,10 @@
 
-export interface RootObject {
-    base_table: string;
-    join_1: string;
-    join_2: string;
-    join_3: string;
-  }
+  export interface TtableVariables {
+    available: {[key: string]: string}[];
+    selected: {[key: string]: string}[];
+}
   export interface TreportVariables {
     joins: {[key: string]: string};
-    conditions: string[];
     report_title: string;
     from_table: string
   }
