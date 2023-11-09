@@ -165,7 +165,7 @@ useEffect(() => {
 
 <div className="mt-9 py-4 bg-slate-200/60 w-10/12 flex flex-col items-center justify-center rounded-md">
 <div className="w-full flex items-center justify-center rounded-md">
-You selected the&nbsp;<b>{reportVariables.from_table.split("_").join(" ").toUpperCase()}</b>&nbsp;table in joint with the&nbsp;<b>{Object.keys(reportVariables.joins).map(j=>j.split("_").join(" ").toUpperCase()).map((t,i,arr)=> arr[i+1] ? t : " and " + t).join(", ")}</b>&nbsp;
+You selected the&nbsp;<b>{reportVariables.from_table ? reportVariables.from_table.split("_").join(" ").toUpperCase() : "..."}</b>&nbsp;table in joint with the&nbsp;<b>{!!Object.keys(reportVariables.joins).length ? Object.keys(reportVariables.joins).map(j=>j.split("_").join(" ").toUpperCase()).map((t,i,arr)=> arr[i+1] ? t : " and " + t).join(", "): "..."}</b>&nbsp;
 </div>
 <div className="flex items-center justify-center px-5 text-slate-200 w-fit bg-slate-500 rounded-full">
 Now you can start building your report by checking the available variables (columns)
