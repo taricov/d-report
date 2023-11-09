@@ -1,4 +1,5 @@
 import Footer from "./components/Footer";
+import Header from "./components/Header";
 import Incorporate from "./components/Incorporate";
 
 import {
@@ -14,6 +15,7 @@ function App() {
   return (
     <>
         <QueryClientProvider client={queryClient}>
+          <Header />
       <div className="flex flex-col items-center bg-gray-100 min-h-screen">
         <h1 className="text-3xl font-bold mt-12 mb-14">
           D-Report 
