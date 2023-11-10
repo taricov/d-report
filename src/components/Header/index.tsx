@@ -37,17 +37,17 @@ export default function Header(){
       <div className="px-4">
           <div className="flex items-center">
               <div className="flex shrink-0">
-                  <a aria-current="page" className="inline-block rounded-lg px-2 py-1 text-sm font-medium text-slate-200 transition-all duration-200 hover:text-slate-50 items-center" href="/">
+                  <a aria-current="page" className="pr-4 inline-block rounded-lg px-2 py-1 text-sm font-medium text-slate-200 transition-all duration-200 hover:text-slate-50 items-center" href="/">
                       {/* <img className="h-7 w-auto" src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" alt=""/> */}
                       <p className="sr-only">Website Title</p>
                       Home
                   </a>
               </div>
-              <div className="md:flex md:gap-5 flex-1">
+              <div className="flex gap-3 md:gap-5 flex-1">
                   <a aria-current="page"
-                      className="inline-block rounded-lg px-2 py-1 text-sm font-medium text-slate-200 transition-all duration-200 hover:text-slate-50"
+                      className="inline-blockrounded-lg py-1 text-sm font-medium text-slate-200 transition-all duration-200 hover:text-slate-50"
                       href="/about">How it works</a>
-                  <a className="inline-block rounded-lg px-2 py-1 text-sm font-medium text-slate-200 transition-all duration-200 hover:text-slate-50"
+                  <a className="inline-block rounded-lg py-1 text-sm font-medium text-slate-200 transition-all duration-200 hover:text-slate-50"
                       href="https://linkedin.com/in/taricov">Author</a>
               </div>
               <div className="flex items-center justify-end gap-3">
