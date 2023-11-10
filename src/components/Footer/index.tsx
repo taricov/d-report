@@ -1,12 +1,13 @@
 export default function Footer(){
 
     return (
-          <footer className="bg-gray-100 text-center text-gray-500 py-4 pt-7">
+          <footer className="bg-slate-700 text-center text-slate-100 py-1">
         <p>
-          Made by{" "}
+          Made with ❤️ {" "}
+          <span>By {" "}</span>
           <a
             href="http://github.com/taricov"
-            className="text-blue-500 hover:text-blue-700"
+            className="underline"
             target="_blank"
             rel="noopener noreferrer"
           >
