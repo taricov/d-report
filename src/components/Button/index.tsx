@@ -6,7 +6,7 @@ export const Button = ({onClickFunc, text, loading, btnFor, color, disabled}:{on
 
         <>
         
-<button disabled={disabled} onClick={onClickFunc} type="button" className={`${disabled && "text-gray-500/50 bg-gray-200 hover:bg-gray-200 pointer-events-none"}text-white transition duration-150 shadow-md ${color} font-medium rounded-lg text-sm my-4 px-5 py-2.5 text-center inline-flex items-center outline-none`}>
+<button disabled={disabled} onClick={onClickFunc} type="button" className={`${disabled && "text-gray-500/50 bg-gray-200 hover:bg-gray-200 pointer-events-none"} text-white transition duration-150 shadow-md ${color} font-medium rounded-lg text-sm my-4 px-5 py-2.5 text-center inline-flex items-center outline-none`}>
   
   
   {loading && btnFor === "building" ? <svg fill="currentColor" style={{transform:"rotateX(180deg)"}} version="1.1" id="Layer_1" x="0px" y="0px"
