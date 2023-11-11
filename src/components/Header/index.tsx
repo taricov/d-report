@@ -1,11 +1,18 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import Connector from "../Connector";
 
 export default function Header(){
 
   const [show, setShow] = useState<boolean>(true);
+  const [showConnectForm, setShowConnectForm] = useState<boolean>(false);
   const [lastScrollY, setLastScrollY] = useState<number>(0);
 
   const connected = false
+
+  const connectForm = (e: React.MouseEvent) =>{
+e.stopPropagation()
+    setShowConnectForm((prev)=>!prev)
+  }
 
   const controlNavbar = () => {
     if (typeof window !== 'undefined') { 
@@ -29,7 +36,7 @@ export default function Header(){
         window.removeEventListener('scroll', controlNavbar);
       };
     }
-  }, [lastScrollY]);
+  }, [lastScrollY, showConnectForm]);
 
 
 
@@ -50,8 +57,9 @@ export default function Header(){
                   <a aria-current="page"
                       className="inline-blockrounded-lg py-1 text-sm font-medium text-slate-200 transition-all duration-200 hover:text-slate-50"
                       href="/about">How it works</a>
+                      {/* eslint-disable */}
                   <a className="inline-block rounded-lg py-1 text-sm font-medium text-slate-200 transition-all duration-200 hover:text-slate-50"
-                      href="https://linkedin.com/in/taricov">Author</a>
+                      href="https://linkedin.com/in/taricov" target="_blank" >Author</a>
               </div>
               }
               {connected &&
@@ -63,15 +71,21 @@ export default function Header(){
               }
               <div className="flex items-center justify-end gap-3">
                 { !connected &&
-                  <a className="items-center justify-center rounded-xl bg-slate-100 hover:bg-slate-300 shadow-light-200 px-3 py-2 text-sm font-semibold text-slate-800 shadow-sm ring-1 ring-inset ring-gray-300 transition-all duration-150 sm:inline-flex"
-                      href="/connect">Connect</a>
-                    }
+                  <button onClick={connectForm} className="items-center justify-center rounded-xl bg-slate-100 hover:bg-slate-300 shadow-light-200 px-3 py-2 text-sm font-semibold text-slate-800 shadow-sm ring-1 ring-inset ring-gray-300 transition-all duration-150 sm:inline-flex"
+                  >Connect</button>
+                }
                 { connected &&
                   <div className="items-center justify-center rounded-xl bg-slate-100 shadow-light-200 px-3 py-2 text-sm font-semibold text-slate-800 shadow-sm transition-all duration-150 sm:inline-flex">Connected</div>
                     }
               </div>
           </div>
       </div>
+
+      
+      <div  className={`fixed transform transition duration-200 -translate-x-1/2 -translate-y-[140%] -mt-20 h-[1000px] w-screen bg-black/50 top-1/2 left-1/2 ${showConnectForm && "-translate-y-0"}`} onClick={connectForm}>
+      </div>
+      <Connector showed={showConnectForm}/>
+
   </header>
     )
-}
+  }
