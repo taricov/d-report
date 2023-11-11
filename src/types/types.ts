@@ -2,6 +2,10 @@ export type Tloading = {
     fetching: boolean;
     building: boolean;
 }
+export type TErrors = {
+    fetching: string;
+    building: string;
+}
   export interface TtableVariables {
     available: {[key: string]: string}[];
     selected: {[key: string]: string}[];

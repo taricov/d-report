@@ -11,13 +11,15 @@ import {
   DraggableStateSnapshot,
 } from "react-beautiful-dnd";
 import { GET_tablesCols } from "../../api/api_funcs";
-import type { Tloading, TreportVariables, TtableVariables } from "../../types/types";
+import type { Tloading, TreportVariables, TtableVariables, TErrors } from "../../types/types";
 import { Button } from "../Button";
 import CardsList from "../CardsList";
 import Spinner from "../Spinner";
 
 const Incorporate = () => {
+  const connected = false
   const [loading, setLoading] = useState<Tloading>({fetching: false, building: false})
+  const [error, setErrors] = useState<TErrors>({fetching: "", building: ""})
 const [tablesVariables, setTablesVariables] = useState<TtableVariables>({available:[], selected: []})
 
 const [reportVariables, setReportVariables] = useState<TreportVariables>({joins:{}, report_title: "", from_table: ""})
@@ -25,6 +27,7 @@ const [reportVariables, setReportVariables] = useState<TreportVariables>({joins:
 
 
 const GETtablesVariables = async () => {
+  setErrors((prev:any) => ({...prev, fetching: ""}))
   const allVars: string[] = []
   setLoading((prev:Tloading) => ({...prev, fetching: true}))
 
@@ -35,7 +38,9 @@ const GETtablesVariables = async () => {
   const method: string = "GET"
 
   return await Promise.all(tables.map(async(table) =>{
-    const data = await GET_tablesCols({SUBDOMAIN, API_KEY, method, table})
+    const res = await GET_tablesCols({SUBDOMAIN, API_KEY, method, table})
+    const data = await res.json()
+    console.log(data)
     allVars.push(...Object.keys(data.data[0]))
   })
   ).then(() => {
@@ -44,7 +49,11 @@ const GETtablesVariables = async () => {
       ...allVars.map((b:string)=>({title:b})
     )], "selected": []}))
   setLoading((prev:Tloading) => ({...prev, fetching: false}))
-
+  
+}).catch(err => {
+  console.log("catched", err)
+  if(err.message === "Failed to fetch") setErrors((prev:any) => ({...prev, fetching: "Please Select A Table to See Avaialable Columns."}))
+  setLoading((prev:Tloading) => ({...prev, fetching: false}))
   });
 
 
@@ -170,7 +179,17 @@ You selected the&nbsp;<b>{reportVariables.from_table ? reportVariables.from_tabl
 <div className="flex items-center justify-center px-5 text-slate-200 w-fit bg-slate-500 rounded-full">
 Now you can start building your report by checking the available variables (columns)
 </div>
-<Button color="bg-slate-500 hover:bg-slate-500/90" btnFor="fetching" onClickFunc={()=>GETtablesVariables()} loading={loading.fetching} text="Check Available Columns" />
+<Button disabled={!connected} color="bg-slate-500 hover:bg-slate-500/90" btnFor="fetching" onClickFunc={()=>GETtablesVariables()} loading={loading.fetching} text="Check Available Columns" />
+{error.fetching !== "" && 
+<div className="shadow flex items-center p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+  <svg className="flex-shrink-0 inline w-4 h-4 mr-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+    <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
+  </svg>
+  <div>
+    <span className="font-medium">Error!</span> {error.fetching}
+  </div>
+</div>
+}
 </div>
 
 
@@ -219,7 +238,7 @@ Now you can start building your report by checking the available variables (colu
 
       </DragDropContext>
 
-      <Button color="bg-emerald-600 hover:bg-emerald-600/90" btnFor="building" onClickFunc={()=>buildReport()} loading={loading.building} text="Build Report" /> 
+      <Button disabled={!connected} color="bg-emerald-600 hover:bg-emerald-600/90" btnFor="building" onClickFunc={()=>buildReport()} loading={loading.building} text="Build Report" /> 
     </>
   );
 };

@@ -8,7 +8,8 @@ export async function GET_tablesCols({SUBDOMAIN, API_KEY, method, table}:TtableC
             "apikey": API_KEY
           },
     })
-const res = await req.json();
-return res
+//     console.log(req)
+// const res = await req.json();
+return req
 }
 
