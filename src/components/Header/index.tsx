@@ -5,6 +5,8 @@ export default function Header(){
   const [show, setShow] = useState<boolean>(true);
   const [lastScrollY, setLastScrollY] = useState<number>(0);
 
+  const connected = false
+
   const controlNavbar = () => {
     if (typeof window !== 'undefined') { 
       if (window.scrollY < lastScrollY) { // if scroll down hide the navbar
@@ -43,6 +45,7 @@ export default function Header(){
                       Home
                   </a>
               </div>
+              {!connected &&
               <div className="flex gap-3 md:gap-5 flex-1">
                   <a aria-current="page"
                       className="inline-blockrounded-lg py-1 text-sm font-medium text-slate-200 transition-all duration-200 hover:text-slate-50"
@@ -50,9 +53,22 @@ export default function Header(){
                   <a className="inline-block rounded-lg py-1 text-sm font-medium text-slate-200 transition-all duration-200 hover:text-slate-50"
                       href="https://linkedin.com/in/taricov">Author</a>
               </div>
+              }
+              {connected &&
+              <div className="flex gap-3 md:gap-5 flex-1">
+                  <a aria-current="page"
+                      className="inline-blockrounded-lg py-1 text-sm font-medium text-slate-200 transition-all duration-200 hover:text-slate-50"
+                      href="/reports">Your Reports</a>
+              </div>
+              }
               <div className="flex items-center justify-end gap-3">
+                { !connected &&
                   <a className="items-center justify-center rounded-xl bg-slate-100 hover:bg-slate-300 shadow-light-200 px-3 py-2 text-sm font-semibold text-slate-800 shadow-sm ring-1 ring-inset ring-gray-300 transition-all duration-150 sm:inline-flex"
                       href="/connect">Connect</a>
+                    }
+                { connected &&
+                  <div className="items-center justify-center rounded-xl bg-slate-100 shadow-light-200 px-3 py-2 text-sm font-semibold text-slate-800 shadow-sm transition-all duration-150 sm:inline-flex">Connected</div>
+                    }
               </div>
           </div>
       </div>
