@@ -22,9 +22,9 @@ const Incorporate = () => {
   const connected = true
   const [loading, setLoading] = useState<Tloading>({fetching: false, building: false})
   const [error, setErrors] = useState<TErrors>({fetching: "", building: ""})
-  // const [snacks, setSnacks] = useState<HTMLElement>()
+  const [clipboardValue, setClipboardValue] = useState<string | null>(null)
+  const [showSnackBar, setShowSnackBar] = useState<boolean>(false)
 const [tablesVariables, setTablesVariables] = useState<TtableVariables>({available:[], selected: []})
-
 const [reportVariables, setReportVariables] = useState<TreportVariables>({joins:{}, report_title: "", from_table: ""})
 
 
@@ -64,16 +64,46 @@ const GETtablesVariables = async () => {
 
   }
 
+  const goToReport = async () => {
+    window.open("/reports")
+    setClipboardValue(null)
+  
+}
+
 const buildReport = () => {
   
-  setErrors(prev=>({...prev, building: "Please Select Columns to build the report."}))
   setLoading(prev=>({...prev, building: true}))
+  const baseURL = "http://localhost:8080/reports/"
+  const reportID = "2"
+
+return new Promise((resolve, reject) => {
+  setErrors(prev=>({...prev, building: ""}))
+  try {
+    setTimeout(async()=>{
+      if(tablesVariables.selected.length < 1) {
+        setErrors(prev=>({...prev, building: "Please Select Columns to build the report."}))
+        setLoading(prev=>({...prev, building: false}))
+        reject("fuck");  
+        return;
+      }
+      await navigator.clipboard.writeText(baseURL + reportID);
+      resolve(baseURL + reportID)
+    },2000)
+  }
+  catch (err) {
+    console.error('Failed to copy: ', err);
+  }
+}).then((data)=>{
+  setClipboardValue(data as string)
+  console.log("clipboard val: ", clipboardValue)
+  setLoading(prev=>({...prev, building: false}))
+
+  setShowSnackBar(true)
   setTimeout(()=>{
-    // setLoading(prev=>({...prev, building: false}))
-    // setSnacks(()=><span className="font-medium">Successful Build!</span> Report URL is Copied to Clipbaord!)
-  },8000)
-  // const redirectURL = ""
-  // window.open("/reports")
+    setShowSnackBar(false)
+  },3000)
+})
+
 }
 
 
@@ -139,7 +169,7 @@ useEffect(() => {
 },[reportVariables, tablesVariables])
   return (
     <>
-    <SnackBar showMe={true} body={<><span className="font-medium">Successful Build!</span> Report URL is Copied to Clipbaord!</>}/>
+    <SnackBar showMe={showSnackBar} body={<><span className="font-medium">Successful Build!</span> Report URL is Copied to Clipbaord!</>}/>
 <div className="w-[100%] m-auto flex justify-center items-start gap-4">
 <ul className="flex flex-col gap-2 w-[40%]">
   <h2 className="bg-slate-500/30 m-auto rounded-md w-fit px-5 py-3 font-bold text-slate-600">Select 1st Table</h2>
@@ -241,9 +271,13 @@ Now you can start building your report by checking the available variables (colu
         </div>
 
       </DragDropContext>
-
+{
+  !clipboardValue && 
       <Button disabled={!connected} color="bg-emerald-600 hover:bg-emerald-600/90" btnFor="building" onClickFunc={()=>buildReport()} loading={loading.building} text="Build Report" /> 
-      {!!tablesVariables.selected.length && <Error text={error.building}/>}
+}
+      {!!clipboardValue && <Button disabled={!connected} color="bg-emerald-600 hover:bg-emerald-600/90" btnFor="go-to-reports" onClickFunc={()=>goToReport()} loading={loading.building} text="Go To Reports" /> }
+      {error.building && <Error text={error.building}/>}
+
     </>
   );
 };

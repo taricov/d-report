@@ -42,6 +42,9 @@ export const Button = ({onClickFunc, text, loading, btnFor, color, disabled}:{on
     <svg className={`${disabled && "text-gray-500/50 bg-gray-200 hover:bg-gray-200 pointer-events-none"} inline w-5 mr-3 text-white`}  viewBox="0 0 24 24"><path fill="currentColor" d="M9 4h6v8h4.84L12 19.84L4.16 12H9V4Z"/></svg>
   : null}
   {text}
+{btnFor === "go-to-reports" &&
+<svg className="inline w-5 ml-1 fill-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>arrow-right-bold</title><path d="M4,15V9H12V4.16L19.84,12L12,19.84V15H4Z" /></svg>
+}
 </button>
         </>
     )
