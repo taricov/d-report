@@ -1,11 +1,11 @@
 import { TtableCol } from "../types/types";
 
-export async function GET_tablesCols({SUBDOMAIN, API_KEY, method, table}:TtableCol ): Promise<any>{
-    const req = await fetch(`https://${SUBDOMAIN}.daftra.com/v2/api/entity/${table}/list/1`, {
+export async function GET_tablesCols({subdomain, apikey, method, table}:TtableCol ): Promise<any>{
+    const req = await fetch(`https://${subdomain}.daftra.com/v2/api/entity/${table}/list/1`, {
         method,
         headers: {
             "Content-Type": "application/json",
-            "apikey": API_KEY
+            "apikey": apikey
           },
     })
 //     console.log(req)
@@ -13,3 +13,14 @@ export async function GET_tablesCols({SUBDOMAIN, API_KEY, method, table}:TtableC
 return req
 }
 
+
+
+export async function GET_siteInfo({subdomain, apikey}:Omit<TtableCol, "table" | "method"> ): Promise<any>{
+    const req = await fetch(`https://${subdomain}.daftra.com/api2/site_info`, {
+        headers: {
+            "Content-Type": "application/json",
+            "apikey": apikey
+          },
+    })
+return req
+}

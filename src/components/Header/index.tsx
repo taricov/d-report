@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Connector from "../Connector";
+import { UserContext } from "../../App";
 
 export default function Header(){
 
   const [show, setShow] = useState<boolean>(true);
   const [showConnectForm, setShowConnectForm] = useState<boolean>(false);
   const [lastScrollY, setLastScrollY] = useState<number>(0);
-
-  const connected = false
+  const userStatus = useContext(UserContext)
 
   const connectForm = (e: React.MouseEvent) =>{
 e.stopPropagation()
@@ -52,7 +52,7 @@ e.stopPropagation()
                       Home
                   </a>
               </div>
-              {!connected &&
+              {!userStatus.connected &&
               <div className="flex gap-3 md:gap-5 flex-1">
                   <a aria-current="page"
                       className="inline-blockrounded-lg py-1 text-sm font-medium text-slate-200 transition-all duration-200 hover:text-slate-50"
@@ -62,7 +62,7 @@ e.stopPropagation()
                       href="https://linkedin.com/in/taricov" target="_blank" >Author</a>
               </div>
               }
-              {connected &&
+              {userStatus.connected &&
               <div className="flex gap-3 md:gap-5 flex-1">
                   <a aria-current="page"
                       className="inline-blockrounded-lg py-1 text-sm font-medium text-slate-200 transition-all duration-200 hover:text-slate-50"
@@ -70,11 +70,11 @@ e.stopPropagation()
               </div>
               }
               <div className="flex items-center justify-end gap-3">
-                { !connected &&
+                { !userStatus.connected &&
                   <button onClick={connectForm} className="items-center justify-center rounded-xl bg-slate-100 hover:bg-slate-300 shadow-light-200 px-3 py-2 text-sm font-semibold text-slate-800 shadow-sm ring-1 ring-inset ring-gray-300 transition-all duration-150 sm:inline-flex"
                   >Connect</button>
                 }
-                { connected &&
+                { userStatus.connected &&
                   <div className="items-center justify-center rounded-xl bg-slate-100 shadow-light-200 px-3 py-2 text-sm font-semibold text-slate-800 shadow-sm transition-all duration-150 sm:inline-flex">Connected</div>
                     }
               </div>

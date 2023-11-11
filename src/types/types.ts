@@ -1,7 +1,31 @@
+import { Dispatch, SetStateAction } from "react";
+
 export type Tloading = {
     fetching: boolean;
     building: boolean;
 }
+
+export interface TformProps {
+  loading: boolean;
+  error: string;
+}
+export interface TformData {
+  subdomain: string;
+  apikey: string;
+  siteFirstName: string;
+  siteLastName: string;
+  siteBusinessName: string;
+  siteID: string;
+  siteEmail: string;
+  siteLogoURL: string;
+}
+
+export interface Tconnector {
+  connected: boolean;
+  setConnected: Dispatch<SetStateAction<boolean>>;
+}
+
+
 export type TErrors = {
     fetching: string;
     building: string;
@@ -27,8 +51,8 @@ export type Ttable = {
     }
 }
 export interface TtableCol {
-    SUBDOMAIN: string;
-    API_KEY: string;
+    subdomain: string;
+    apikey: string;
     table: string;
     method: string;
 }

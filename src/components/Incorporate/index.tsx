@@ -3,7 +3,7 @@ import Card from "../Card/index";
 import Chip from "../Chip/index";
 import List from "../List/index";
 // import { report } from "../../logic/report"
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useContext, useEffect, useState } from "react";
 import {
   DragDropContext,
   Draggable,
@@ -17,9 +17,10 @@ import CardsList from "../CardsList";
 import Spinner from "../Spinner";
 import Error from "../Error";
 import SnackBar from "../SanckBar";
+import { UserContext } from "../../App";
 
 const Incorporate = () => {
-  const connected = true
+  const userStatus = useContext(UserContext)
   const [loading, setLoading] = useState<Tloading>({fetching: false, building: false})
   const [error, setErrors] = useState<TErrors>({fetching: "", building: ""})
   const [clipboardValue, setClipboardValue] = useState<string | null>(null)
@@ -38,12 +39,12 @@ const GETtablesVariables = async () => {
 
   const tables: string[]= [reportVariables.from_table, ...Object.keys(reportVariables.joins)]
   console.log(tables)
-  const SUBDOMAIN: string = "taricov"
-  const API_KEY: string = "24b476fdd8aa43091e0963ba01b98762155c9dd4"
+  const subdomain: string = "taricov"
+  const apikey: string = "24b476fdd8aa43091e0963ba01b98762155c9dd4"
   const method: string = "GET"
 
   return await Promise.all(tables.map(async(table) =>{
-    const res = await GET_tablesCols({SUBDOMAIN, API_KEY, method, table})
+    const res = await GET_tablesCols({subdomain, apikey, method, table})
     const data = await res.json()
     console.log(data)
     allVars.push(...Object.keys(data.data[0]))
@@ -67,7 +68,6 @@ const GETtablesVariables = async () => {
   const goToReport = async () => {
     window.open("/reports")
     setClipboardValue(null)
-  
 }
 
 const buildReport = () => {
@@ -220,7 +220,7 @@ You selected the&nbsp;<b>{reportVariables.from_table ? reportVariables.from_tabl
 <div className="flex items-center justify-center px-5 text-slate-200 w-fit bg-slate-500 rounded-full">
 Now you can start building your report by checking the available variables (columns)
 </div>
-<Button disabled={!connected} color="bg-slate-500 hover:bg-slate-500/90" btnFor="fetching" onClickFunc={()=>GETtablesVariables()} loading={loading.fetching} text="Check Available Columns" />
+<Button disabled={!userStatus.connected} color="bg-slate-500 hover:bg-slate-500/90" btnFor="fetching" onClickFunc={()=>GETtablesVariables()} loading={loading.fetching} text="Check Available Columns" />
 {error.fetching !== "" && 
 <Error text={error.fetching}/>
 }
@@ -273,9 +273,9 @@ Now you can start building your report by checking the available variables (colu
       </DragDropContext>
 {
   !clipboardValue && 
-      <Button disabled={!connected} color="bg-emerald-600 hover:bg-emerald-600/90" btnFor="building" onClickFunc={()=>buildReport()} loading={loading.building} text="Build Report" /> 
+      <Button disabled={!userStatus.connected} color="bg-emerald-600 hover:bg-emerald-600/90" btnFor="building" onClickFunc={()=>buildReport()} loading={loading.building} text="Build Report" /> 
 }
-      {!!clipboardValue && <Button disabled={!connected} color="bg-emerald-600 hover:bg-emerald-600/90" btnFor="go-to-reports" onClickFunc={()=>goToReport()} loading={loading.building} text="Go To Reports" /> }
+      {!!clipboardValue && <Button disabled={!userStatus.connected} color="bg-emerald-600 hover:bg-emerald-600/90" btnFor="go-to-reports" onClickFunc={()=>goToReport()} loading={loading.building} text="Go To Reports" /> }
       {error.building && <Error text={error.building}/>}
 
     </>
