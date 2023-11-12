@@ -9,8 +9,17 @@ import { UserContext } from "../../App";
 
 export default function Connector({showed}:{showed: boolean}){
 const userStatus = useContext(UserContext)
-const [formProps, setFormProps] = useState<TformProps>({loading: false, error: ""})
+const [formProps, setFormProps] = useState<TformProps>({loading: false, error: "", disconnecting: false})
   const [formData, setFormData ] = useState<TformData>({subdomain: "", apikey: "", siteLogoURL: "", siteID: "", siteEmail: "", siteFirstName: "", siteLastName: "", siteBusinessName: ""})
+
+
+  const disconnect = () => { 
+    setFormData(prev=>({...prev, disconnecting: true}))
+    setTimeout(() => {
+      setFormData(prev=>({...prev, disconnecting: false}))
+      userStatus.setConnected(false)
+    }, 2000);
+  }
 
   const formControl = (e: React.FormEvent) =>{
     e.preventDefault()
@@ -50,7 +59,7 @@ console.log(userStatus);
   },[formData])
     return (
         <>
-        <div className={`${showed && "translate-y-12"} bg-slate-300 fixed top-20 left-1/2 transform transition duration-200 -translate-y-[140%] -translate-x-1/2 shadow-lg rounded-lg overflow-hidden mx-auto w-10/12 md:w-[800px]`}>
+        <div className={`${showed && "!translate-y-12"} bg-slate-300 fixed top-20 left-1/2 transform transition duration-200 -translate-y-[140%] -translate-x-1/2 shadow-lg rounded-lg overflow-hidden mx-auto w-10/12 md:w-[800px]`}>
 
         <div className="p-6">
             <h2 className="text-2xl font-bold text-slate-700 mb-2">Welcome to D-Report!</h2>
@@ -70,8 +79,11 @@ console.log(userStatus);
           </label>
                     <input className="shadow appearance-none border rounded w-full py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline" id="apikey" type="apikey" placeholder="Password" value={formData.apikey} onChange={(e:ChangeEvent<HTMLInputElement>)=>setFormData(prev=>({...prev, apikey: e.target.value}))} />
                 </div>
+                <div className="flex gap-2">
                 <Button disabled={userStatus.connected} btnFor="submitting" loading={formProps.loading}  type="submit" text={userStatus.connected ? "Connected!" : "Connect Now"} color={userStatus.connected ? "bg-emerald-600 hover:bg-emerald-600/90" : "bg-slate-500 hover:bg-slate-500/90"}/>
-                {/* {userStatus.connected && <p>Con</p>} */}
+
+                <Button disabled={!userStatus.connected} btnFor="submitting" loading={formProps.disconnecting} type="button" text={"Disconnect"} onClickFunc={disconnect} color={"bg-red-600 hover:bg-red-600/90"}/>
+                </div>
                  
                     <a className="block align-baseline mb-2 transition duration-300 text-xs underline text-blue-500 hover:text-blue-800" href="/">Don't know how to get your subdomain and API key?             
                       </a>

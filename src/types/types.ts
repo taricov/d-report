@@ -7,6 +7,7 @@ export type Tloading = {
 
 export interface TformProps {
   loading: boolean;
+  disconnecting: boolean;
   error: string;
 }
 export interface TformData {
