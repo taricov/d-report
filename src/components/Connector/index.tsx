@@ -1,23 +1,26 @@
 import { ChangeEvent, useContext, useEffect, useState } from "react";
-import type { TformData, TformProps } from "../../types/types";
+import { UserContext } from "../../App";
 import { GET_siteInfo } from "../../api/api_funcs";
+import { cookieHandler } from "../../logic/cookies";
+import type { TformProps } from "../../types/types";
 import { Button } from "../Button";
 import Error from "../Error";
-import SnackBar from "../SanckBar";
-import { UserContext } from "../../App";
 
 
 export default function Connector({showed}:{showed: boolean}){
 const userInfo = useContext(UserContext)
 const [formProps, setFormProps] = useState<TformProps>({loading: false, error: "", disconnecting: false})
-  // const [formData, setFormData ] = useState<TformData>({subdomain: "", apikey: "", siteLogoURL: "", siteID: "", siteEmail: "", siteFirstName: "", siteLastName: "", siteBusinessName: ""})
+  // const [formData, seTsiteData ] = useState<TsiteData>({subdomain: "", apikey: "", siteLogoURL: "", siteID: "", siteEmail: "", siteFirstName: "", siteLastName: "", siteBusinessName: ""})
 
   const disconnect = () => { 
-    userInfo.setSiteData(prev=>({...prev, disconnecting: true}))
+    setFormProps(prev=>({...prev, disconnecting: true}))
+    cookieHandler.remove('site_subdomain')
+    cookieHandler.remove('site_api_key')
+    userInfo.setSiteData(prev=>({...prev, apikey: "", subdomain: "", siteID: ""}))
     setTimeout(() => {
-      userInfo.setSiteData(prev=>({...prev, disconnecting: false}))
+      setFormProps(prev=>({...prev, disconnecting: false}))
       userInfo.setConnected(false)
-    }, 2000);
+    }, 3000);
   }
 
   const formControl = (e: React.FormEvent) =>{
@@ -40,6 +43,7 @@ const [formProps, setFormProps] = useState<TformProps>({loading: false, error: "
       console.log(siteInfo)
       userInfo.setSiteData(prev=>({...prev, siteLogoURL: `https://${userInfo.siteData.subdomain}.daftra.com/files/images/site-logos/${siteInfo.site_logo}`, siteID: siteInfo.id, siteEmail: siteInfo.email, siteFirstName: siteInfo.first_name, siteLastName: siteInfo.last_name, siteBusinessName: siteInfo.business_name}))
 
+      cookieHandler.setter(userInfo.siteData.subdomain, userInfo.siteData.apikey)
       setFormProps(prev=>({...prev, loading: false}))
     }).catch((err) =>{
     console.log("catectef",(err as Error).message)
@@ -52,7 +56,7 @@ const [formProps, setFormProps] = useState<TformProps>({loading: false, error: "
   
   useEffect(() => {
     console.log(userInfo.siteData)
-console.log(userInfo);
+console.log("from connector", userInfo);
 
     userInfo.siteData.siteID !== "" && userInfo.setConnected(true)
   },[userInfo.siteData])
@@ -76,7 +80,7 @@ console.log(userInfo);
                     <label className="block text-slate-700 font-bold mb-2" htmlFor="apikey">
             API Key
           </label>
-                    <input disabled={userInfo.connected && userInfo.siteData.apikey.length > 0} className="shadow appearance-none border rounded w-full py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline" id="apikey" type="apikey" placeholder="API Key goes here..." value={""} onChange={(e:ChangeEvent<HTMLInputElement>)=>userInfo.setSiteData(prev=>({...prev, apikey: e.target.value}))} />
+                    <input disabled={userInfo.connected && userInfo.siteData.apikey.length > 0} className="shadow appearance-none border rounded w-full py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline" id="apikey" type="apikey" placeholder="API Key goes here..." value={userInfo.siteData.apikey} onChange={(e:ChangeEvent<HTMLInputElement>)=>userInfo.setSiteData(prev=>({...prev, apikey: e.target.value}))} />
                 </div>
                 <div className="flex gap-2">
                 <Button disabled={userInfo.connected} btnFor="submitting" loading={formProps.loading}  type="submit" text={userInfo.connected ? "Connected!" : "Connect Now"} color={userInfo.connected ? "bg-emerald-600 hover:bg-emerald-600/90" : "bg-slate-500 hover:bg-slate-500/90"}/>

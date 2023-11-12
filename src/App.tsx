@@ -12,10 +12,11 @@ import About from "./pages/About";
 import Reports from "./pages/Reports";
 import Report from "./pages/Report";
 import { createContext, useEffect, useState } from "react";
-import { Tconnector, TformData } from "./types/types";
+import { Tconnector, TsiteData } from "./types/types";
 import SnackBar from "./components/SanckBar";
 import { cookieHandler } from "./logic/cookies";
 import { GET_siteInfo } from "./api/api_funcs";
+import { connect } from "http2";
 
 const queryClient = new QueryClient()
 
@@ -30,15 +31,14 @@ export const UserContext = createContext<Tconnector>({connected: false, setConne
   siteLogoURL: "",}, setSiteData:()=>{}});
 
 function App() {
-  const [siteData, setSiteData ] = useState<TformData>({subdomain: "", apikey: "", siteLogoURL: "", siteID: "", siteEmail: "", siteFirstName: "", siteLastName: "", siteBusinessName: ""})
+  const [siteData, setSiteData ] = useState<TsiteData>({subdomain: "", apikey: "", siteLogoURL: "", siteID: "", siteEmail: "", siteFirstName: "", siteLastName: "", siteBusinessName: ""})
 const [connected, setConnected] = useState<boolean>(false)
 const [showSnackBar, setShowSnackBar] = useState<boolean>(false)
+const [showSnackBarDisconnected, setShowSnackBarDisconnected] = useState<boolean>(false)
 
 const checkCookie = async() => {
-const apikey = cookieHandler.getter("site_api_key") || ""
-const subdomain =  cookieHandler.getter("site_id") || ""
 setSiteData(prev => ({...prev, apikey: cookieHandler.getter("site_api_key") || "", subdomain: cookieHandler.getter("site_subdomain") || ""}))
-const res = await GET_siteInfo({subdomain, apikey})
+const res = await GET_siteInfo({subdomain: siteData.subdomain, apikey: siteData.apikey})
 console.log(res)
 if(res.status !== 200) return;
 if(res.status === 200){
@@ -52,12 +52,23 @@ if(res.status === 200){
 
 useEffect(()=>{
   checkCookie()
-  setShowSnackBar(()=>connected)
-  console.log("connected", showSnackBar)
-  setTimeout(()=>{
-  setShowSnackBar(false)
-  console.log("timeout", showSnackBar)
-  },3000)
+},[]);
+
+useEffect(()=>{
+console.log(connected)
+  if(connected){
+
+    setShowSnackBar(()=>connected)
+    setTimeout(()=>{
+      setShowSnackBar(false)
+    },3000)
+  }else{
+    setShowSnackBarDisconnected(()=>!connected)
+    setTimeout(()=>{
+      setShowSnackBarDisconnected(false)
+    },3000)
+
+  }
 },[connected])
 
   return (
@@ -76,6 +87,7 @@ useEffect(()=>{
 
 </BrowserRouter>
     <SnackBar showMe={showSnackBar} body={<><span className="font-medium">Connected!</span> You are now connected successfully!</>}/>
+    <SnackBar color="!border-red-400 !text-red-800 !bg-red-100" showMe={showSnackBarDisconnected} body={<><span className="font-medium">Disconnected! ☹️</span> You have disconnected the service!</>}/>
     <Footer/>
 
     </QueryClientProvider>

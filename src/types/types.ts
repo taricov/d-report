@@ -10,7 +10,7 @@ export interface TformProps {
   disconnecting: boolean;
   error: string;
 }
-export interface TformData {
+export interface TsiteData {
   subdomain: string;
   apikey: string;
   siteFirstName: string;
@@ -24,8 +24,8 @@ export interface TformData {
 export interface Tconnector {
   connected: boolean;
   setConnected: Dispatch<SetStateAction<boolean>>;
-  siteData: TformData;
-  setSiteData: Dispatch<SetStateAction<TformData>>;
+  siteData: TsiteData;
+  setSiteData: Dispatch<SetStateAction<TsiteData>>;
 }
 
 
