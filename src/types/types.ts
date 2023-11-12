@@ -24,6 +24,8 @@ export interface TformData {
 export interface Tconnector {
   connected: boolean;
   setConnected: Dispatch<SetStateAction<boolean>>;
+  siteData: TformData;
+  setSiteData: Dispatch<SetStateAction<TformData>>;
 }
 
 
