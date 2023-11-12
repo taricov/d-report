@@ -16,6 +16,7 @@ return req
 
 
 export async function GET_siteInfo({subdomain, apikey}:Pick<TsiteData, "subdomain" | "apikey"> ): Promise<any>{
+    console.log(subdomain, apikey)
     const req = await fetch(`https://${subdomain}.daftra.com/api2/site_info`, {
         headers: {
             "Content-Type": "application/json",

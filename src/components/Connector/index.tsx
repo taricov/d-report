@@ -33,20 +33,20 @@ const [formProps, setFormProps] = useState<TformProps>({loading: false, error: "
         const res = await GET_siteInfo({...userInfo.siteData})
         resolve(res)
       }).then(async(res) =>{
-        console.log("reeez", res)
+        // console.log("reeez", res)
         if(res.status === 401) setFormProps(prev=>({...prev, error: "Please check your API Key. The provided value may be invalid value.", loading: false}))
         // console.log(res)
       const data = await res.json()
       return data
     }).then((data) =>{
       const siteInfo = data.data.Site
-      console.log(siteInfo)
+      // console.log(siteInfo)
       userInfo.setSiteData(prev=>({...prev, siteLogoURL: `https://${userInfo.siteData.subdomain}.daftra.com/files/images/site-logos/${siteInfo.site_logo}`, siteID: siteInfo.id, siteEmail: siteInfo.email, siteFirstName: siteInfo.first_name, siteLastName: siteInfo.last_name, siteBusinessName: siteInfo.business_name}))
 
       cookieHandler.setter(userInfo.siteData.subdomain, userInfo.siteData.apikey)
       setFormProps(prev=>({...prev, loading: false}))
     }).catch((err) =>{
-    console.log("catectef",(err as Error).message)
+    // console.log("catectef",(err as Error).message)
     
     
     // if(err) setFormProps(prev=>({...prev, error: "", loading: false}))
@@ -55,8 +55,8 @@ const [formProps, setFormProps] = useState<TformProps>({loading: false, error: "
   }
   
   useEffect(() => {
-    console.log(userInfo.siteData)
-console.log("from connector", userInfo);
+    // console.log(userInfo.siteData)
+// console.log("from connector", userInfo);
 
     userInfo.siteData.siteID !== "" && userInfo.setConnected(true)
   },[userInfo.siteData])

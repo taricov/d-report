@@ -16,7 +16,6 @@ import { Tconnector, TsiteData } from "./types/types";
 import SnackBar from "./components/SanckBar";
 import { cookieHandler } from "./logic/cookies";
 import { GET_siteInfo } from "./api/api_funcs";
-import { connect } from "http2";
 
 const queryClient = new QueryClient()
 
@@ -37,12 +36,15 @@ const [showSnackBar, setShowSnackBar] = useState<boolean>(false)
 const [showSnackBarDisconnected, setShowSnackBarDisconnected] = useState<boolean>(false)
 
 const checkCookie = async() => {
-setSiteData(prev => ({...prev, apikey: cookieHandler.getter("site_api_key") || "", subdomain: cookieHandler.getter("site_subdomain") || ""}))
+  const sub = cookieHandler.getter("site_subdomain") || ""
+  const api = cookieHandler.getter("site_api_key") || ""
+setSiteData(prev => ({...prev, apikey: api, subdomain: sub}))
 const res = await GET_siteInfo({subdomain: siteData.subdomain, apikey: siteData.apikey})
 console.log(res)
 if(res.status !== 200) return;
 if(res.status === 200){
-  const data = res.json()
+  const data = await res.json()
+  console.log(data)
   const siteInfo = data.data.Site
   setSiteData(prev => ({...prev, siteBusinessName: siteInfo.business_name, siteEmail: siteInfo.email, siteFirstName: siteInfo.first_name, siteLastName: siteInfo.last_name, siteID: siteInfo.id, siteLogoURL: siteInfo.site_logo}))
   setConnected(true);
@@ -51,11 +53,15 @@ if(res.status === 200){
 }
 
 useEffect(()=>{
+ 
+  if(siteData.subdomain.length < 0) return;
   checkCookie()
-},[]);
+
+},[siteData.subdomain]);
 
 useEffect(()=>{
-console.log(connected)
+
+// console.log(connected)
   if(connected){
 
     setShowSnackBar(()=>connected)
@@ -71,10 +77,13 @@ console.log(connected)
   }
 },[connected])
 
+// if(siteData.subdomain.length < 0) return <div >loading...</div>;
+
   return (
     <>
     <UserContext.Provider value={{connected, setConnected, siteData, setSiteData}}>
         <QueryClientProvider client={queryClient}>
+    {siteData.subdomain.length < 0 && <div >loading...</div>}
           <Header />
           <BrowserRouter>
 <Routes>

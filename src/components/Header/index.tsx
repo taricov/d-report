@@ -76,6 +76,7 @@ e.stopPropagation()
                 }
                 { userInfo.connected &&
                   <div className="items-center justify-center rounded-xl bg-slate-100 shadow-light-200 px-3 py-2 text-sm font-semibold text-slate-800 shadow-sm transition-all duration-150 sm:inline-flex">Connected</div>
+                  
                     }
               </div>
           </div>
