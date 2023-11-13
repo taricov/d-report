@@ -19,6 +19,8 @@ export interface TsiteData {
   siteID: string;
   siteEmail: string;
   siteLogoURL: string;
+  fromForm: boolean;
+  fetching: boolean;
 }
 
 export interface Tconnector {

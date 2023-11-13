@@ -27,15 +27,20 @@ export const UserContext = createContext<Tconnector>({connected: false, setConne
   siteBusinessName: "",
   siteID: "",
   siteEmail: "",
-  siteLogoURL: "",}, setSiteData:()=>{}});
+  siteLogoURL: "",
+  fromForm: false,
+  fetching: false,
+}, setSiteData:()=>{},
+});
 
 function App() {
-  const [siteData, setSiteData ] = useState<TsiteData>({subdomain: "", apikey: "", siteLogoURL: "", siteID: "", siteEmail: "", siteFirstName: "", siteLastName: "", siteBusinessName: ""})
+  const [siteData, setSiteData ] = useState<TsiteData>({subdomain: "", apikey: "", siteLogoURL: "", siteID: "", siteEmail: "", siteFirstName: "", siteLastName: "", siteBusinessName: "", fromForm: false, fetching: false})
 const [connected, setConnected] = useState<boolean>(false)
 const [showSnackBar, setShowSnackBar] = useState<boolean>(false)
 const [showSnackBarDisconnected, setShowSnackBarDisconnected] = useState<boolean>(false)
 
 const checkCookie = async() => {
+  setSiteData(prev=>({...prev, fetching: true}));
   const sub = cookieHandler.getter("site_subdomain") || ""
   const api = cookieHandler.getter("site_api_key") || ""
 setSiteData(prev => ({...prev, apikey: api, subdomain: sub}))
@@ -48,7 +53,8 @@ if(res.status === 200){
   const siteInfo = data.data.Site
   setSiteData(prev => ({...prev, siteBusinessName: siteInfo.business_name, siteEmail: siteInfo.email, siteFirstName: siteInfo.first_name, siteLastName: siteInfo.last_name, siteID: siteInfo.id, siteLogoURL: siteInfo.site_logo}))
   setConnected(true);
-
+  setSiteData(prev=>({...prev, fetching: false}));
+  
 }
 }
 
@@ -62,13 +68,13 @@ useEffect(()=>{
 useEffect(()=>{
 
 // console.log(connected)
-  if(connected){
+  if(connected && siteData.fromForm){
 
     setShowSnackBar(()=>connected)
     setTimeout(()=>{
       setShowSnackBar(false)
     },3000)
-  }else{
+  }else if(connected && siteData.fromForm){
     setShowSnackBarDisconnected(()=>!connected)
     setTimeout(()=>{
       setShowSnackBarDisconnected(false)
@@ -83,7 +89,6 @@ useEffect(()=>{
     <>
     <UserContext.Provider value={{connected, setConnected, siteData, setSiteData}}>
         <QueryClientProvider client={queryClient}>
-    {siteData.subdomain.length < 0 && <div >loading...</div>}
           <Header />
           <BrowserRouter>
 <Routes>

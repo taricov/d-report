@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import Connector from "../Connector";
 import { UserContext } from "../../App";
+import Spinner from "../Spinner";
 
 export default function Header(){
 
@@ -82,8 +83,7 @@ e.stopPropagation()
           </div>
       </div>
 
-      
-      <div  className={`fixed transform transition duration-200 -translate-x-1/2 -translate-y-[140%] -mt-20 h-[1000px] w-screen bg-black/50 top-1/2 left-1/2 ${showConnectForm && "-translate-y-0"}`} onClick={connectForm}>
+      <div className={`fixed transform transition duration-200 -translate-x-1/2 -translate-y-[140%] -mt-20 h-[1000px] w-screen bg-black/50 top-1/2 left-1/2 ${showConnectForm && "-translate-y-0"}`} onClick={connectForm}>
       </div>
       <Connector showed={showConnectForm}/>
 

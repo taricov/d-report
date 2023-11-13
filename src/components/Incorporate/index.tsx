@@ -231,7 +231,7 @@ Now you can start building your report by checking the available variables (colu
       <DragDropContext onDragEnd={onDragEnd}>
         <div className="flex row w-full p-12 gap-x-4">
           <List title="Available Columns" onDragEnd={onDragEnd} name="available">
-          {loading.fetching && <Spinner/>}
+          {loading.fetching && <Spinner size={"w-20"} />}
               {tablesVariables.available.map((v:any, i:number) => (
               // {tablesVariables.available.map((v:any,i:number) =>(
               <Draggable key={v.title+"-"+i} draggableId={v.title+ "-"+i} index={i}>
