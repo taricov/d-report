@@ -1,5 +1,12 @@
 import { Dispatch, SetStateAction } from "react";
 
+
+export interface TDaftraWorkflow {
+  name: string
+  status: number
+  singular_title: string
+}
+
 export type Tloading = {
     fetching: boolean;
     building: boolean;
@@ -21,6 +28,17 @@ export interface TsiteData {
   siteLogoURL: string;
   fromForm: boolean;
   fetching: boolean;
+  sitePhone1: string
+   sitePhone2: string
+   siteAddress1: string
+   siteAddress2: string
+   siteBn1: string
+   siteModuleKey: string
+   siteCity: string
+   siteState: string
+   siteCountryCode: string
+   siteCountry: string;
+   siteCurrencyCode: string;
 }
 
 export interface Tconnector {

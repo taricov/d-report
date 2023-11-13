@@ -30,11 +30,22 @@ export const UserContext = createContext<Tconnector>({connected: false, setConne
   siteLogoURL: "",
   fromForm: false,
   fetching: false,
+  sitePhone1: "",
+   sitePhone2: "",
+   siteAddress1: "",
+   siteAddress2: "",
+   siteBn1: "",
+   siteModuleKey: "",
+   siteCity: "",
+   siteState: "",
+   siteCountryCode: "",
+   siteCountry: "",
+   siteCurrencyCode: ""
 }, setSiteData:()=>{},
 });
 
 function App() {
-  const [siteData, setSiteData ] = useState<TsiteData>({subdomain: "", apikey: "", siteLogoURL: "", siteID: "", siteEmail: "", siteFirstName: "", siteLastName: "", siteBusinessName: "", fromForm: false, fetching: false})
+  const [siteData, setSiteData ] = useState<TsiteData>({subdomain: "", apikey: "", siteLogoURL: "", siteID: "", siteEmail: "", siteFirstName: "", siteLastName: "", siteBusinessName: "", fromForm: false, fetching: false, sitePhone1: "", sitePhone2: "", siteAddress1: "", siteAddress2: "", siteBn1: "", siteModuleKey: "", siteCountryCode: "", siteCurrencyCode: "", siteCity: "", siteState: "", siteCountry: ""})
 const [connected, setConnected] = useState<boolean>(false)
 const [showSnackBar, setShowSnackBar] = useState<boolean>(false)
 const [showSnackBarDisconnected, setShowSnackBarDisconnected] = useState<boolean>(false)

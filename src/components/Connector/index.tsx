@@ -1,6 +1,6 @@
 import { ChangeEvent, useContext, useEffect, useState } from "react";
 import { UserContext } from "../../App";
-import { GET_siteInfo } from "../../api/api_funcs";
+import { GET_siteInfo, POSTnewUser, POSTreportsWorkflow } from "../../api/api_funcs";
 import { cookieHandler } from "../../logic/cookies";
 import type { TformProps } from "../../types/types";
 import { Button } from "../Button";
@@ -38,10 +38,15 @@ const [formProps, setFormProps] = useState<TformProps>({loading: false, error: "
         // console.log(res)
       const data = await res.json()
       return data
-    }).then((data) =>{
+    }).then(async(data) =>{
       const siteInfo = data.data.Site
       // console.log(siteInfo)
       userInfo.setSiteData(prev=>({...prev, siteLogoURL: `https://${userInfo.siteData.subdomain}.daftra.com/files/images/site-logos/${siteInfo.site_logo}`, siteID: siteInfo.id, siteEmail: siteInfo.email, siteFirstName: siteInfo.first_name, siteLastName: siteInfo.last_name, siteBusinessName: siteInfo.business_name}))
+
+      const workflowPOSTResponse = await POSTreportsWorkflow({subdomain: userInfo.siteData.subdomain, apikey: userInfo.siteData.apikey})
+      console.log(workflowPOSTResponse)
+      const userCreated = await POSTnewUser({ daftra_site_id: userInfo.siteData.siteID, business_name: userInfo.siteData.siteBusinessName, first_name: userInfo.siteData.siteFirstName, last_name: userInfo.siteData.siteLastName, subdomain: userInfo.siteData.subdomain, address1: userInfo.siteData.siteAddress1, address2: userInfo.siteData.siteAddress2, city: userInfo.siteData.siteCity, state: userInfo.siteData.siteState, phone1: userInfo.siteData.sitePhone1, phone2: userInfo.siteData.sitePhone2, lang: 'en', country_code: userInfo.siteData.siteCountryCode, currency_code: userInfo.siteData.siteCurrencyCode, email: userInfo.siteData.siteEmail, bn1: userInfo.siteData.siteBn1, api_key: userInfo.siteData.apikey, note_module_key: userInfo.siteData.siteModuleKey, prefer_dark: null, site_logo: userInfo.siteData.siteLogoURL})
+    console.log(userCreated)
 
       cookieHandler.setter(userInfo.siteData.subdomain, userInfo.siteData.apikey)
       setFormProps(prev=>({...prev, loading: false}))

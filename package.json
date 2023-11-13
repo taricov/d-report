@@ -17,6 +17,7 @@
     "@types/react": "^17.0.20",
     "@types/react-beautiful-dnd": "^13.1.2",
     "@types/react-dom": "^17.0.9",
+    "appwrite": "^13.0.0",
     "dayjs": "^1.11.10",
     "export-to-csv": "^1.2.1",
     "js-cookie": "^3.0.5",
