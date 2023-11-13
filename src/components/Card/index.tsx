@@ -12,15 +12,14 @@ type Props = {
 };
 
 
-const Card = ({text, idx}:{text:string, idx: number}) => {
-  console.log(idx)
+const Card = ({text, idx, bgColor}:{text:string, idx: number, bgColor: string}) => {
   return (
     <div className="shadow-lg flex w-full cursor-pointer">
       {/* <div className="rounded-l-md p-5 w-36 bg-blue-200">
         <img src="./card.svg" alt="Ícone padrão de item do card" />
       </div> */}
 
-      <main className="py-3 rounded-md shadow px-5 rounded-r-md w-full bg-white">
+      <main className={`py-3 rounded-md shadow px-5 rounded-r-md w-full text-black ${bgColor}`}>
         <span className="flex flex-row justify-between">
         <sub className="">{idx+1}</sub>
           
