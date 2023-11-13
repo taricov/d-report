@@ -11,7 +11,9 @@ type Props = {
   };
 };
 
-const Card = ({text}:{text:string}) => {
+
+const Card = ({text, idx}:{text:string, idx: number}) => {
+  console.log(idx)
   return (
     <div className="shadow-lg flex w-full cursor-pointer">
       {/* <div className="rounded-l-md p-5 w-36 bg-blue-200">
@@ -20,10 +22,12 @@ const Card = ({text}:{text:string}) => {
 
       <main className="py-3 rounded-md shadow px-5 rounded-r-md w-full bg-white">
         <span className="flex flex-row justify-between">
+        <sub className="">{idx+1}</sub>
+          
           {/* <h4 className="uppercase font-normal">{data.subtitle}</h4>
           <p>{data.updatedAt}</p> */}
         </span>
-        <h1 className="font-bold text-md">{text}</h1>
+        <h1 className="font-bold text-md text-center capitalize">{text.split("_").join(" ")}</h1>
       </main>
     </div>
   );

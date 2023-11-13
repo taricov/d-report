@@ -194,9 +194,9 @@ useEffect(() => {
 
 <div className="flex flex-col">
 <h2 className="bg-slate-500/30 m-auto shadow rounded-md w-fit px-5 py-3 font-bold text-slate-600">Select Tables To Join</h2>
-<ul className="flex flex-col gap-2 w-full overflow-scroll h-[500px] border rounded-md px-3 py-4">
+<ul className="flex flex-col gap-2 min-w-full overflow-scroll h-[500px] border rounded-md px-3 py-4">
   
-    {tables[reportVariables?.from_table]?.rels.map((rel, idx) =>(
+    {tables[reportVariables?.from_table]?.rels.map((rel, idx) =>
 <li key={idx} className="flex">
         <input type="checkbox" data-foreignkey={rel.foreign_key} checked={Object.keys(reportVariables.joins).includes(rel.table)} id={rel.table} value={rel.table} onChange={selectJoinTable} className="hidden peer" />
         <label htmlFor={rel.table} className="inline-flex items-center justify-between w-full p-5 text-gray-500 bg-white border-2 border-gray-200 rounded-lg cursor-pointer dark:hover:text-gray-300 dark:border-gray-700 peer-checked:bg-slate-600 peer-checked:text-slate-200 hover:text-gray-600 dark:peer-checked:text-gray-300hover:bg-gray-50 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700">                           
@@ -209,7 +209,7 @@ useEffect(() => {
 
 
     </li> 
-    ))}
+    )}
     </ul>
     </div>
     </div>
@@ -247,7 +247,7 @@ Now you can start building your report by checking the available variables (colu
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
                     >
-                      <Chip text={v.title} />
+                      <Chip text={v.title} tableColor={""} />
                     </div>
                 )}
               </Draggable>
@@ -263,7 +263,7 @@ Now you can start building your report by checking the available variables (colu
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
                   >
-                    <Card text={v.title} />
+                    <Card text={v.title} idx={i} />
                     {/* <Card text={v.name} /> */}
                   </div>
                 )}
