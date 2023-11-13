@@ -32,14 +32,13 @@ const [reportVariables, setReportVariables] = useState<TreportVariables>({joins:
 
 
 const colorRandomizer = () => {
-  return 'bg-' + colors[Math.floor(Math.random()*colors.length)] + "-400";
+  return colors[Math.floor(Math.random()*colors.length)]
 }
 
 const GETtablesVariables = async () => {
   setTablesVariables({available:[], selected: []})
   setErrors((prev:any) => ({...prev, fetching: ""}))
-  const allVars: string[] = []
-  let currentTable: string = ""
+  let allVars: any = []
   setLoading((prev:Tloading) => ({...prev, fetching: true}))
 
 
@@ -53,14 +52,14 @@ const GETtablesVariables = async () => {
     const res = await GET_tablesCols({subdomain, apikey, method, table})
     const data = await res.json()
     console.log(data)
-    allVars.push(...Object.keys(data.data[0]))
-    currentTable = table
+  const currentColor: string = colorRandomizer()
+    allVars = [...allVars, ...Object.keys(data.data[0]).map(c=>({columnName: c, tableName: table, bgColor: currentColor}))]
+    console.log("in the loop>>", allVars)
+
   })
   ).then(() => {
-    const currentColor = colorRandomizer()
-    console.log(allVars)
     setTablesVariables((prev:any)=>({"available":[...prev.available,
-      ...allVars.map((b:string)=>({columnName:b, bgColor: currentColor, tableName: currentTable})
+      ...allVars.map((b:string)=>(b)
     )], "selected": []}))
   setLoading((prev:Tloading) => ({...prev, fetching: false}))
   
@@ -236,15 +235,32 @@ Now you can start building your report by checking the available variables (colu
 }
 </div>
 
+<div className="flex-col gap-3 mt-9 py-4 bg-slate-200/60 w-10/12 items-center justify-center rounded-md">
+<div className="flex gap-3 py-2 mx-auto w-10/12 items-center justify-center rounded-md">
+  {tablesVariables.available.filter((col1, i) => tablesVariables.available.findIndex((col2) => col1.tableName === col2.tableName) === i).map(col =>(
 
+    <div className="flex items-center gap-1">
+    <span className={`${col.bgColor} w-4 h-4 rounded shadow`}></span>
+    <span className="capitalize">{col.tableName.split("_").join(" ")}</span>
+    </div>
+
+
+))
+    }
+      </div>
+  <span className="block text-sm text-center px-6">*The available variables are color labeled as below so you can pick a variable that belongs to the desired table easily.</span>
+  <span className="block text-sm text-center px-6">**Please note that the relations in the selected section is going from top to bottom. <span className="block text-xs text-center px-6">(e.g. if you arranged the invoice ID column before the client ID that means the report will display clients regarding the invoices and not the other way around.)</span></span>
+
+
+      </div>
 
       <DragDropContext onDragEnd={onDragEnd}>
-        <div className="flex row w-full p-12 gap-x-4">
+        <div className="flex row w-full pb-12 pt-4 gap-x-4">
           <List title="Available Columns" onDragEnd={onDragEnd} name="available">
           {loading.fetching && <Spinner size={"w-20"} />}
-              {tablesVariables.available.map((v:any, i:number) => (
+              {tablesVariables.available.map((col:any, idx:number) => (
               // {tablesVariables.available.map((v:any,i:number) =>(
-              <Draggable key={v.columnName+"-"+i} draggableId={v.columnName+ "-"+i} index={i}>
+              <Draggable key={col.columnName+"-"+idx} draggableId={col.columnName+ "-"+idx} index={idx}>
                 {(
                   provided: DraggableProvided | any,
                   snapshot: DraggableStateSnapshot
@@ -255,7 +271,7 @@ Now you can start building your report by checking the available variables (colu
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
                     >
-                      <Chip text={v.columnName} tableColor={v.bgColor} />
+                      <Chip text={col.columnName} tableColor={col.bgColor} />
                     </div>
                 )}
               </Draggable>
@@ -264,14 +280,14 @@ Now you can start building your report by checking the available variables (colu
           </List>
           <CardsList title="Selected Columns" onDragEnd={onDragEnd} name="selected">
           {tablesVariables.selected.map((v, i) => (
-              <Draggable draggableId={v.title+"-"+i} index={i} key={"selected-"+v.title}>
+              <Draggable draggableId={v.columnName+"-"+i} index={i} key={"selected-"+v.columnName}>
                 {(provided, snapshot) => (
                   <div
                     ref={provided.innerRef}
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
                   >
-                    <Card text={v.title} idx={i} />
+                    <Card text={v.columnName} idx={i} />
                     {/* <Card text={v.name} /> */}
                   </div>
                 )}

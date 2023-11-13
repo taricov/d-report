@@ -3,7 +3,7 @@ import { Client, Databases, ID, Query } from 'appwrite'
 
 
 export async function GET_tablesCols({subdomain, apikey, method, table}:TtableCol ): Promise<Response>{
-    const req = await fetch(`https://${subdomain}.daftra.com/v2/api/entity/${table}/list/1`, {
+    const req = await fetch(`https://${subdomain}.daftra.com/v2/api/entity/${table}/list/1?per_page=1`, {
         method,
         headers: {
             "Content-Type": "application/json",
