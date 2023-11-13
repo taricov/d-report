@@ -170,9 +170,10 @@ useEffect(() => {
   return (
     <>
     <SnackBar showMe={showSnackBar} body={<><span className="font-medium">Successful Build!</span> Report URL is Copied to Clipbaord!</>}/>
-<div className="w-[100%] m-auto flex justify-center items-start gap-4">
-<ul className="flex flex-col gap-2 w-[40%]">
-  <h2 className="bg-slate-500/30 m-auto rounded-md w-fit px-5 py-3 font-bold text-slate-600">Select 1st Table</h2>
+<div className="w-[100%] m-auto flex justify-center items-start gap-1">
+<div className="flex flex-col">
+  <h2 className="bg-slate-500/30 shadow m-auto rounded-md w-fit px-5 py-3 font-bold text-slate-600">Select 1st Table</h2>
+<ul className="flex flex-col gap-2 w-full overflow-scroll h-[500px] border rounded-md px-3 py-4">
     {Object.entries(tables).map((table, idx) =>(
 <li key={idx}>
         <input name="from-table" type="radio" id={table[0]+"-"+table} value={table[0]} onChange={selectTable} className="hidden peer" required={true} />
@@ -188,20 +189,20 @@ useEffect(() => {
     </li>
     ))}
     </ul>
-
+    </div>
     <svg width="100" viewBox="0 0 24 24" className="self-center fill-slate-600"><path  d="M4 15V9h8V4.16L19.84 12L12 19.84V15H4Z"/></svg>
 
-
-<ul className="flex flex-col gap-2 w-[40%]">
-<h2 className="bg-slate-500/30 m-auto rounded-md w-fit px-5 py-3 font-bold text-slate-600">Select Tables To Join</h2>
+<div className="flex flex-col">
+<h2 className="bg-slate-500/30 m-auto shadow rounded-md w-fit px-5 py-3 font-bold text-slate-600">Select Tables To Join</h2>
+<ul className="flex flex-col gap-2 w-full overflow-scroll h-[500px] border rounded-md px-3 py-4">
   
-    {tables[reportVariables?.from_table]?.rels.map((table, idx) =>(
+    {tables[reportVariables?.from_table]?.rels.map((rel, idx) =>(
 <li key={idx} className="flex">
-        <input type="checkbox" checked={Object.keys(reportVariables.joins).includes(table)} id={table} value={table} onChange={selectJoinTable} className="hidden peer" />
-        <label htmlFor={table} className="inline-flex items-center justify-between w-full p-5 text-gray-500 bg-white border-2 border-gray-200 rounded-lg cursor-pointer dark:hover:text-gray-300 dark:border-gray-700 peer-checked:bg-slate-600 peer-checked:text-slate-200 hover:text-gray-600 dark:peer-checked:text-gray-300hover:bg-gray-50 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700">                           
+        <input type="checkbox" data-foreignkey={rel.foreign_key} checked={Object.keys(reportVariables.joins).includes(rel.table)} id={rel.table} value={rel.table} onChange={selectJoinTable} className="hidden peer" />
+        <label htmlFor={rel.table} className="inline-flex items-center justify-between w-full p-5 text-gray-500 bg-white border-2 border-gray-200 rounded-lg cursor-pointer dark:hover:text-gray-300 dark:border-gray-700 peer-checked:bg-slate-600 peer-checked:text-slate-200 hover:text-gray-600 dark:peer-checked:text-gray-300hover:bg-gray-50 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700">                           
             <div className="block">
-                <div className="w-full text-lg font-semibold capitalize">{table.split("_").join(" ")}</div>
-                <div className="w-full text-xs">Join the <b>{reportVariables.from_table.split("_").join(" ").toUpperCase()}</b> table with the <b>{table.split("_").join(" ").toUpperCase()}</b> table.</div>
+                <div className="w-full text-lg font-semibold capitalize">{rel.table.split("_").join(" ")}</div>
+                <div className="w-full text-xs">Join the <b>{reportVariables.from_table.split("_").join(" ").toUpperCase()}</b> table with the <b>{rel.table.split("_").join(" ").toUpperCase()}</b> table.</div>
 
             </div>
             </label>
@@ -210,6 +211,7 @@ useEffect(() => {
     </li> 
     ))}
     </ul>
+    </div>
     </div>
 
 

@@ -66,7 +66,8 @@ export type TErrors = {
 export type Ttable = {
     [key: string]: {
         description: string;
-        rels: string[];
+        primary_key: string;
+        rels: {table: string, foreign_key: string}[];
         from_table: string;
          model_name:string;
          alias: string;
