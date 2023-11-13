@@ -19,6 +19,7 @@ import Error from "../Error";
 import SnackBar from "../SanckBar";
 import { UserContext } from "../../App";
 import { colors } from "../../data/colors";
+import { table } from "console";
 
 const Incorporate = () => {
   const userStatus = useContext(UserContext)
@@ -31,13 +32,14 @@ const [reportVariables, setReportVariables] = useState<TreportVariables>({joins:
 
 
 const colorRandomizer = () => {
-  return 'bg' + colors[Math.floor(Math.random()*colors.length)] + "400";
+  return 'bg-' + colors[Math.floor(Math.random()*colors.length)] + "-400";
 }
 
 const GETtablesVariables = async () => {
   setTablesVariables({available:[], selected: []})
   setErrors((prev:any) => ({...prev, fetching: ""}))
   const allVars: string[] = []
+  let currentTable: string = ""
   setLoading((prev:Tloading) => ({...prev, fetching: true}))
 
 
@@ -52,12 +54,13 @@ const GETtablesVariables = async () => {
     const data = await res.json()
     console.log(data)
     allVars.push(...Object.keys(data.data[0]))
+    currentTable = table
   })
   ).then(() => {
     const currentColor = colorRandomizer()
     console.log(allVars)
     setTablesVariables((prev:any)=>({"available":[...prev.available,
-      ...allVars.map((b:string)=>({columnName:b, bgColor: currentColor})
+      ...allVars.map((b:string)=>({columnName:b, bgColor: currentColor, tableName: currentTable})
     )], "selected": []}))
   setLoading((prev:Tloading) => ({...prev, fetching: false}))
   
@@ -252,7 +255,7 @@ Now you can start building your report by checking the available variables (colu
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
                     >
-                      <Chip text={v.columnName} tableColor={`bg-green-200`} />
+                      <Chip text={v.columnName} tableColor={v.bgColor} />
                     </div>
                 )}
               </Draggable>

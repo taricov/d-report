@@ -1,2 +1,20 @@
 export const colors = 
-["teal", "green", "cyan", "light-blue", "indigo", "blue", "purple", "deep-purple", "red", "pink", "yellow", "lime", "light-green", "amber", "orange", "deep-orange", "grey", "blue-grey", "brown"]
+["bg-teal-400", 
+"bg-green-400", 
+"bg-cyan-400", 
+"bg-light-blue-400", 
+"bg-indigo-400", 
+"bg-blue-400", 
+"bg-purple-400", 
+"bg-deep-purple-400", 
+"bg-red-400", 
+"bg-pink-400", 
+"bg-yellow-400", 
+"bg-lime-400", 
+"bg-light-green-400", 
+"bg-amber-400", 
+"bg-orange-400", 
+"bg-deep-orange-400", 
+"bg-grey-400", 
+"bg-blue-grey-400", 
+"bg-brown-400"]
