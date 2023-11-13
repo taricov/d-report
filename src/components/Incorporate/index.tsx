@@ -18,6 +18,7 @@ import Spinner from "../Spinner";
 import Error from "../Error";
 import SnackBar from "../SanckBar";
 import { UserContext } from "../../App";
+import { colors } from "../../data/colors";
 
 const Incorporate = () => {
   const userStatus = useContext(UserContext)
@@ -29,6 +30,9 @@ const [tablesVariables, setTablesVariables] = useState<TtableVariables>({availab
 const [reportVariables, setReportVariables] = useState<TreportVariables>({joins:{}, report_title: "", from_table: ""})
 
 
+const colorRandomizer = () => {
+  return 'bg' + colors[Math.floor(Math.random()*colors.length)] + "400";
+}
 
 const GETtablesVariables = async () => {
   setTablesVariables({available:[], selected: []})
@@ -50,9 +54,10 @@ const GETtablesVariables = async () => {
     allVars.push(...Object.keys(data.data[0]))
   })
   ).then(() => {
+    const currentColor = colorRandomizer()
     console.log(allVars)
     setTablesVariables((prev:any)=>({"available":[...prev.available,
-      ...allVars.map((b:string)=>({title:b})
+      ...allVars.map((b:string)=>({columnName:b, bgColor: currentColor})
     )], "selected": []}))
   setLoading((prev:Tloading) => ({...prev, fetching: false}))
   
@@ -236,7 +241,7 @@ Now you can start building your report by checking the available variables (colu
           {loading.fetching && <Spinner size={"w-20"} />}
               {tablesVariables.available.map((v:any, i:number) => (
               // {tablesVariables.available.map((v:any,i:number) =>(
-              <Draggable key={v.title+"-"+i} draggableId={v.title+ "-"+i} index={i}>
+              <Draggable key={v.columnName+"-"+i} draggableId={v.columnName+ "-"+i} index={i}>
                 {(
                   provided: DraggableProvided | any,
                   snapshot: DraggableStateSnapshot
@@ -247,7 +252,7 @@ Now you can start building your report by checking the available variables (colu
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
                     >
-                      <Chip text={v.title} tableColor={""} />
+                      <Chip text={v.columnName} tableColor={`bg-green-200`} />
                     </div>
                 )}
               </Draggable>
