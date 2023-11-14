@@ -77,7 +77,11 @@ const GETtablesVariables = async () => {
     setClipboardValue(null)
 }
 
-const buildReport = () => {
+const merge2Tables = async (table1:any[], table2:any[]) => {
+return table1.map((item:any, i:number) => Object.assign({}, item, table2[i]));
+}
+
+const buildReport = (allSelected: any) => {
   
   setLoading(prev=>({...prev, building: true}))
   const baseURL = "http://localhost:8080/reports/"
@@ -86,14 +90,21 @@ const buildReport = () => {
 return new Promise((resolve, reject) => {
   setErrors(prev=>({...prev, building: ""}))
   try {
-    setTimeout(async()=>{
+    setTimeout(async()=>{ 
       if(tablesVariables.selected.length < 1) {
         setErrors(prev=>({...prev, building: "Please Select Columns to build the report."}))
         setLoading(prev=>({...prev, building: false}))
         reject("fuck");  
         return;
       }
-      await navigator.clipboard.writeText(baseURL + reportID);
+      //build the report
+      const requiredTables = [...new Set(allSelected.map((selected: any) => selected.tableName))]
+      console.log(requiredTables)
+      // const requiredTables = [...new Map(allSelected.map((selected:any)=>[selected["tableName"], selected])).values()];
+      // const = merge2Tables()
+
+
+      await navigator.clipboard.writeText(baseURL + reportID)
       resolve(baseURL + reportID)
     },2000)
   }
@@ -299,7 +310,7 @@ Now you can start building your report by checking the available variables (colu
       </DragDropContext>
 {
   !clipboardValue && 
-      <Button disabled={!userStatus.connected} color="bg-emerald-600 hover:bg-emerald-600/90" btnFor="building" onClickFunc={()=>buildReport()} loading={loading.building} text="Build Report" /> 
+      <Button disabled={!userStatus.connected} color="bg-emerald-600 hover:bg-emerald-600/90" btnFor="building" onClickFunc={()=>buildReport(tablesVariables.selected)} loading={loading.building} text="Build Report" /> 
 }
       {!!clipboardValue && <Button disabled={!userStatus.connected} color="bg-emerald-600 hover:bg-emerald-600/90" btnFor="go-to-reports" onClickFunc={()=>goToReport()} loading={loading.building} text="Go To Reports" /> }
       {error.building && <Error text={error.building}/>}

@@ -79,6 +79,7 @@ export interface TtableCol {
     apikey: string;
     table: string;
     method: string;
+    limit?: number;
 }
 // interface TtableObj{
 
