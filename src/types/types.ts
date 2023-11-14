@@ -1,5 +1,10 @@
+import { SwitchProps } from "@mantine/core";
 import { Dispatch, SetStateAction } from "react";
 
+export interface TreportConfig extends SwitchProps {
+  // rowSelection: any
+  [key: string]: any
+}
 
 export interface TDaftraWorkflow {
   name: string

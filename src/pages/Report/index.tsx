@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useParams } from "react-router-dom";
 import { mkConfig, generateCsv, download } from 'export-to-csv'; //or use your library of choice here
 import { jsPDF } from 'jspdf'; //or use your library of choice here
@@ -14,7 +14,8 @@ import { Box, Button, Flex, Menu, Text, Title } from '@mantine/core';
 import { IconUserCircle, IconSend, IconDownload } from '@tabler/icons-react';
 import { data } from './makeDate';
 import { useMakeCols } from './Report.hooks';
-import {ReportSettings} from '../../components/ReportSettings';
+import {ReportConfig } from '../../components/ReportConfig';
+import { TreportConfig } from '../../types/types';
 
 export type Employee = {
   firstName: string;
@@ -28,12 +29,24 @@ export type Employee = {
 };
 
 const Report = () => {
-  
+  const [reportConfig, setReportConfig] = useState<TreportConfig>({
+    rowSelection: true, 
+    basicColumnFilters: false,
+    advancedColumnFilters: false,
+    columnReorder: false,
+    globalSearchBar: true,
+    columnPinning: true,
+    columnGrouping: true,
+    columnSorting: true,
+  })
   
 
   const {id} = useParams();
 
 
+  useEffect(() => {
+    console.log(reportConfig)
+  },[reportConfig])
 
   const csvConfig = mkConfig({
     fieldSeparator: ',',
@@ -62,24 +75,28 @@ const Report = () => {
   };
 
   const table = useMantineReactTable({
-    enableExpanding: false,
-    enableExpandAll: false,
+    // enableExpanding: false,
+    // enableExpandAll: false,
     enableDensityToggle: true,
     columns: useMakeCols(),
     data, //must be memoized or stable (useState, useMemo, defined outside of this component, etc.)
-    // enableColumnFilterModes: true,
-    enableColumnOrdering: true,
+    enableFilterMatchHighlighting: true,
+    enableColumnFilterModes: reportConfig.advancedColumnFilters,
+    enableFilters: reportConfig.basicColumnFilters,
+    enableColumnOrdering: reportConfig.columnReorder,
     enableFacetedValues: true, 
-    enableGrouping: true,
-    enablePinning: true,
-    // enableRowActions: true,
-    enableRowSelection: true,
-    initialState: { showColumnFilters: true, showGlobalFilter: true },
+    enableGrouping: reportConfig.columnGrouping,
+    enablePinning: reportConfig.columnPinning,
+    enableRowActions: false,
+    enableRowSelection: reportConfig.rowSelection,
+    enableSorting: reportConfig.columnSorting,
+    // showColumnFilters:, 
+    // showGlobalFilter: reportConfig.globalSearchBar,
     paginationDisplayMode: 'pages',
     positionToolbarAlertBanner: 'bottom',
     mantinePaginationProps: {
       radius: 'sm',
-      size: 'lg',
+      size: 'md',
     },
     mantineSearchTextInputProps: {
       placeholder: 'Search...',
@@ -121,8 +138,8 @@ const Report = () => {
   });
 
   return <>
-  <ReportSettings/>
-  <div className="mt-32 !w-screen"><MantineReactTable table={table} /></div>;
+  <ReportConfig config={reportConfig} setConfig={setReportConfig}/>
+  <div className="mt-10 !w-screen"><MantineReactTable table={table} /></div>
   </>
 };
 
