@@ -62,7 +62,7 @@ if(res.status === 200){
   const data = await res.json()
   console.log(data)
   const siteInfo = data.data.Site
-  setSiteData(prev => ({...prev, siteBusinessName: siteInfo.business_name, siteEmail: siteInfo.email, siteFirstName: siteInfo.first_name, siteLastName: siteInfo.last_name, siteID: siteInfo.id, siteLogoURL: siteInfo.site_logo}))
+  setSiteData(prev => ({...prev, siteBusinessName: siteInfo.business_name, siteEmail: siteInfo.email, siteFirstName: siteInfo.first_name, siteLastName: siteInfo.last_name, siteID: siteInfo.id, siteLogoURL: `https://${siteData.subdomain}.daftra.com/files/images/site-logos/${siteInfo.site_logo}`}))
   setConnected(true);
   setSiteData(prev=>({...prev, fetching: false}));
   
