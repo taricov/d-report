@@ -7,6 +7,7 @@ export const tables: Ttable = {
         model_name:"Invoice", 
         alias: "i", 
         primary_key: "id",
+        foreign_key: "invoice_id",
         rels:
             [
                 {table: "product", foreign_key: "product_id",}, 
@@ -24,6 +25,7 @@ export const tables: Ttable = {
             model_name:"WorkOrder", 
             alias: "wo", 
             primary_key: "id",
+            foreign_key: "work_order_id",
             rels:
             [
                 {table: "invoice", foreign_key: "invoice_id"}, 
@@ -39,6 +41,7 @@ export const tables: Ttable = {
             model_name:"Product",
             alias: "p", 
             primary_key: "id",
+            foreign_key: "product_id",
             rels:
             [
                 {table: "invoice", foreign_key: "invoice_id"}, 
@@ -54,6 +57,7 @@ export const tables: Ttable = {
         model_name:"Client",
         alias: "c", 
         primary_key: "id",
+        foreign_key: "client_id",
         rels:
             [
                 {table: "invoice", foreign_key: "invoice_id"}, 
@@ -69,6 +73,7 @@ export const tables: Ttable = {
         model_name:"Staff",
         alias: "s", 
         primary_key: "id",
+        foreign_key: "staff_id",
         rels:
             [
                 {table: "invoice", foreign_key: "invoice_id"}, 
@@ -81,6 +86,7 @@ export const tables: Ttable = {
         model_name:"Reuquisition",
         alias: "req", 
         primary_key: "id",
+        foreign_key: "requisition_id",
         rels:
             [
                 {table: "invoice", foreign_key: "invoice_id"}, 
@@ -95,6 +101,7 @@ export const tables: Ttable = {
         model_name:"Store",
         alias: "store", 
         primary_key: "id",
+        foreign_key: "store_id",
         rels:
             [
                 {table: "invoice", foreign_key: "invoice_id"}, 
@@ -108,6 +115,7 @@ export const tables: Ttable = {
         model_name:"Branch",
         alias: "b", 
         primary_key: "id",
+        foreign_key: "branch_id",
         rels:
             [
                 {table: "invoice", foreign_key: "invoice_id"}, 

@@ -21,6 +21,7 @@ import { UserContext } from "../../App";
 import { colors } from "../../data/colors";
 import { table } from "console";
 
+
 const Incorporate = () => {
   const userStatus = useContext(UserContext)
   const [loading, setLoading] = useState<Tloading>({fetching: false, building: false})
@@ -29,7 +30,11 @@ const Incorporate = () => {
   const [showSnackBar, setShowSnackBar] = useState<boolean>(false)
 const [tablesVariables, setTablesVariables] = useState<TtableVariables>({available:[], selected: []})
 const [reportVariables, setReportVariables] = useState<TreportVariables>({joins:{}, report_title: "", from_table: ""})
+const [selectedTablesRows, setSelectedTablesRows] = useState<any>()
+const [joinedTable, setJoinedTable] = useState<any>()
 
+
+const userInfo = useContext(UserContext)
 
 const colorRandomizer = () => {
   return colors[Math.floor(Math.random()*colors.length)]
@@ -44,17 +49,16 @@ const GETtablesVariables = async () => {
 
   const tables: string[]= [reportVariables.from_table, ...Object.keys(reportVariables.joins)]
   console.log(tables)
-  const subdomain: string = "taricov"
-  const apikey: string = "24b476fdd8aa43091e0963ba01b98762155c9dd4"
-  const method: string = "GET"
+  // const subdomain: string = "taricov"
+  // const apikey: string = "24b476fdd8aa43091e0963ba01b98762155c9dd4"
+  // const method: string = "GET"
 
   return await Promise.all(tables.map(async(table) =>{
-    const res = await GET_tablesCols({subdomain, apikey, method, table})
+    const res = await GET_tablesCols({subdomain: userInfo.siteData.subdomain, apikey: userInfo.siteData.apikey, table})
     const data = await res.json()
     console.log(data)
   const currentColor: string = colorRandomizer()
     allVars = [...allVars, ...Object.keys(data.data[0]).map(c=>({columnName: c, tableName: table, bgColor: currentColor}))]
-    console.log("in the loop>>", allVars)
 
   })
   ).then(() => {
@@ -77,42 +81,52 @@ const GETtablesVariables = async () => {
     setClipboardValue(null)
 }
 
-const merge2Tables = async (table1:any[], table2:any[]) => {
-return table1.map((item:any, i:number) => Object.assign({}, item, table2[i]));
+const merge2Tables = async (foreignKey: string, table1:any, table2:any) => {
+  setJoinedTable(()=>table1.map((row1:any) => ({...row1, ...table2.find((row2:any)=> row2[foreignKey] === row1.id)})))
+  console.log("merge2Tables", joinedTable)
+// return table1.map((item:any, i:number) => Object.assign({}, item, table2[i]));
 }
 
-const buildReport = (allSelected: any) => {
+const buildReport = async (allSelected: any) => {
   
   setLoading(prev=>({...prev, building: true}))
+  let tablesData: any = {}
   const baseURL = "http://localhost:8080/reports/"
   const reportID = "2"
-
-return new Promise((resolve, reject) => {
+  const requiredTables: any[] = [...new Set(allSelected.map((selected: any) => selected.tableName))]
+  const foreignKey = tables[requiredTables[0] as string]["foreign_key"]
+  console.log(foreignKey)
   setErrors(prev=>({...prev, building: ""}))
-  try {
-    setTimeout(async()=>{ 
-      if(tablesVariables.selected.length < 1) {
-        setErrors(prev=>({...prev, building: "Please Select Columns to build the report."}))
-        setLoading(prev=>({...prev, building: false}))
-        reject("fuck");  
-        return;
+
+        if(tablesVariables.selected.length < 1) {
+          setErrors(prev=>({...prev, building: "Please Select Columns to build the report."}))
+          setLoading(prev=>({...prev, building: false}))
+          return;
       }
       //build the report
-      const requiredTables = [...new Set(allSelected.map((selected: any) => selected.tableName))]
-      console.log(requiredTables)
+  
       // const requiredTables = [...new Map(allSelected.map((selected:any)=>[selected["tableName"], selected])).values()];
-      // const = merge2Tables()
+      return await Promise.all(
+        requiredTables.map(async(table:any, i:number)=>{
+        const res: Response = await GET_tablesCols({subdomain: userInfo.siteData.subdomain, apikey: userInfo.siteData.apikey, table, limit:1000})
+        const dataJSON = await res.json();
+        tablesData[table] = dataJSON.data
+      })).then(() => {
+        setSelectedTablesRows(tablesData)
+        // console.log(Object.entries(selectedTablesRows)[0][1])
+        const merged = merge2Tables(foreignKey, Object.entries(selectedTablesRows)[0][1], Object.entries(selectedTablesRows)[1][1])
+
+      })
 
 
-      await navigator.clipboard.writeText(baseURL + reportID)
-      resolve(baseURL + reportID)
-    },2000)
-  }
-  catch (err) {
-    console.error('Failed to copy: ', err);
-  }
-}).then((data)=>{
-  setClipboardValue(data as string)
+      // await navigator.clipboard.writeText(baseURL + reportID)
+      // resolve(baseURL + reportID)
+//   .catch (err) {
+//     console.error('Failed to copy: ', err);
+//   }
+// })
+.then((data)=>{
+  // setClipboardValue(data as string)
   console.log("clipboard val: ", clipboardValue)
   setLoading(prev=>({...prev, building: false}))
 
@@ -183,8 +197,11 @@ const selectJoinTable = (e: ChangeEvent<HTMLInputElement>) => {
 useEffect(() => {
       console.log(tablesVariables)
       console.log(reportVariables)
+      console.log(selectedTablesRows)
+      console.log("joind", joinedTable)
 
-},[reportVariables, tablesVariables])
+
+},[reportVariables, tablesVariables, selectedTablesRows, joinedTable])
   return (
     <>
     <SnackBar showMe={showSnackBar} body={<><span className="font-medium">Successful Build!</span> Report URL is Copied to Clipbaord!</>}/>
@@ -248,7 +265,7 @@ Now you can start building your report by checking the available variables (colu
 
 <div className="flex-col gap-3 mt-9 py-4 bg-slate-200/60 w-10/12 items-center justify-center rounded-md">
 <div className="flex gap-3 py-2 mx-auto w-10/12 items-center justify-center rounded-md">
-  {tablesVariables.available.filter((col1, i) => tablesVariables.available.findIndex((col2) => col1.tableName === col2.tableName) === i).map(col =>(
+  {tablesVariables.available.filter((col1, i) => tablesVariables.available.findIndex((col2) => col1.tableName === col2.tableName) === i).reverse().map(col =>(
 
     <div className="flex items-center gap-1">
     <span className={`${col.bgColor} w-4 h-4 rounded shadow`}></span>

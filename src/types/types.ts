@@ -67,6 +67,7 @@ export type Ttable = {
     [key: string]: {
         description: string;
         primary_key: string;
+        foreign_key: string;
         rels: {table: string, foreign_key: string}[];
         from_table: string;
          model_name:string;
@@ -78,7 +79,7 @@ export interface TtableCol {
     subdomain: string;
     apikey: string;
     table: string;
-    method: string;
+    method?: string;
     limit?: number;
 }
 // interface TtableObj{

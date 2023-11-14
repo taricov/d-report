@@ -9,7 +9,7 @@ export default function Header(){
   const [showConnectForm, setShowConnectForm] = useState<boolean>(false);
   const [lastScrollY, setLastScrollY] = useState<number>(0);
   const userInfo = useContext(UserContext)
-console.log(userInfo)
+
   const connectForm = (e: React.MouseEvent) =>{
 e.stopPropagation()
     setShowConnectForm((prev)=>!prev)

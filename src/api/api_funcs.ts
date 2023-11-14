@@ -2,7 +2,7 @@ import { TDaftraWorkflow, TsiteData, TtableCol } from "../types/types";
 import { Client, Databases, ID, Query } from 'appwrite'
 
 
-export async function GET_tablesCols({subdomain, apikey, method, table, limit=1}:TtableCol ): Promise<Response>{
+export async function GET_tablesCols({subdomain, apikey, method="GET", table, limit=1}:TtableCol ): Promise<Response>{
     const req = await fetch(`https://${subdomain}.daftra.com/v2/api/entity/${table}/list/1?per_page=${limit}`, {
         method,
         headers: {
