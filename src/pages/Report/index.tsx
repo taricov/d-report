@@ -21,6 +21,7 @@ import { data } from './makeDate';
 import {ReportConfig } from '../../components/ReportConfig';
 import { TreportConfig } from '../../types/types';
 import { localStorageHandler } from '../../logic/localStorageHandler';
+import { useCreateReportColumns } from './Report.hooks';
 
 export type Employee = {
   firstName: string;
@@ -45,7 +46,9 @@ const Report = () => {
     columnSorting: true,
   })
   
-
+  const headers = ["invoice_id", "amount", "currency", "price", "work_order_id", "table"]
+  const x = useCreateReportColumns(headers)
+    console.log("xxxxxxxx", x)
   const {id} = useParams();
 
   const columns = useMemo<MRT_ColumnDef<any>[]>(
@@ -57,7 +60,7 @@ const Report = () => {
           size: 200,
          },
          {
-          accessorKey: 'firstName',
+          accessorKey: 'firstNamee',
           header: 'E',
           filterVariant: "autocomplete",
           size: 200,
