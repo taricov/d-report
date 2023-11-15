@@ -281,7 +281,14 @@ Now you can start building your report by checking the available variables (colu
     }
       </div>
   <span className="block text-sm text-center px-6"><sup className="mx-1">1</sup><b>color:</b> the available variables are color labeled as below so you can pick a variable that belongs to the desired table easily.</span>
-  <span className="block text-sm text-center px-6"><sup className="mx-1">2</sup><b>Relation Direction:</b> please note that the relations in the selected section is going from top to bottom. <span className="block text-xs text-center px-6">(e.g. if you arranged the invoice ID column before the client ID that means the report will display clients regarding the invoices and not the other way around.)</span></span>
+
+  <span className="block text-sm text-center px-6"><sup className="mx-1">2</sup><b>Relation Direction:</b> please note that the relations in the selected section is going from top to bottom. 
+  <span className="block text-xs text-center px-6">(e.g. if you arranged the invoice ID column before the client ID that means the report will display clients regarding the invoices and not the other way around.)</span>
+  </span>
+
+  <span className="block text-sm text-center px-6"><sup className="mx-1">3</sup><b>Columns Features:</b> After you finish selecting/arranging your desired columns, click on the tiny gear icon on the selected section title to tweak columns configurations. 
+
+  </span>
 
 
       </div>
