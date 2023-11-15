@@ -55,8 +55,9 @@ export interface Tconnector {
 
 
 export type TErrors = {
-    fetching: string;
-    building: string;
+    fetching: boolean;
+    reportTitle: boolean;
+    building: boolean;
 }
   export interface TtableVariables {
     available: {[key: string]: string}[];

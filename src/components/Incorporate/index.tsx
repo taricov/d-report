@@ -25,7 +25,7 @@ import { table } from "console";
 const Incorporate = () => {
   const userStatus = useContext(UserContext)
   const [loading, setLoading] = useState<Tloading>({fetching: false, building: false})
-  const [error, setErrors] = useState<TErrors>({fetching: "", building: ""})
+  const [error, setErrors] = useState<TErrors>({fetching: false, reportTitle: false, building: false})
   const [clipboardValue, setClipboardValue] = useState<string | null>(null)
   const [showSnackBar, setShowSnackBar] = useState<boolean>(false)
 const [tablesVariables, setTablesVariables] = useState<TtableVariables>({available:[], selected: []})
@@ -42,7 +42,7 @@ const colorRandomizer = () => {
 
 const GETtablesVariables = async () => {
   setTablesVariables({available:[], selected: []})
-  setErrors((prev:any) => ({...prev, fetching: ""}))
+  setErrors((prev:any) => ({...prev, fetching: false}))
   let allVars: any = []
   setLoading((prev:Tloading) => ({...prev, fetching: true}))
 
@@ -69,7 +69,7 @@ const GETtablesVariables = async () => {
   
 }).catch(err => {
   console.log("catched", err)
-  if(err.message === "Failed to fetch") setErrors((prev:any) => ({...prev, fetching: "Please Select A Table to See Avaialable Columns."}))
+  if(err.message === "Failed to fetch") setErrors((prev:any) => ({...prev, fetching: true}))
   setLoading((prev:Tloading) => ({...prev, fetching: false}))
   });
 
@@ -88,21 +88,25 @@ const merge2Tables = async (foreignKey: string, table1:any, table2:any) => {
 }
 
 const buildReport = async (allSelected: any) => {
-  
+  setErrors(({fetching: false, building: false, reportTitle: false})); 
   setLoading(prev=>({...prev, building: true}))
+  if(tablesVariables.selected.length < 1) {
+    setErrors(prev=>({...prev, building: true}))
+    setLoading(prev=>({...prev, building: false}))
+    return;
+  }
+  if(!reportVariables.report_title.length) {
+    setErrors(prev=>({...prev, reportTitle: true})); 
+    setLoading(prev=>({...prev, building: false}))
+    return;
+}
   let tablesData: any = {}
   const baseURL = "http://localhost:8080/reports/"
   const reportID = "2"
   const requiredTables: any[] = [...new Set(allSelected.map((selected: any) => selected.tableName))]
   const foreignKey = tables[requiredTables[0] as string]["foreign_key"]
   console.log(foreignKey)
-  setErrors(prev=>({...prev, building: ""}))
-
-        if(tablesVariables.selected.length < 1) {
-          setErrors(prev=>({...prev, building: "Please Select Columns to build the report."}))
-          setLoading(prev=>({...prev, building: false}))
-          return;
-      }
+        
       //build the report
   
       // const requiredTables = [...new Map(allSelected.map((selected:any)=>[selected["tableName"], selected])).values()];
@@ -129,7 +133,7 @@ const buildReport = async (allSelected: any) => {
   // setClipboardValue(data as string)
   console.log("clipboard val: ", clipboardValue)
   setLoading(prev=>({...prev, building: false}))
-
+setReportVariables(prev=>({...prev, report_title: ""}))
   setShowSnackBar(true)
   setTimeout(()=>{
     setShowSnackBar(false)
@@ -258,8 +262,8 @@ You selected the&nbsp;<b>{reportVariables.from_table ? reportVariables.from_tabl
 Now you can start building your report by checking the available variables (columns)
 </div>
 <Button disabled={!userStatus.connected} color="bg-slate-500 hover:bg-slate-500/90" btnFor="fetching" onClickFunc={()=>GETtablesVariables()} loading={loading.fetching} text="Check Available Columns" />
-{error.fetching !== "" && 
-<Error text={error.fetching}/>
+{error.fetching && 
+<Error text={"Please Select A Table to See Avaialable Columns."}/>
 }
 </div>
 
@@ -283,7 +287,7 @@ Now you can start building your report by checking the available variables (colu
       </div>
 
       <DragDropContext onDragEnd={onDragEnd}>
-        <div className="flex row w-full pb-12 pt-4 gap-x-4">
+        <div className="flex row w-full pb-8 pt-4 gap-x-4">
           <List title="Available Columns" onDragEnd={onDragEnd} name="available">
           {loading.fetching && <Spinner size={"w-20"} />}
               {tablesVariables.available.map((col:any, idx:number) => (
@@ -327,10 +331,18 @@ Now you can start building your report by checking the available variables (colu
       </DragDropContext>
 {
   !clipboardValue && 
+  <>
+  <div className="my-3 w-5/12 flex flex-col gap-5 ">
+  <svg width="100" viewBox="0 0 24 24" className="transform rotate-90 self-center fill-slate-600"><path  d="M4 15V9h8V4.16L19.84 12L12 19.84V15H4Z"/></svg>
+
+      { error.reportTitle && <Error text={"Please give a title to your report."}/> }
+    <input type="text" id="default-input" value={reportVariables.report_title} onChange={(e:ChangeEvent<HTMLInputElement>)=>setReportVariables(prev=>({...prev, report_title: e.target.value}))}  placeholder="Give Your Report a Title" className="transition duration-200 placeholder:text-center bg-slate-100 ring-0 outline-0 shadow border-2 border-slate-300 text-center text-slate-700 font-bold text-sm rounded-lg  focus:border-slate-500/40 block w-full p-2.5"/>
+</div>
       <Button disabled={!userStatus.connected} color="bg-emerald-600 hover:bg-emerald-600/90" btnFor="building" onClickFunc={()=>buildReport(tablesVariables.selected)} loading={loading.building} text="Build Report" /> 
+</>
 }
-      {!!clipboardValue && <Button disabled={!userStatus.connected} color="bg-emerald-600 hover:bg-emerald-600/90" btnFor="go-to-reports" onClickFunc={()=>goToReport()} loading={loading.building} text="Go To Reports" /> }
-      {error.building && <Error text={error.building}/>}
+      {!!clipboardValue &&  <Button disabled={!userStatus.connected} color="bg-emerald-600 hover:bg-emerald-600/90" btnFor="go-to-reports" onClickFunc={()=>goToReport()} loading={loading.building} text="Go To Reports" /> }
+      {error.building && <Error text={"Please Select Columns to build the report."}/> }
 
     </>
   );
