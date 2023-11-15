@@ -332,6 +332,7 @@ Now you can start building your report by checking the available variables (colu
                 )}
               </Draggable>
             ))}
+            <Card text={"col_1"} bgColor={"bg-slate-200"} idx={1} />
           </CardsList>
         </div>
 

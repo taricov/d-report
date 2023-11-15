@@ -12,13 +12,14 @@ import About from "./pages/About";
 import Reports from "./pages/Reports";
 import Report from "./pages/Report";
 import { createContext, useEffect, useState } from "react";
-import { Tconnector, TsiteData } from "./types/types";
+import { TErrors, Tconnector, TsiteData } from "./types/types";
 import SnackBar from "./components/SanckBar";
 import { cookieHandler } from "./logic/cookies";
 import { GET_siteInfo } from "./api/api_funcs";
 
 const queryClient = new QueryClient()
 
+// export const ReportContext = createContext<TreportData>()
 export const UserContext = createContext<Tconnector>({connected: false, setConnected:()=>false, siteData: {
   subdomain: "",
   apikey: "",
@@ -49,15 +50,24 @@ function App() {
 const [connected, setConnected] = useState<boolean>(false)
 const [showSnackBar, setShowSnackBar] = useState<boolean>(false)
 const [showSnackBarDisconnected, setShowSnackBarDisconnected] = useState<boolean>(false)
+const [showSnackBarInternetConnection, setShowSnackBarInternetConnection] = useState<boolean>(false)
+
+const [errors, setErrors] = useState<{[key:string]: boolean}>({internetConnection: false})
 
 const checkCookie = async() => {
   setSiteData(prev=>({...prev, fetching: true}));
   const sub = cookieHandler.getter("site_subdomain") || ""
   const api = cookieHandler.getter("site_api_key") || ""
 setSiteData(prev => ({...prev, apikey: api, subdomain: sub}))
+if(!navigator.onLine){
+  setSiteData(prev=>({...prev, fetching: false}));
+  setErrors(prev=>({...prev, internetConnection: true}));
+  return;
+}
 const res = await GET_siteInfo({subdomain: siteData.subdomain, apikey: siteData.apikey})
-console.log(res)
-if(res.status !== 200) return;
+if(res.status !== 200) {
+  setSiteData(prev=>({...prev, fetching: false}));
+  return;};
 if(res.status === 200){
   const data = await res.json()
   console.log(data)
@@ -79,7 +89,14 @@ useEffect(()=>{
 useEffect(()=>{
 
 // console.log(connected)
-  if(connected && siteData.fromForm){
+  if(!errors.internetConnection){
+    setTimeout(()=>{
+    setShowSnackBarInternetConnection(true)
+  },1000)
+    setTimeout(()=>{
+      setShowSnackBarInternetConnection(false)
+    },3000)
+  }else if(connected && siteData.fromForm){
 
     setShowSnackBar(()=>connected)
     setTimeout(()=>{
@@ -114,8 +131,9 @@ useEffect(()=>{
 </BrowserRouter>
     <SnackBar showMe={showSnackBar} body={<><span className="font-medium">Connected!</span> You are now connected successfully!</>}/>
     <SnackBar color="!border-red-400 !text-red-800 !bg-red-100" showMe={showSnackBarDisconnected} body={<><span className="font-medium">Disconnected! ☹️</span> You have disconnected the service!</>}/>
+    <SnackBar color="!border-red-400 !text-red-800 !bg-red-100" showMe={showSnackBarInternetConnection} body={<><span className="font-medium">Check Your Internet!</span>You are NOT Connected to the internet!</>}/>
     <Footer/>
-    <div className="absolute top-0 bottom-0 left-0 right-0 inset-0 w-full h-[100vh] overflow-hidden bg-no-repeat pointer-events-none -z-10 lg:block bg-gradient-to-b from-slate-50 to-slate-800 via-slate-500/80" />
+    {/* <div className="absolute top-0 bottom-0 left-0 right-0 inset-0 w-full h-[100vh] overflow-hidden bg-no-repeat pointer-events-none -z-10 lg:block bg-gradient-to-b from-slate-50 to-slate-800 via-slate-500/80" /> */}
     </QueryClientProvider>
     </UserContext.Provider>
     </>

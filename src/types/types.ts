@@ -2,7 +2,6 @@ import { SwitchProps } from "@mantine/core";
 import { Dispatch, SetStateAction } from "react";
 
 export interface TreportConfig extends SwitchProps {
-  // rowSelection: any
   [key: string]: any
 }
 
@@ -12,6 +11,15 @@ export interface TDaftraWorkflow {
   singular_title: string
 }
 
+
+interface TcolumnSettings {
+    accessorKey: string;
+    header: string;
+    filterVariant: string;
+    size: number;
+  }
+export type TcolumnsSettings = TcolumnSettings[]
+  
 export type Tloading = {
     fetching: boolean;
     building: boolean;

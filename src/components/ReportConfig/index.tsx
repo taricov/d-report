@@ -25,14 +25,12 @@ export const ReportConfig = ({config, setConfig}: {config:TreportConfig, setConf
     e.target.checked ? setConfig(prev=>({...prev, columnGrouping: e.target.checked, columnReorder: true})) : setConfig(prev=>({...prev, columnGrouping: e.target.checked}))
   }
 
-  // const [showSettings, setShowSettings] = useState<boolean>(true)
   const [height, setHeight] = useState<string | number | any>(0);
 
   return (
     <div className="w-full mt-40">
       <div className="mx-auto shadow-md w-fit text-slate-100 rounded-md bg-slate-600">
     <button 
-    // onClick={()=>setShowSettings(prev=>!prev)} 
     onClick={() => setHeight(height === 0 ? 'auto' : 0)}
     className="px-10 py-3 mx-auto text-center leading-4 text-2xl">
       <div className="font-bold">
