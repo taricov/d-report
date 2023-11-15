@@ -18,10 +18,10 @@ export const ReportConfig = ({config, setConfig}: {config:TreportConfig, setConf
   },[config])
 
   const toggleAdvancedFilters = (e:ChangeEvent<HTMLInputElement>) =>{
-      setConfig(prev=>({...prev, advancedColumnFilters: e.target.checked, basicColumnFilters: true}))
+    e.target.checked ? setConfig(prev=>({...prev, advancedColumnFilters: e.target.checked, basicColumnFilters: true})) : setConfig(prev=>({...prev, advancedColumnFilters: e.target.checked}))
   }
   const toggleColumnsGrouping = (e:ChangeEvent<HTMLInputElement>) =>{
-          setConfig(prev=>({...prev, columnGrouping: e.target.checked, columnReorder: true}))
+    e.target.checked ? setConfig(prev=>({...prev, columnGrouping: e.target.checked, columnReorder: true})) : setConfig(prev=>({...prev, columnGrouping: e.target.checked}))
   }
   
   return (
