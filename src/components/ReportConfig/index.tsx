@@ -1,6 +1,7 @@
 import { Switch } from "@mantine/core";
 import { TreportConfig } from "../../types/types";
-import { ChangeEvent, Dispatch, SetStateAction, useEffect } from "react";
+import { ChangeEvent, Dispatch, SetStateAction, useEffect, useState } from "react";
+import AnimateHeight from "react-animate-height";
 
 
 
@@ -23,18 +24,31 @@ export const ReportConfig = ({config, setConfig}: {config:TreportConfig, setConf
   const toggleColumnsGrouping = (e:ChangeEvent<HTMLInputElement>) =>{
     e.target.checked ? setConfig(prev=>({...prev, columnGrouping: e.target.checked, columnReorder: true})) : setConfig(prev=>({...prev, columnGrouping: e.target.checked}))
   }
-  
+
+  // const [showSettings, setShowSettings] = useState<boolean>(true)
+  const [height, setHeight] = useState<string | number | any>(0);
+
   return (
     <div className="w-full mt-40">
-      <div className="mx-auto shadow-md w-fit text-slate-100 rounded-md px-10 py-3 bg-slate-600">
-    <h2 className="mx-auto text-center leading-5 text-2xl font-bold">
-      Table Settings
-    </h2>
+      <div className="mx-auto shadow-md w-fit text-slate-100 rounded-md bg-slate-600">
+    <button 
+    // onClick={()=>setShowSettings(prev=>!prev)} 
+    onClick={() => setHeight(height === 0 ? 'auto' : 0)}
+    className="px-10 py-3 mx-auto text-center leading-4 text-2xl">
+      <div className="font-bold">
+        Table Settings
+        </div>
     <span className="text-xs text-center">
-      {/* (To Toggle The Search Bar) */}
+      (Click to show settings)
       </span>
+    </button>
       </div>
-    <div className="px-10 mx-auto mb-9 py-4 bg-slate-200/60 w-10/12 flex flex-col items-center justify-center rounded-md">
+      <AnimateHeight
+        id="example-panel"
+        duration={500}
+        height={height} // see props documentation below
+      >
+    <div className={`py-4 px-10 mx-auto bg-slate-200/60 w-10/12 flex flex-col items-center justify-center rounded-md`}>
 <ul className="flex flex-wrap gap-3 justify-center">
       <li className="min-w-md block px-4 py-2 bg-slate-300/50 rounded-md">
   {/* <AppSwitch label="Row Selection" stateProp={config.rowSelection}/> */}
@@ -66,6 +80,7 @@ export const ReportConfig = ({config, setConfig}: {config:TreportConfig, setConf
     </li>
       </ul>
       </div>
+      </AnimateHeight>
     </div>
 
   );

@@ -1,7 +1,7 @@
 export const Hero = () => {
     return (
 
-      <div className="py-8 px-4 mt-20 mx-auto max-w-screen-xl text-center lg:py-16 lg:px-12">
+      <div className="py-8 px-4 mx-auto max-w-screen-xl text-center lg:py-16 lg:px-12">
 
         
         <h1 className="mb-4 text-4xl font-extrabold tracking-tight leading-none text-slate-700 md:text-5xl lg:text-6xl capitalize">Build the reports your business needs.</h1>

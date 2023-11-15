@@ -1,33 +1,34 @@
-# POC - react-beautiful-dnd
-
+# D-Report
 ## Aplicação Funcionando
 
-<img src="./images/img-01.gif">
+<img src="">
 
 <br/>
 <br/>
 
-## Acesse o Projeto <a href="https://beautiful-and-accessible-drag-and-drop-for-list.vercel.app/" __blank >Aqui</a>
+## Access to Product <a href="" __blank >Here</a>
 
 <br/>
 
-## Observações
+## About:
 
-- Isso é uma prova de conceito.
-- Não tem responsividade.
-- Algumas tipagens estão como any para adiantar o processo de teste.
+- Project - D-Report is a tool for building custom reports that works on top of Daftra ERP.
+- Autor - [Taric Ov](https://linkedin.com/in/taricov/)
+
 
 <br />
 
-## Tecnologias
+## Technologies:
 
 - TailwindCSS
 - React
+- Mantine 
 - React Beautiful DND
+- Mantine React Tables 
 - HTML
 - CSS
 
-## Rodando o projeto
+## How To Use:
 
 ```bash
 # install
@@ -40,10 +41,6 @@ $ yarn build
 $ npm run start:prod
 ```
 
-## Entre em contato
-
-- Autor - [Carlos Eduardo](https://portfolio-carlos-eduardo-dias-batista.vercel.app/)
-
-## Licença
+## License:
 
 Is [MIT licensed](LICENSE).

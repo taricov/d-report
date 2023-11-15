@@ -21,7 +21,7 @@ import { data } from './makeDate';
 import {ReportConfig } from '../../components/ReportConfig';
 import { TreportConfig } from '../../types/types';
 import { localStorageHandler } from '../../logic/localStorageHandler';
-import { useCreateReportColumns } from './Report.hooks';
+import { useCreateReportColumns } from '../../hooks/useCreateReportColumns.hooks';
 
 export type Employee = {
   firstName: string;
@@ -213,6 +213,10 @@ const Report = () => {
 
   return <>
   <ReportConfig config={reportConfig} setConfig={setReportConfig}/>
+  <div className={`my-10 py-4 px-10 mx-auto bg-slate-200/60 w-10/12 flex flex-col items-center justify-center rounded-md`}>
+  <h1 className='text-2xl font-bold'>Report Title Goes Here!</h1>
+  <p className='text-md'>Created at: </p>
+  </div>
   <div className="mt-10 !w-screen"><MantineReactTable table={table} /></div>
   </>
 };
