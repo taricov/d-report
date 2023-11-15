@@ -98,6 +98,7 @@ useEffect(()=>{
 
   return (
     <>
+
     <UserContext.Provider value={{connected, setConnected, siteData, setSiteData}}>
         <QueryClientProvider client={queryClient}>
           <Header />
@@ -114,7 +115,7 @@ useEffect(()=>{
     <SnackBar showMe={showSnackBar} body={<><span className="font-medium">Connected!</span> You are now connected successfully!</>}/>
     <SnackBar color="!border-red-400 !text-red-800 !bg-red-100" showMe={showSnackBarDisconnected} body={<><span className="font-medium">Disconnected! ☹️</span> You have disconnected the service!</>}/>
     <Footer/>
-
+    <div className="absolute top-0 bottom-0 left-0 right-0 inset-0 w-full h-[100vh] overflow-hidden bg-no-repeat pointer-events-none -z-10 lg:block bg-gradient-to-b from-slate-50 to-slate-800 via-slate-500/80" />
     </QueryClientProvider>
     </UserContext.Provider>
     </>
