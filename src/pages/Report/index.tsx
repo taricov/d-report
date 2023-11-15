@@ -18,7 +18,6 @@ import {
 import { Box, Button, Flex, Menu, Text, Title } from '@mantine/core';
 import { IconUserCircle, IconSend, IconDownload } from '@tabler/icons-react';
 import { data } from './makeDate';
-import { useMakeCols } from './Report.hooks';
 import {ReportConfig } from '../../components/ReportConfig';
 import { TreportConfig } from '../../types/types';
 import { localStorageHandler } from '../../logic/localStorageHandler';
@@ -110,7 +109,7 @@ const Report = () => {
     const doc = new jsPDF();
     const tableData = rows.map((row:any) => Object.values(row.original));
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    const tableHeaders = useMakeCols().map((c) => c.header);
+    const tableHeaders = columns.map((c) => c.header);
     
 
     autoTable(doc, {
@@ -162,23 +161,34 @@ const Report = () => {
         <Flex p="md" justify="space-between">
           <Flex gap="xs">
             {/* import MRT sub-components */}
+            <div className="w-full bg-slate-200/70 text-slate-100 hover:bg-slate-200/70 rounded-md transition duration-200">
             <MRT_GlobalFilterTextInput table={table} />
+            </div>
+            <div className="w-full bg-slate-200/70 text-slate-100 hover:bg-slate-200/70 rounded-md transition duration-200">
             <MRT_ToggleDensePaddingButton table={table} />
+            </div>
+            <div className="w-full bg-slate-200/70 text-slate-100 hover:bg-slate-200/70 rounded-md transition duration-200">
             <MRT_ToggleFullScreenButton table={table} />
+            </div>
+            <div className="w-full bg-slate-200/70 text-slate-100 hover:bg-slate-200/70 rounded-md transition duration-200">
             <MRT_ShowHideColumnsButton table={table} />
-            <MRT_ToggleFiltersButton table={table} />
+            </div>
+            <div className="w-full bg-slate-200/70 text-slate-100 hover:bg-slate-200/70 rounded-md transition duration-200">
+            <MRT_ToggleFiltersButton classNames={{root:""}} table={table} />
+            </div>
           </Flex>
           <Flex sx={{ gap: '8px' }}>
           <Button
           disabled={table.getPrePaginationRowModel().rows.length === 0}
-          //export all rows, including from the next page, (still respects filtering and sorting)
           onClick={() =>
             handleExportRowsPDF(table.getPrePaginationRowModel().rows)
           }
           leftIcon={<IconDownload />}
-          variant="default"
+
+          classNames={{root:"bg-slate-700 text-slate-100 hover:bg-slate-700/80 transition duration-200  pb-1", label:"flex flex-col justify-center gap-[2px]"}}
         >
-          Export PDF (All)
+          <div className=''>Export PDF</div>
+          <div className="text-[9px]">(Filtered/Sorted)</div>
         </Button>
         <Button
           disabled={table.getPrePaginationRowModel().rows.length === 0}
@@ -186,9 +196,11 @@ const Report = () => {
             handleExportRowsCSV(table.getPrePaginationRowModel().rows)
           }
           leftIcon={<IconDownload />}
-          variant="subtle"
+
+          classNames={{root:"bg-slate-700 text-slate-100 hover:bg-slate-700/80 transition duration-200  pb-1", label:"flex flex-col justify-center gap-[2px]"}}
         >
-          Export CSV (Filtered/Sorted)
+          <div className=''>Export CSV</div>
+          <div className="text-[9px]">(Filtered/Sorted)</div>
         </Button>
           </Flex>
         </Flex>

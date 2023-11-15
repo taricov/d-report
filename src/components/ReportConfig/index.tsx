@@ -16,6 +16,13 @@ export const ReportConfig = ({config, setConfig}: {config:TreportConfig, setConf
   useEffect(()=>{
     console.log(config)
   },[config])
+
+  const toggleAdvancedFilters = (e:ChangeEvent<HTMLInputElement>) =>{
+      setConfig(prev=>({...prev, advancedColumnFilters: e.target.checked, basicColumnFilters: true}))
+  }
+  const toggleColumnsGrouping = (e:ChangeEvent<HTMLInputElement>) =>{
+          setConfig(prev=>({...prev, columnGrouping: e.target.checked, columnReorder: true}))
+  }
   
   return (
     <div className="w-full mt-40">
@@ -23,7 +30,9 @@ export const ReportConfig = ({config, setConfig}: {config:TreportConfig, setConf
     <h2 className="mx-auto text-center leading-5 text-2xl font-bold">
       Table Settings
     </h2>
-    <span className="text-xs text-center">(To Toggle The Search Bar)</span>
+    <span className="text-xs text-center">
+      {/* (To Toggle The Search Bar) */}
+      </span>
       </div>
     <div className="px-10 mx-auto mb-9 py-4 bg-slate-200/60 w-10/12 flex flex-col items-center justify-center rounded-md">
 <ul className="flex flex-wrap gap-3 justify-center">
@@ -35,25 +44,25 @@ export const ReportConfig = ({config, setConfig}: {config:TreportConfig, setConf
           <Switch checked={config.basicColumnFilters} label="Basic Column Filters" onChange={(e:ChangeEvent<HTMLInputElement>)=>setConfig(prev=>({...prev, basicColumnFilters: e.target.checked}))} labelPosition="left" size="sm" onLabel="ON" offLabel="OFF" />
     </li>
       <li className="min-w-md block px-4 py-2 bg-slate-300/50 rounded-md">
-          <Switch checked={config.advancedColumnFilters} label="Advanced Column Filters" onChange={(e:ChangeEvent<HTMLInputElement>)=>setConfig(prev=>({...prev, advancedColumnFilters: e.target.checked}))} labelPosition="left" size="sm" onLabel="ON" offLabel="OFF" />
+          <Switch checked={config.advancedColumnFilters} label="Advanced Column Filters" onChange={toggleAdvancedFilters} labelPosition="left" size="sm" onLabel="ON" offLabel="OFF" />
     </li>
       
-      <li className="min-w-md block px-4 py-2 bg-slate-300/50 rounded-md">
+      {/* <li className="min-w-md block px-4 py-2 bg-slate-300/50 rounded-md">
           <Switch checked={config.globalSearchBar} label="Global Search Bar" onChange={(e:ChangeEvent<HTMLInputElement>)=>setConfig(prev=>({...prev, globalSearchBar: e.target.checked}))} labelPosition="left" size="sm" onLabel="ON" offLabel="OFF" />
-    </li>
+    </li> */}
     
       <li className="min-w-md block px-4 py-2 bg-slate-300/50 rounded-md">
           <Switch checked={config.columnReorder} label="Column Re-Order" onChange={(e:ChangeEvent<HTMLInputElement>)=>setConfig(prev=>({...prev, columnReorder: e.target.checked}))} labelPosition="left" size="sm" onLabel="ON" offLabel="OFF" />
     </li>
 
-      <li className="min-w-md block px-4 py-2 bg-slate-300/50 rounded-md">
-          <Switch checked={config.columnPinning} label="Pin Columns" onChange={(e:ChangeEvent<HTMLInputElement>)=>setConfig(prev=>({...prev, columnPinning: e.target.checked}))} labelPosition="left" size="sm" onLabel="ON" offLabel="OFF" />
-    </li>
     <li className="min-w-md block px-4 py-2 bg-slate-300/50 rounded-md">
-          <Switch checked={config.columnGrouping} label="Group By Column" onChange={(e:ChangeEvent<HTMLInputElement>)=>setConfig(prev=>({...prev, columnGrouping: e.target.checked}))} labelPosition="left" size="sm" onLabel="ON" offLabel="OFF" />
+          <Switch checked={config.columnGrouping} label="Group By Column" onChange={toggleColumnsGrouping} labelPosition="left" size="sm" onLabel="ON" offLabel="OFF" />
     </li>
     <li className="min-w-md block px-4 py-2 bg-slate-300/50 rounded-md">
           <Switch checked={config.columnSorting} label="Sort Columns" onChange={(e:ChangeEvent<HTMLInputElement>)=>setConfig(prev=>({...prev, columnSorting: e.target.checked}))} labelPosition="left" size="sm" onLabel="ON" offLabel="OFF" />
+    </li>
+      <li className="min-w-md block px-4 py-2 bg-slate-300/50 rounded-md">
+          <Switch checked={config.columnPinning} label="Pin Columns" onChange={(e:ChangeEvent<HTMLInputElement>)=>setConfig(prev=>({...prev, columnPinning: e.target.checked}))} labelPosition="left" size="sm" onLabel="ON" offLabel="OFF" />
     </li>
       </ul>
       </div>
