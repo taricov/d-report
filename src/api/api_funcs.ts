@@ -31,9 +31,9 @@ return req
 export const POSTreportsWorkflow = async ({ subdomain, apikey }: Pick<TsiteData, "subdomain" | "apikey"> ): Promise<Response> => {
     // const { userSub, apikey } = getSecrets()
     const data: TDaftraWorkflow = {
-      name: 'D-Notes Module',
+      name: 'D-Report Module',
       status: 1,
-      singular_title: 'Note',
+      singular_title: 'Report',
     }
 
     const res: Response = await fetch(`https://${subdomain}.daftra.com/v2/api/entity/workflow_type`, {

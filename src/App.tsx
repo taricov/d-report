@@ -62,6 +62,10 @@ const checkCookie = async() => {
   const sub = cookieHandler.getter("site_subdomain") || ""
   const api = cookieHandler.getter("site_api_key") || ""
 setSiteData(prev => ({...prev, apikey: api, subdomain: sub}))
+if(sub.length < 1 || api.length < 1){
+  setSiteData(prev=>({...prev, fetching: false}));
+return;
+}
 if(!navigator.onLine){
   setSiteData(prev=>({...prev, fetching: false}));
   setErrors(prev=>({...prev, internetConnection: true}));
