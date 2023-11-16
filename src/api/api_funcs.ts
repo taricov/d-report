@@ -29,23 +29,44 @@ return req
 }
 
 export const POSTreportsWorkflow = async ({ subdomain, apikey }: Pick<TsiteData, "subdomain" | "apikey"> ): Promise<Response> => {
-    // const { userSub, apikey } = getSecrets()
-    const data: TDaftraWorkflow = {
-      name: 'D-Report Module (do NOT edit)',
-      status: 1,
-      singular_title: 'Report',
-    }
 
-    const res: Response = await fetch(`https://${subdomain}.daftra.com/v2/api/entity/workflow_type`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'apikey': apikey,
-        },
-        body: JSON.stringify(data),
-      })
-      // const result = await res.json()
-      return res
+
+  var myHeaders = new Headers();
+  myHeaders.append("Accept", "application/json");
+  myHeaders.append("Content-Type", "application/json");
+  myHeaders.append("apikey", apikey);
+  
+  const data: TDaftraWorkflow = {
+    name: 'D-Report Module ❌ Edit/Delete ❌',
+    status: 1,
+    singular_title: 'Report',
+  }
+  
+  var requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: JSON.stringify(data),
+  };
+  
+  const res = await fetch(`https://${subdomain}.daftra.com/v2/api/entity/workflow_type`, requestOptions)
+  return res
+  // const result = await res.json()
+  // console.log(result)
+  // return result;
+
+
+
+
+    // const res: Response = await fetch(`https://${subdomain}.daftra.com/v2/api/entity/workflow_type`, {
+    //     method: 'POST',
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //       'apikey': apikey,
+    //     },
+    //     body: JSON.stringify(data),
+    //   })
+    //   // const result = await res.json()
+    //   return res
     }
     
 

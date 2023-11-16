@@ -54,8 +54,9 @@ const [connected, setConnected] = useState<boolean>(false)
 const [showSnackBar, setShowSnackBar] = useState<boolean>(false)
 const [showSnackBarDisconnected, setShowSnackBarDisconnected] = useState<boolean>(false)
 const [showSnackBarInternetConnection, setShowSnackBarInternetConnection] = useState<boolean>(false)
+// const [showSnackBarWorkflow, setShowSnackBarWorkflow] = useState<boolean>(false)
 
-const [errors, setErrors] = useState<{[key:string]: boolean}>({internetConnection: false})
+const [, setErrors] = useState<{[key:string]: boolean}>({internetConnection: false})
 
 const checkCookie = async() => {
   setSiteData(prev=>({...prev, fetching: true}));
@@ -112,19 +113,33 @@ useEffect(()=>{
 
 useEffect(()=>{
 
-if(connected && siteData.fromForm){
+// if(connected && siteData.fromForm && siteData.siteModuleKey.length > 1){
 
+//     setShowSnackBar(()=>connected)
+//     setTimeout(()=>{
+//       setShowSnackBar(false)
+//       setShowSnackBarWorkflow(()=>connected)
+//     },3000)
+//     setTimeout(()=>{
+//       setShowSnackBarWorkflow(false)
+//     },5000)
+
+  // }else
+   if(connected && siteData.fromForm) {
+    console.log("Please I am here")
     setShowSnackBar(()=>connected)
     setTimeout(()=>{
       setShowSnackBar(false)
     },3000)
-  }else if(connected && siteData.fromForm){
-    setShowSnackBarDisconnected(()=>!connected)
+}else if(!connected && siteData.fromForm){
+  console.log("Please I am here")
+    setShowSnackBarDisconnected(true)
     setTimeout(()=>{
       setShowSnackBarDisconnected(false)
     },3000)
-
   }
+
+  console.log("fromForm: " + siteData.fromForm, connected)
 },[connected])
 
 // if(siteData.subdomain.length < 0) return <div >loading...</div>;
@@ -149,6 +164,7 @@ if(connected && siteData.fromForm){
     <SnackBar showMe={showSnackBar} body={<><span className="font-medium">Connected!</span> You are now connected successfully!</>}/>
     <SnackBar color="!border-red-400 !text-red-800 !bg-red-100" showMe={showSnackBarDisconnected} body={<><span className="font-medium">Disconnected! ☹️</span> You have disconnected the service!</>}/>
     <SnackBar color="!border-red-400 !text-red-800 !bg-red-100" showMe={showSnackBarInternetConnection} body={<><span className="font-medium">Check Your Internet!</span>You are NOT Connected to the internet!</>}/>
+    {/* <SnackBar color="!border-green-400 !text-green-800 !bg-green-100" showMe={showSnackBarWorkflow} body={<><span className="font-medium">Sucess!</span>A Workflow has been created 👉 "D-Report App" 👈</>}/> */}
     <Footer/>
     {/* <div className="absolute top-0 bottom-0 left-0 right-0 inset-0 w-full h-[100vh] overflow-hidden bg-no-repeat pointer-events-none -z-10 lg:block bg-gradient-to-b from-slate-50 to-slate-800 via-slate-500/80" /> */}
     </QueryClientProvider>

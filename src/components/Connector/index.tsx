@@ -5,6 +5,7 @@ import { cookieHandler } from "../../logic/cookies";
 import type { TformProps } from "../../types/types";
 import { Button } from "../Button";
 import Error from "../Error";
+import SnackBar from "../SanckBar";
 
 
 export default function Connector({showed}:{showed: boolean}){
@@ -13,6 +14,7 @@ const [formProps, setFormProps] = useState<TformProps>({loading: false, error: "
   // const [formData, seTsiteData ] = useState<TsiteData>({subdomain: "", apikey: "", siteLogoURL: "", siteID: "", siteEmail: "", siteFirstName: "", siteLastName: "", siteBusinessName: ""})
 
   const disconnect = () => { 
+    userInfo.setSiteData(prev=>({...prev, fromForm: true}))
     setFormProps(prev=>({...prev, disconnecting: true}))
     cookieHandler.remove('site_subdomain')
     cookieHandler.remove('site_api_key')
@@ -20,21 +22,22 @@ const [formProps, setFormProps] = useState<TformProps>({loading: false, error: "
     setTimeout(() => {
       setFormProps(prev=>({...prev, disconnecting: false}))
       userInfo.setConnected(false)
+    userInfo.setSiteData(prev=>({...prev, fromForm: false}))
     }, 3000);
   }
 
   const formControl = (e: React.FormEvent) =>{
     e.preventDefault()
     setFormProps(prev=>({...prev, error: "", loading: true}))
+    userInfo.setSiteData(prev=>({...prev, fromForm: true}))
 
     return new Promise<any>(async (resolve, reject) =>{
-
       if(userInfo.siteData.apikey === "" || userInfo.siteData.apikey === "") setFormProps(prev=>({...prev, error: "Please Fill/Check The Subdomain and API Key Values.", loading: false}))
       if(userInfo.siteData.subdomain.split(" ").length > 1) setFormProps(prev=>({...prev, error: "Please check your Subdomain. The provided value may be invalid value.", loading: false}))
         const res = await GET_siteInfo({...userInfo.siteData})
         resolve(res)
       }).then(async(res) =>{
-        if(res.status === 401) setFormProps(prev=>({...prev, error: "Please check your API Key. The provided value may be invalid value.", loading: false}))
+        if(res.status === 422) setFormProps(prev=>({...prev, error: "Please check your API Key. The provided value may be invalid value.", loading: false}))
       const data = await res.json()
       return data
     }).then(async(data) =>{
@@ -54,25 +57,33 @@ const [formProps, setFormProps] = useState<TformProps>({loading: false, error: "
         siteAddress2: siteInfo.address2, 
         siteID: siteInfo.id, 
         siteLogoURL: `https://${userInfo.siteData.subdomain}.daftra.com/files/images/site-logos/${siteInfo.site_logo}`}))
+try{
 
-      const creatReportWorkflow = await POSTreportsWorkflow({subdomain: userInfo.siteData.subdomain, apikey: userInfo.siteData.apikey})
-      const x = await creatReportWorkflow.json()
-      console.log(x)
-      const userCreated = await POSTnewUser({ daftra_site_id: userInfo.siteData.siteID, business_name: userInfo.siteData.siteBusinessName, first_name: userInfo.siteData.siteFirstName, last_name: userInfo.siteData.siteLastName, subdomain: userInfo.siteData.subdomain, address1: userInfo.siteData.siteAddress1, address2: userInfo.siteData.siteAddress2, city: userInfo.siteData.siteCity, state: userInfo.siteData.siteState, phone1: userInfo.siteData.sitePhone1, phone2: userInfo.siteData.sitePhone2, lang: 'en', country_code: userInfo.siteData.siteCountryCode, currency_code: userInfo.siteData.siteCurrencyCode, email: userInfo.siteData.siteEmail, bn1: userInfo.siteData.siteBn1, api_key: userInfo.siteData.apikey, note_module_key: userInfo.siteData.siteModuleKey, prefer_dark: null, site_logo: userInfo.siteData.siteLogoURL})
+  const creatReportWorkflow = await POSTreportsWorkflow({subdomain: userInfo.siteData.subdomain, apikey: userInfo.siteData.apikey})
+  const res = await creatReportWorkflow.json()
+  console.log("reS", creatReportWorkflow, "errors", res)
+  if(creatReportWorkflow.status === 200) userInfo.setSiteData(prev=>({...prev, siteModuleKey: res.id}))
+}catch (err) {
+  console.log(err)
+}
+  
+  try {
+  const userCreated = await POSTnewUser({ daftra_site_id: userInfo.siteData.siteID, business_name: userInfo.siteData.siteBusinessName, first_name: userInfo.siteData.siteFirstName, last_name: userInfo.siteData.siteLastName, subdomain: userInfo.siteData.subdomain, address1: userInfo.siteData.siteAddress1, address2: userInfo.siteData.siteAddress2, city: userInfo.siteData.siteCity, state: userInfo.siteData.siteState, phone1: userInfo.siteData.sitePhone1, phone2: userInfo.siteData.sitePhone2, lang: 'en', country_code: userInfo.siteData.siteCountryCode, currency_code: userInfo.siteData.siteCurrencyCode, email: userInfo.siteData.siteEmail, bn1: userInfo.siteData.siteBn1, api_key: userInfo.siteData.apikey, note_module_key: userInfo.siteData.siteModuleKey, prefer_dark: null, site_logo: userInfo.siteData.siteLogoURL})
     console.log(userCreated)
-
+  }catch(err){console.log(err)}
       cookieHandler.setter(userInfo.siteData.subdomain, userInfo.siteData.apikey)
     })
     .then(()=>{
       setFormProps(prev=>({...prev, loading: false}))
       userInfo.setConnected(true)
-
+      userInfo.setSiteData(prev=>({...prev, fromForm: false}))
     })
     .catch((err) =>{
     
     userInfo.setSiteData(prev=>({...prev, loading: false}))
   });
   }
+
   
   useEffect(() => {
     console.log("fds", userInfo.siteData)
@@ -82,6 +93,7 @@ const [formProps, setFormProps] = useState<TformProps>({loading: false, error: "
   },[userInfo.siteData])
     return (
         <>
+
         <div className={`${showed && "!translate-y-12"} bg-slate-300 fixed top-20 left-1/2 transform transition duration-200 -translate-y-[140%] -translate-x-1/2 shadow-lg rounded-lg overflow-hidden mx-auto w-10/12 md:w-[800px]`}>
 
         <div className="p-6">
@@ -94,7 +106,7 @@ const [formProps, setFormProps] = useState<TformProps>({loading: false, error: "
                     <label className="block text-slate-700 font-bold mb-2" htmlFor="subdomain">
             Subdomain
           </label>
-                    <input autoComplete="name" disabled={userInfo.connected && userInfo.siteData.subdomain.length > 0} className="shadow appearance-none border rounded w-full py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline" id="subdomain" type="text" placeholder="Your Subdomain goes here..." value={userInfo.siteData.subdomain.toLocaleLowerCase()} onChange={(e:ChangeEvent<HTMLInputElement>)=>userInfo.setSiteData(prev=>({...prev, subdomain: e.target.value}))}/>
+                    <input autoComplete="subdomain" disabled={userInfo.connected && userInfo.siteData.subdomain.length > 0} className="shadow appearance-none border rounded w-full py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline" id="subdomain" type="text" placeholder="Your Subdomain goes here..." value={userInfo.siteData.subdomain.toLocaleLowerCase()} onChange={(e:ChangeEvent<HTMLInputElement>)=>userInfo.setSiteData(prev=>({...prev, subdomain: e.target.value}))}/>
                 </div>
                 <div className="mb-6">
                     <label className="block text-slate-700 font-bold mb-2" htmlFor="apikey">
