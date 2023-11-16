@@ -1,0 +1,23 @@
+export const accountAttributes = [
+  "subdomain",
+  "apikey",
+  "first_name",
+  "last_name",
+  "business_name",
+  "id",
+  "email",
+  "logo_url",
+  "submitting",
+  "fetching",
+  "phone1",
+  "phone2",
+  "address1",
+  "address2",
+  "bn1",
+  "module_key",
+  "city",
+  "state",
+  "country_code",
+  "country",
+  "currency_code"
+] as const

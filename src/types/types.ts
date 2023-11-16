@@ -1,5 +1,6 @@
 import { SwitchProps } from "@mantine/core";
 import { Dispatch, SetStateAction } from "react";
+import { accountAttributes } from "../data/attrs";
 
 export interface TreportConfig extends SwitchProps {
   [key: string]: any
@@ -37,28 +38,33 @@ export interface TformProps {
   disconnecting: boolean;
   error: string;
 }
-export interface TsiteData {
+
+
+type Td = typeof accountAttributes[number]
+export type TsiteData = {[K in Td]: K extends "fetching" | "submitting" ? boolean :  string}
+
+export interface TsiteData0 {
   subdomain: string;
   apikey: string;
-  siteFirstName: string;
-  siteLastName: string;
-  siteBusinessName: string;
-  siteID: string;
-  siteEmail: string;
-  siteLogoURL: string;
-  fromForm: boolean;
+  first_name: string;
+  last_name: string;
+  business_name: string;
+  id: string;
+  email: string;
+  logo_url: string;
+  submitting: boolean;
   fetching: boolean;
-  sitePhone1: string
-   sitePhone2: string
-   siteAddress1: string
-   siteAddress2: string
-   siteBn1: string
-   siteModuleKey: string
-   siteCity: string
-   siteState: string
-   siteCountryCode: string
-   siteCountry: string;
-   siteCurrencyCode: string;
+  phone1: string
+  phone2: string
+  address1: string
+  address2: string
+  bn1: string
+  module_key: string
+  city: string
+  state: string
+  country_code: string
+  country: string;
+  currency_code: string;
 }
 
 export interface TCONTEXT_Connector {

@@ -1,6 +1,6 @@
 import { ChangeEvent, useContext, useEffect, useState } from "react";
 import { UserContext } from "../../App";
-import { GET_siteInfo, POSTnewUser, POSTreportsWorkflow } from "../../api/api_funcs";
+import { GET_siteInfo, GetUser, POSTnewUser, POSTreportsWorkflow } from "../../api/api_funcs";
 import { cookieHandler } from "../../logic/cookies";
 import type { TformProps } from "../../types/types";
 import { Button } from "../Button";
@@ -14,7 +14,6 @@ const [formProps, setFormProps] = useState<TformProps>({loading: false, error: "
   // const [formData, seTsiteData ] = useState<TsiteData>({subdomain: "", apikey: "", siteLogoURL: "", siteID: "", siteEmail: "", siteFirstName: "", siteLastName: "", siteBusinessName: ""})
 
   const disconnect = () => { 
-    userInfo.setSiteData(prev=>({...prev, fromForm: true}))
     setFormProps(prev=>({...prev, disconnecting: true}))
     cookieHandler.remove('site_subdomain')
     cookieHandler.remove('site_api_key')
@@ -22,7 +21,12 @@ const [formProps, setFormProps] = useState<TformProps>({loading: false, error: "
     setTimeout(() => {
       setFormProps(prev=>({...prev, disconnecting: false}))
       userInfo.setConnected(false)
-    userInfo.setSiteData(prev=>({...prev, fromForm: false}))
+    userInfo.setSiteData(prev=>({...prev, fromForm: true}))
+
+      setTimeout(() => {
+        userInfo.setSiteData(prev=>({...prev, fromForm: false}))
+        console.log(userInfo.siteData.fromForm)
+    }, 1000);
     }, 3000);
   }
 
@@ -57,23 +61,36 @@ const [formProps, setFormProps] = useState<TformProps>({loading: false, error: "
         siteAddress2: siteInfo.address2, 
         siteID: siteInfo.id, 
         siteLogoURL: `https://${userInfo.siteData.subdomain}.daftra.com/files/images/site-logos/${siteInfo.site_logo}`}))
+
+  const user: any = await GetUser('subdomain', userInfo.siteData.subdomain)
+  console.log('existing user: ', user)
+
+  if (user.total === 0){
 try{
 
   const creatReportWorkflow = await POSTreportsWorkflow({subdomain: userInfo.siteData.subdomain, apikey: userInfo.siteData.apikey})
   const res = await creatReportWorkflow.json()
-  console.log("reS", creatReportWorkflow, "errors", res)
   if(creatReportWorkflow.status === 200) userInfo.setSiteData(prev=>({...prev, siteModuleKey: res.id}))
+  console.log(res)
+
+    const userCreated = await POSTnewUser({ daftra_site_id: userInfo.siteData.siteID, business_name: userInfo.siteData.siteBusinessName, first_name: userInfo.siteData.siteFirstName, last_name: userInfo.siteData.siteLastName, subdomain: userInfo.siteData.subdomain, address1: userInfo.siteData.siteAddress1, address2: userInfo.siteData.siteAddress2, city: userInfo.siteData.siteCity, state: userInfo.siteData.siteState, phone1: userInfo.siteData.sitePhone1, phone2: userInfo.siteData.sitePhone2, lang: 'en', country_code: userInfo.siteData.siteCountryCode, currency_code: userInfo.siteData.siteCurrencyCode, email: userInfo.siteData.siteEmail, bn1: userInfo.siteData.siteBn1, api_key: userInfo.siteData.apikey, note_module_key: userInfo.siteData.siteModuleKey, prefer_dark: null, site_logo: userInfo.siteData.siteLogoURL})
+      console.log(userCreated)
 }catch (err) {
   console.log(err)
 }
+
+
+  }
+
+  if (user.total > 0) {
+    userInfo.setSiteData(prev => ({...prev, siteModuleKey:  user.documents[0].noteModuleKey}))
+    console.log(userInfo.siteData)
+  }
+
   
-  try {
-  const userCreated = await POSTnewUser({ daftra_site_id: userInfo.siteData.siteID, business_name: userInfo.siteData.siteBusinessName, first_name: userInfo.siteData.siteFirstName, last_name: userInfo.siteData.siteLastName, subdomain: userInfo.siteData.subdomain, address1: userInfo.siteData.siteAddress1, address2: userInfo.siteData.siteAddress2, city: userInfo.siteData.siteCity, state: userInfo.siteData.siteState, phone1: userInfo.siteData.sitePhone1, phone2: userInfo.siteData.sitePhone2, lang: 'en', country_code: userInfo.siteData.siteCountryCode, currency_code: userInfo.siteData.siteCurrencyCode, email: userInfo.siteData.siteEmail, bn1: userInfo.siteData.siteBn1, api_key: userInfo.siteData.apikey, note_module_key: userInfo.siteData.siteModuleKey, prefer_dark: null, site_logo: userInfo.siteData.siteLogoURL})
-    console.log(userCreated)
-  }catch(err){console.log(err)}
-      cookieHandler.setter(userInfo.siteData.subdomain, userInfo.siteData.apikey)
     })
     .then(()=>{
+      cookieHandler.setter(userInfo.siteData.subdomain, userInfo.siteData.apikey)
       setFormProps(prev=>({...prev, loading: false}))
       userInfo.setConnected(true)
       userInfo.setSiteData(prev=>({...prev, fromForm: false}))
@@ -86,7 +103,7 @@ try{
 
   
   useEffect(() => {
-    console.log("fds", userInfo.siteData)
+    console.log("siteData From App", userInfo.siteData)
 // console.log("from connector", userInfo);
 
     // userInfo.siteData.siteID !== "" && userInfo.setConnected(true)

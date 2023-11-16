@@ -50,23 +50,7 @@ export const POSTreportsWorkflow = async ({ subdomain, apikey }: Pick<TsiteData,
   
   const res = await fetch(`https://${subdomain}.daftra.com/v2/api/entity/workflow_type`, requestOptions)
   return res
-  // const result = await res.json()
-  // console.log(result)
-  // return result;
-
-
-
-
-    // const res: Response = await fetch(`https://${subdomain}.daftra.com/v2/api/entity/workflow_type`, {
-    //     method: 'POST',
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //       'apikey': apikey,
-    //     },
-    //     body: JSON.stringify(data),
-    //   })
-    //   // const result = await res.json()
-    //   return res
+  
     }
     
 
@@ -86,6 +70,18 @@ const databases = new Databases(client)
         JSON.stringify(data),
       ).then((res) => {
         return res
+      }, (error) => {
+        return error
+      })
+
+      export const GetUser = (label: string, data: string) => databases.listDocuments(
+        '6470ec650e1ca8428bf6', '6470eca413760d1ae70a',
+        // `${DATABASE_ID}`, `${COLLECTION_ID}`,
+        [
+          Query.equal(label, data),
+        ],
+      ).then((response) => {
+        return response
       }, (error) => {
         return error
       })
