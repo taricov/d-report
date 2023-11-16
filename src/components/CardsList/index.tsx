@@ -5,7 +5,6 @@ import {
   DroppableProvided,
   DroppableStateSnapshot,
 } from "react-beautiful-dnd";
-import { SettingsModal } from "../ColumnsSettings";
 
 type ListProps = {
   children?: React.ReactNode;

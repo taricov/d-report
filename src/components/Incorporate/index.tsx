@@ -24,6 +24,7 @@ import { useCreateReportColumns } from "../../hooks/useCreateReportColumns.hooks
 
 
 const Incorporate = () => {
+const reportInfo = useContext(ReportContext)
   const userStatus = useContext(UserContext)
   const [loading, setLoading] = useState<Tloading>({fetching: false, building: false})
   const [error, setErrors] = useState<TErrors>({fetching: false, reportTitle: false, building: false})
@@ -31,7 +32,7 @@ const Incorporate = () => {
   const [showSnackBar, setShowSnackBar] = useState<boolean>(false)
 const [tablesVariables, setTablesVariables] = useState<TtableVariables>({available:[], selected: []})
 const [reportVariables, setReportVariables] = useState<TreportVariables>({joins:{}, report_title: "", from_table: ""})
-const [selectedTablesRows, setSelectedTablesRows] = useState<any>()
+const [data, setData] = useState<any>()
 const [joinedTable, setJoinedTable] = useState<any>()
 
 
@@ -88,7 +89,15 @@ const merge2Tables = async (foreignKey: string, table1:any, table2:any) => {
 // return table1.map((item:any, i:number) => Object.assign({}, item, table2[i]));
 }
 
+
+// const { colHeaders } = useCreateReportColumns(Object.keys(tablesVariables.selected))
 const buildReport = async (allSelected: any) => {
+  
+  // reportInfo.setReportData(prev=>({...prev, columnsSettings: colHeaders, selectedColumns: tablesVariables.selected}))
+
+  console.log(reportInfo.reportData)
+
+
   setErrors(({fetching: false, building: false, reportTitle: false})); 
   setLoading(prev=>({...prev, building: true}))
   if(tablesVariables.selected.length < 1) {
@@ -117,9 +126,9 @@ const buildReport = async (allSelected: any) => {
         const dataJSON = await res.json();
         tablesData[table] = dataJSON.data
       })).then(() => {
-        setSelectedTablesRows(tablesData)
-        // console.log(Object.entries(selectedTablesRows)[0][1])
-        const merged = merge2Tables(foreignKey, Object.entries(selectedTablesRows)[0][1], Object.entries(selectedTablesRows)[1][1])
+        setData(tablesData)
+        // console.log(Object.entries(data)[0][1])
+        const merged = merge2Tables(foreignKey, Object.entries(data)[0][1], Object.entries(data)[1][1])
 
       })
 
@@ -198,18 +207,14 @@ const selectJoinTable = (e: ChangeEvent<HTMLInputElement>) => {
     }))
   }
 }
-const [headers, setHeaders] = useState<any>()
-const reportInfo = useContext(ReportContext)
-setHeaders(useCreateReportColumns(Object.keys(tablesVariables.selected)))
 useEffect(() => {
       console.log(tablesVariables)
       console.log(reportVariables)
-      console.log(selectedTablesRows)
+      console.log(data)
       console.log("joind", joinedTable)
-      reportInfo.setReportData(prev=>({...prev, columnsSettings: headers, selectedColumns: tablesVariables.selected}))
 
 
-},[reportVariables, tablesVariables, selectedTablesRows, joinedTable])
+},[reportVariables, tablesVariables, data, joinedTable])
   return (
     <>
     <SnackBar showMe={showSnackBar} body={<><span className="font-medium">Successful Build!</span> Report URL is Copied to Clipbaord!</>}/>

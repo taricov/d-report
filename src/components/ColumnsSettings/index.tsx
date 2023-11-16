@@ -17,9 +17,9 @@ reportInfo.setReportData(prev=>({...prev, columnsSettings: [...prev.columnsSetti
   } 
 })]
 }))
-console.log("fromColumnsSettings", reportInfo.reportData.columnsSettings)
+console.log("fromColumnsSettings", reportInfo)
 
-  },[reportInfo.reportData.columnsSettings])
+  },[filterMode])
 
     return (
 
@@ -30,6 +30,7 @@ console.log("fromColumnsSettings", reportInfo.reportData.columnsSettings)
       name={id}
       label="Select Filter Mode:"
       description="How you will be able to filter on the column."
+      classNames={{description:"text-slate-700"}}
     >
         <Group mt="xs">
           <Radio icon={CheckIcon} label="Text" value="text"  />

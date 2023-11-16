@@ -65,6 +65,12 @@ setSiteData(prev => ({...prev, apikey: api, subdomain: sub}))
 if(!navigator.onLine){
   setSiteData(prev=>({...prev, fetching: false}));
   setErrors(prev=>({...prev, internetConnection: true}));
+  setTimeout(()=>{
+    setShowSnackBarInternetConnection(true)
+  },1000)
+    setTimeout(()=>{
+      setShowSnackBarInternetConnection(false)
+    },3000)
   return;
 }
 const res = await GET_siteInfo({subdomain: siteData.subdomain, apikey: siteData.apikey})
@@ -92,14 +98,8 @@ useEffect(()=>{
 useEffect(()=>{
 
 // console.log(connected)
-  if(!errors.internetConnection){
-    setTimeout(()=>{
-    setShowSnackBarInternetConnection(true)
-  },1000)
-    setTimeout(()=>{
-      setShowSnackBarInternetConnection(false)
-    },3000)
-  }else if(connected && siteData.fromForm){
+
+if(connected && siteData.fromForm){
 
     setShowSnackBar(()=>connected)
     setTimeout(()=>{

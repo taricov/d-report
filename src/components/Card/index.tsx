@@ -1,10 +1,17 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AnimateHeight from "react-animate-height";
 import { ColumnsSettings } from "../ColumnsSettings";
 
 const Card = ({text, idx, bgColor}:{text:string, idx: number, bgColor: string}) => {
  
+  const [tableTitle, setTableTitle] = useState<string>(text);
+  const [editTableTitle, setEditTableTitle] = useState<boolean>(false);
   const [height, setHeight] = useState<string | number | any>(0);
+
+  useEffect(() => {
+    console.log("title", tableTitle);
+    if(tableTitle.length < 1) setEditTableTitle(true)
+  },[tableTitle])
   return (
     <div className="relative shadow-lg flex w-full cursor-pointer">
       <button onClick={()=>setHeight(()=> height === 0 ? "auto" : 0 )} className="absolute top-0 right-0 transform translate-y-0 translate-x-0 transiton hover:bg-slate-400/20 hover:shadow duration-200 fill-slate-700 rounded-md rounded-tl-none rounded-br-none px-[6px] py-[3px]">
@@ -14,7 +21,26 @@ const Card = ({text, idx, bgColor}:{text:string, idx: number, bgColor: string}) 
         <span className="flex flex-row justify-between">
         <sub className="">{idx+1}</sub>
         </span>
-        <h1 className="font-bold text-md text-center capitalize">{text.split("_").join(" ")}</h1>
+        <div className="flex align-center justify-center">
+        { editTableTitle ?
+        <input
+            className="rounded-md block bg-slate-100/20 underline text-center outline-0 border-0 mx-auto"
+            type="text"
+            value={tableTitle}
+            onChange={(e)=>setTableTitle(e.target.value)}
+            onBlur={()=>setEditTableTitle(tableTitle.length < 1 ? true : false)}
+            onKeyDown={(e:React.KeyboardEvent)=>setEditTableTitle(()=>{
+            if(tableTitle.length < 1) return true;
+              return e.code === "Enter" ? false : true
+            })}
+            autoFocus
+          />
+          :
+        <h1 onDoubleClick={()=>setEditTableTitle(true)} className="font-bold text-md text-center capitalize">
+          {tableTitle.split("_").join(" ")}</h1>
+          }
+          </div>
+          {tableTitle.length < 1 && <div className="rounded-md text-slate-100 bg-red-600 px-3 py-1 text-[9px] text-center mt-1">Table Title can not set empty.</div>}
       <AnimateHeight
         id="column-settings"
         duration={500}
