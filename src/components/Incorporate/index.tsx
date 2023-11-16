@@ -50,15 +50,10 @@ const GETtablesVariables = async () => {
 
 
   const tables: string[]= [reportVariables.from_table, ...Object.keys(reportVariables.joins)]
-  console.log(tables)
-  // const subdomain: string = "taricov"
-  // const apikey: string = "24b476fdd8aa43091e0963ba01b98762155c9dd4"
-  // const method: string = "GET"
 
   return await Promise.all(tables.map(async(table) =>{
     const res = await GET_tablesCols({subdomain: userInfo.siteData.subdomain, apikey: userInfo.siteData.apikey, table})
     const data = await res.json()
-    console.log(data)
   const currentColor: string = colorRandomizer()
     allVars = [...allVars, ...Object.keys(data.data[0]).map(c=>({columnName: c, tableName: table, bgColor: currentColor}))]
 
@@ -85,7 +80,7 @@ const GETtablesVariables = async () => {
 
 const merge2Tables = async (foreignKey: string, table1:any, table2:any) => {
   setJoinedTable(()=>table1.map((row1:any) => ({...row1, ...table2.find((row2:any)=> row2[foreignKey] === row1.id)})))
-  console.log("merge2Tables", joinedTable)
+  // console.log("merge2Tables", joinedTable)
 // return table1.map((item:any, i:number) => Object.assign({}, item, table2[i]));
 }
 
@@ -115,7 +110,6 @@ const buildReport = async (allSelected: any) => {
   const reportID = "2"
   const requiredTables: any[] = [...new Set(allSelected.map((selected: any) => selected.tableName))]
   const foreignKey = tables[requiredTables[0] as string]["foreign_key"]
-  console.log(foreignKey)
         
       //build the report
   
@@ -127,7 +121,6 @@ const buildReport = async (allSelected: any) => {
         tablesData[table] = dataJSON.data
       })).then(() => {
         setData(tablesData)
-        // console.log(Object.entries(data)[0][1])
         const merged = merge2Tables(foreignKey, Object.entries(data)[0][1], Object.entries(data)[1][1])
 
       })
@@ -141,7 +134,7 @@ const buildReport = async (allSelected: any) => {
 // })
 .then((data)=>{
   // setClipboardValue(data as string)
-  console.log("clipboard val: ", clipboardValue)
+  // console.log("clipboard val: ", clipboardValue)
   setLoading(prev=>({...prev, building: false}))
 setReportVariables(prev=>({...prev, report_title: ""}))
   setShowSnackBar(true)
@@ -167,7 +160,6 @@ setReportVariables(prev=>({...prev, report_title: ""}))
 
   const onDragEnd = (result: any) => {
     if (!result.destination) {
-      console.log(result);
       return;
     }
     const listCopy: any = { ...tablesVariables };
@@ -179,7 +171,6 @@ setReportVariables(prev=>({...prev, report_title: ""}))
       listCopy[result.source.droppableId] = newSourceList;
 
     const destinationList = listCopy[result.destination.droppableId];
-    console.log("result",result.destination);
 
     listCopy[result.destination.droppableId] = addToList(
       destinationList,
@@ -208,10 +199,10 @@ const selectJoinTable = (e: ChangeEvent<HTMLInputElement>) => {
   }
 }
 useEffect(() => {
-      console.log(tablesVariables)
-      console.log(reportVariables)
-      console.log(data)
-      console.log("joind", joinedTable)
+      // console.log(tablesVariables)
+      // console.log(reportVariables)
+      // console.log(data)
+      // console.log("joind", joinedTable)
 
 
 },[reportVariables, tablesVariables, data, joinedTable])
@@ -290,7 +281,7 @@ Now you can start building your report by checking the available variables (colu
     }
       </div>
   <span className="block text-sm text-center px-6"><sup className="mx-1">1</sup><b>color:</b> the available variables are color labeled as below so you can pick a variable that belongs to the desired table easily.</span>
-
+ 
   <span className="block text-sm text-center px-6"><sup className="mx-1">2</sup><b>Relation Direction:</b> please note that the relations in the selected section is going from top to bottom. 
   <span className="block text-xs text-center px-6">(e.g. if you arranged the invoice ID column before the client ID that means the report will display clients regarding the invoices and not the other way around.)</span>
   </span>

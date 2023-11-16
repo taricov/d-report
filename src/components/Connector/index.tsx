@@ -33,14 +33,11 @@ const [formProps, setFormProps] = useState<TformProps>({loading: false, error: "
         const res = await GET_siteInfo({...userInfo.siteData})
         resolve(res)
       }).then(async(res) =>{
-        // console.log("reeez", res)
         if(res.status === 401) setFormProps(prev=>({...prev, error: "Please check your API Key. The provided value may be invalid value.", loading: false}))
-        // console.log(res)
       const data = await res.json()
       return data
     }).then(async(data) =>{
       const siteInfo = data.data.Site
-      // console.log(siteInfo)
       userInfo.setSiteData(prev=>({...prev, siteLogoURL: `https://${userInfo.siteData.subdomain}.daftra.com/files/images/site-logos/${siteInfo.site_logo}`, siteID: siteInfo.id, siteEmail: siteInfo.email, siteFirstName: siteInfo.first_name, siteLastName: siteInfo.last_name, siteBusinessName: siteInfo.business_name}))
 
       const creatReportWorkflow = await POSTreportsWorkflow({subdomain: userInfo.siteData.subdomain, apikey: userInfo.siteData.apikey})
@@ -51,16 +48,13 @@ const [formProps, setFormProps] = useState<TformProps>({loading: false, error: "
       cookieHandler.setter(userInfo.siteData.subdomain, userInfo.siteData.apikey)
       setFormProps(prev=>({...prev, loading: false}))
     }).catch((err) =>{
-    // console.log("catectef",(err as Error).message)
     
-    
-    // if(err) setFormProps(prev=>({...prev, error: "", loading: false}))
     userInfo.setSiteData(prev=>({...prev, loading: false}))
   });
   }
   
   useEffect(() => {
-    console.log(userInfo.siteData)
+    console.log("fds", userInfo.siteData)
 // console.log("from connector", userInfo);
 
     // userInfo.siteData.siteID !== "" && userInfo.setConnected(true)
@@ -79,13 +73,13 @@ const [formProps, setFormProps] = useState<TformProps>({loading: false, error: "
                     <label className="block text-slate-700 font-bold mb-2" htmlFor="subdomain">
             Subdomain
           </label>
-                    <input disabled={userInfo.connected && userInfo.siteData.subdomain.length > 0} className="shadow appearance-none border rounded w-full py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline" id="subdomain" type="text" placeholder="Your Subdomain goes here..." value={userInfo.siteData.subdomain} onChange={(e:ChangeEvent<HTMLInputElement>)=>userInfo.setSiteData(prev=>({...prev, subdomain: e.target.value}))}/>
+                    <input autoComplete="username" disabled={userInfo.connected && userInfo.siteData.subdomain.length > 0} className="shadow appearance-none border rounded w-full py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline" id="subdomain" type="text" placeholder="Your Subdomain goes here..." value={userInfo.siteData.subdomain} onChange={(e:ChangeEvent<HTMLInputElement>)=>userInfo.setSiteData(prev=>({...prev, subdomain: e.target.value}))}/>
                 </div>
                 <div className="mb-6">
                     <label className="block text-slate-700 font-bold mb-2" htmlFor="apikey">
             API Key
           </label>
-                    <input disabled={userInfo.connected && userInfo.siteData.apikey.length > 0} className="shadow appearance-none border rounded w-full py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline" id="apikey" type="password" placeholder="API Key goes here..." value={userInfo.siteData.apikey} onChange={(e:ChangeEvent<HTMLInputElement>)=>userInfo.setSiteData(prev=>({...prev, apikey: e.target.value}))} />
+                    <input autoComplete="current-password" disabled={userInfo.connected && userInfo.siteData.apikey.length > 0} className="shadow appearance-none border rounded w-full py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline" id="apikey" type="password" placeholder="API Key goes here..." value={userInfo.siteData.apikey} onChange={(e:ChangeEvent<HTMLInputElement>)=>userInfo.setSiteData(prev=>({...prev, apikey: e.target.value}))} />
                 </div>
                 <div className="flex gap-2">
                 <Button disabled={userInfo.connected} btnFor="submitting" loading={formProps.loading}  type="submit" text={userInfo.connected ? "Connected!" : "Connect Now"} color={userInfo.connected ? "bg-emerald-600 hover:bg-emerald-600/90" : "bg-slate-500 hover:bg-slate-500/90"}/>

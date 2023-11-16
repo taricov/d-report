@@ -18,7 +18,7 @@ return req
 
 
 export async function GET_siteInfo({subdomain, apikey}:Pick<TsiteData, "subdomain" | "apikey"> ): Promise<Response>{
-    console.log(subdomain, apikey)
+    // console.log(subdomain, apikey)
     const req: Response = await fetch(`https://${subdomain}.daftra.com/api2/site_info`, {
         headers: {
             "Content-Type": "application/json",
@@ -31,7 +31,7 @@ return req
 export const POSTreportsWorkflow = async ({ subdomain, apikey }: Pick<TsiteData, "subdomain" | "apikey"> ): Promise<Response> => {
     // const { userSub, apikey } = getSecrets()
     const data: TDaftraWorkflow = {
-      name: 'D-Report Module',
+      name: 'D-Report Module (Do NOT Edit This)',
       status: 1,
       singular_title: 'Report',
     }

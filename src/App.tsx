@@ -77,15 +77,29 @@ if(!navigator.onLine){
     },3000)
   return;
 }
-const res = await GET_siteInfo({subdomain: siteData.subdomain, apikey: siteData.apikey})
+
+const res = await GET_siteInfo({subdomain: sub, apikey: api})
 if(res.status !== 200) {
   setSiteData(prev=>({...prev, fetching: false}));
   return;};
 if(res.status === 200){
   const data = await res.json()
-  console.log(data)
   const siteInfo = data.data.Site
-  setSiteData(prev => ({...prev, siteBusinessName: siteInfo.business_name, siteEmail: siteInfo.email, siteFirstName: siteInfo.first_name, siteLastName: siteInfo.last_name, siteID: siteInfo.id, siteLogoURL: `https://${siteData.subdomain}.daftra.com/files/images/site-logos/${siteInfo.site_logo}`}))
+  setSiteData(prev => ({...prev, 
+    siteBusinessName: siteInfo.business_name, 
+    siteEmail: siteInfo.email, 
+    siteFirstName: siteInfo.first_name, 
+    siteLastName: siteInfo.last_name, 
+    siteCity: siteInfo.city, 
+    siteState: siteInfo.state, 
+    sitePhone1: siteInfo.phone1, 
+    sitePhone2: siteInfo.phone2, 
+    siteCountryCode: siteInfo.country_code, 
+    siteCurrencyCode: siteInfo.currency_code, 
+    siteAddress1: siteInfo.address1, 
+    siteAddress2: siteInfo.address2, 
+    siteID: siteInfo.id, 
+    siteLogoURL: `https://${sub}.daftra.com/files/images/site-logos/${siteInfo.site_logo}`}))
   setConnected(true);
   setSiteData(prev=>({...prev, fetching: false}));
   
@@ -93,15 +107,10 @@ if(res.status === 200){
 }
 
 useEffect(()=>{
- 
-  // if(siteData.subdomain.length < 0) return;
   checkCookie()
-
 },[]);
 
 useEffect(()=>{
-
-// console.log(connected)
 
 if(connected && siteData.fromForm){
 
