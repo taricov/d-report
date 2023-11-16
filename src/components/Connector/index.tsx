@@ -16,7 +16,7 @@ const [formProps, setFormProps] = useState<TformProps>({loading: false, error: "
     setFormProps(prev=>({...prev, disconnecting: true}))
     cookieHandler.remove('site_subdomain')
     cookieHandler.remove('site_api_key')
-    userInfo.setSiteData(prev=>({...prev, apikey: "", subdomain: "", siteID: ""}))
+    userInfo.setSiteData(()=>({...Object.keys(userInfo.siteData).reduce((acc:any, curr)=>({...acc, [curr]: ""}), {})}))
     setTimeout(() => {
       setFormProps(prev=>({...prev, disconnecting: false}))
       userInfo.setConnected(false)
@@ -30,6 +30,7 @@ const [formProps, setFormProps] = useState<TformProps>({loading: false, error: "
     return new Promise<any>(async (resolve, reject) =>{
 
       if(userInfo.siteData.apikey === "" || userInfo.siteData.apikey === "") setFormProps(prev=>({...prev, error: "Please Fill/Check The Subdomain and API Key Values.", loading: false}))
+      if(userInfo.siteData.subdomain.split(" ").length > 1) setFormProps(prev=>({...prev, error: "Please check your Subdomain. The provided value may be invalid value.", loading: false}))
         const res = await GET_siteInfo({...userInfo.siteData})
         resolve(res)
       }).then(async(res) =>{
@@ -38,16 +39,36 @@ const [formProps, setFormProps] = useState<TformProps>({loading: false, error: "
       return data
     }).then(async(data) =>{
       const siteInfo = data.data.Site
-      userInfo.setSiteData(prev=>({...prev, siteLogoURL: `https://${userInfo.siteData.subdomain}.daftra.com/files/images/site-logos/${siteInfo.site_logo}`, siteID: siteInfo.id, siteEmail: siteInfo.email, siteFirstName: siteInfo.first_name, siteLastName: siteInfo.last_name, siteBusinessName: siteInfo.business_name}))
+      userInfo.setSiteData(prev => ({...prev, 
+        siteBusinessName: siteInfo.business_name, 
+        siteEmail: siteInfo.email, 
+        siteFirstName: siteInfo.first_name, 
+        siteLastName: siteInfo.last_name, 
+        siteCity: siteInfo.city, 
+        siteState: siteInfo.state, 
+        sitePhone1: siteInfo.phone1, 
+        sitePhone2: siteInfo.phone2, 
+        siteCountryCode: siteInfo.country_code, 
+        siteCurrencyCode: siteInfo.currency_code, 
+        siteAddress1: siteInfo.address1, 
+        siteAddress2: siteInfo.address2, 
+        siteID: siteInfo.id, 
+        siteLogoURL: `https://${userInfo.siteData.subdomain}.daftra.com/files/images/site-logos/${siteInfo.site_logo}`}))
 
       const creatReportWorkflow = await POSTreportsWorkflow({subdomain: userInfo.siteData.subdomain, apikey: userInfo.siteData.apikey})
-      console.log(creatReportWorkflow)
+      const x = await creatReportWorkflow.json()
+      console.log(x)
       const userCreated = await POSTnewUser({ daftra_site_id: userInfo.siteData.siteID, business_name: userInfo.siteData.siteBusinessName, first_name: userInfo.siteData.siteFirstName, last_name: userInfo.siteData.siteLastName, subdomain: userInfo.siteData.subdomain, address1: userInfo.siteData.siteAddress1, address2: userInfo.siteData.siteAddress2, city: userInfo.siteData.siteCity, state: userInfo.siteData.siteState, phone1: userInfo.siteData.sitePhone1, phone2: userInfo.siteData.sitePhone2, lang: 'en', country_code: userInfo.siteData.siteCountryCode, currency_code: userInfo.siteData.siteCurrencyCode, email: userInfo.siteData.siteEmail, bn1: userInfo.siteData.siteBn1, api_key: userInfo.siteData.apikey, note_module_key: userInfo.siteData.siteModuleKey, prefer_dark: null, site_logo: userInfo.siteData.siteLogoURL})
     console.log(userCreated)
 
       cookieHandler.setter(userInfo.siteData.subdomain, userInfo.siteData.apikey)
+    })
+    .then(()=>{
       setFormProps(prev=>({...prev, loading: false}))
-    }).catch((err) =>{
+      userInfo.setConnected(true)
+
+    })
+    .catch((err) =>{
     
     userInfo.setSiteData(prev=>({...prev, loading: false}))
   });
@@ -73,7 +94,7 @@ const [formProps, setFormProps] = useState<TformProps>({loading: false, error: "
                     <label className="block text-slate-700 font-bold mb-2" htmlFor="subdomain">
             Subdomain
           </label>
-                    <input autoComplete="username" disabled={userInfo.connected && userInfo.siteData.subdomain.length > 0} className="shadow appearance-none border rounded w-full py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline" id="subdomain" type="text" placeholder="Your Subdomain goes here..." value={userInfo.siteData.subdomain} onChange={(e:ChangeEvent<HTMLInputElement>)=>userInfo.setSiteData(prev=>({...prev, subdomain: e.target.value}))}/>
+                    <input autoComplete="name" disabled={userInfo.connected && userInfo.siteData.subdomain.length > 0} className="shadow appearance-none border rounded w-full py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline" id="subdomain" type="text" placeholder="Your Subdomain goes here..." value={userInfo.siteData.subdomain.toLocaleLowerCase()} onChange={(e:ChangeEvent<HTMLInputElement>)=>userInfo.setSiteData(prev=>({...prev, subdomain: e.target.value}))}/>
                 </div>
                 <div className="mb-6">
                     <label className="block text-slate-700 font-bold mb-2" htmlFor="apikey">

@@ -82,7 +82,9 @@ e.stopPropagation()
                   >Connect</button>
                 }
                 { userInfo.connected &&
-                  <div className="items-center justify-center rounded-xl bg-slate-100 shadow-light-200 px-3 py-2 text-sm font-semibold text-slate-800 shadow-sm transition-all duration-150 sm:inline-flex">Connected</div>
+                  // <div className="items-center justify-center rounded-xl bg-slate-100 shadow-light-200 px-3 py-2 text-sm font-semibold text-slate-800 shadow-sm transition-all duration-150 sm:inline-flex">Connected</div>
+                  <button onClick={connectForm} className="items-center justify-center rounded-xl bg-slate-100 hover:bg-slate-300 shadow-light-200 px-3 py-2 text-sm font-semibold text-slate-800 shadow-sm ring-1 ring-inset ring-gray-300 transition-all duration-150 sm:inline-flex"
+                  >Connected</button>
                   
                     }
               </div>

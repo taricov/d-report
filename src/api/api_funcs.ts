@@ -31,7 +31,7 @@ return req
 export const POSTreportsWorkflow = async ({ subdomain, apikey }: Pick<TsiteData, "subdomain" | "apikey"> ): Promise<Response> => {
     // const { userSub, apikey } = getSecrets()
     const data: TDaftraWorkflow = {
-      name: 'D-Report Module (Do NOT Edit This)',
+      name: 'D-Report Module (do NOT edit)',
       status: 1,
       singular_title: 'Report',
     }
