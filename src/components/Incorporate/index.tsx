@@ -298,6 +298,10 @@ Now you can start building your report by checking the available variables (colu
   <span className="block text-sm text-center px-6"><sup className="mx-1">3</sup><b>Columns Features:</b> After you finish selecting/arranging your desired columns, click on the tiny gear icon on the selected section title to tweak columns configurations. 
 
   </span>
+  <span className="block text-sm text-center px-6"><sup className="mx-1">4</sup><b>Rename Columns:</b> Rename a column by double clicking the column name. 
+  <span className="block text-xs text-center px-6 italic">(No Empty Values Allowed)</span>
+
+  </span>
 
 
       </div>
