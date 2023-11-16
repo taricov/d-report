@@ -60,10 +60,10 @@ const [formProps, setFormProps] = useState<TformProps>({loading: false, error: "
   }
   
   useEffect(() => {
-    // console.log(userInfo.siteData)
+    console.log(userInfo.siteData)
 // console.log("from connector", userInfo);
 
-    userInfo.siteData.siteID !== "" && userInfo.setConnected(true)
+    // userInfo.siteData.siteID !== "" && userInfo.setConnected(true)
   },[userInfo.siteData])
     return (
         <>
@@ -85,7 +85,7 @@ const [formProps, setFormProps] = useState<TformProps>({loading: false, error: "
                     <label className="block text-slate-700 font-bold mb-2" htmlFor="apikey">
             API Key
           </label>
-                    <input disabled={userInfo.connected && userInfo.siteData.apikey.length > 0} className="shadow appearance-none border rounded w-full py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline" id="apikey" type="apikey" placeholder="API Key goes here..." value={userInfo.siteData.apikey} onChange={(e:ChangeEvent<HTMLInputElement>)=>userInfo.setSiteData(prev=>({...prev, apikey: e.target.value}))} />
+                    <input disabled={userInfo.connected && userInfo.siteData.apikey.length > 0} className="shadow appearance-none border rounded w-full py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline" id="apikey" type="password" placeholder="API Key goes here..." value={userInfo.siteData.apikey} onChange={(e:ChangeEvent<HTMLInputElement>)=>userInfo.setSiteData(prev=>({...prev, apikey: e.target.value}))} />
                 </div>
                 <div className="flex gap-2">
                 <Button disabled={userInfo.connected} btnFor="submitting" loading={formProps.loading}  type="submit" text={userInfo.connected ? "Connected!" : "Connect Now"} color={userInfo.connected ? "bg-emerald-600 hover:bg-emerald-600/90" : "bg-slate-500 hover:bg-slate-500/90"}/>

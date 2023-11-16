@@ -94,10 +94,10 @@ if(res.status === 200){
 
 useEffect(()=>{
  
-  if(siteData.subdomain.length < 0) return;
+  // if(siteData.subdomain.length < 0) return;
   checkCookie()
 
-},[siteData.subdomain]);
+},[]);
 
 useEffect(()=>{
 
