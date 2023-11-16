@@ -5,7 +5,7 @@ import Spinner from "../Spinner";
 
 export default function Header(){
 
-  const [show, setShow] = useState<boolean>(true);
+  const [show, setShow] = useState<boolean>(false);
   const [showConnectForm, setShowConnectForm] = useState<boolean>(false);
   const [lastScrollY, setLastScrollY] = useState<number>(0);
   const userInfo = useContext(UserContext)
