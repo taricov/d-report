@@ -12,15 +12,17 @@ import About from "./pages/About";
 import Reports from "./pages/Reports";
 import Report from "./pages/Report";
 import { createContext, useEffect, useState } from "react";
-import { TErrors, Tconnector, TsiteData } from "./types/types";
+import type { TCONTEXT_Connector, TCONTEXT_ReportData, TreportData, TsiteData } from "./types/types";
 import SnackBar from "./components/SanckBar";
 import { cookieHandler } from "./logic/cookies";
 import { GET_siteInfo } from "./api/api_funcs";
 
 const queryClient = new QueryClient()
 
-// export const ReportContext = createContext<TreportData>()
-export const UserContext = createContext<Tconnector>({connected: false, setConnected:()=>false, siteData: {
+export const ReportContext = createContext<TCONTEXT_ReportData>({reportData: {selectedColumns: [],columnsSettings: [], reportConfig: {}}, setReportData: () => {}})
+export const UserContext = createContext<TCONTEXT_Connector>({
+  connected: false, setConnected:()=>false, 
+  siteData: {
   subdomain: "",
   apikey: "",
   siteFirstName: "",
@@ -46,6 +48,7 @@ export const UserContext = createContext<Tconnector>({connected: false, setConne
 });
 
 function App() {
+  const [reportData, setReportData ] = useState<TreportData>({selectedColumns: [],columnsSettings: [], reportConfig: {}})
   const [siteData, setSiteData ] = useState<TsiteData>({subdomain: "", apikey: "", siteLogoURL: "", siteID: "", siteEmail: "", siteFirstName: "", siteLastName: "", siteBusinessName: "", fromForm: false, fetching: false, sitePhone1: "", sitePhone2: "", siteAddress1: "", siteAddress2: "", siteBn1: "", siteModuleKey: "", siteCountryCode: "", siteCurrencyCode: "", siteCity: "", siteState: "", siteCountry: ""})
 const [connected, setConnected] = useState<boolean>(false)
 const [showSnackBar, setShowSnackBar] = useState<boolean>(false)
@@ -117,6 +120,7 @@ useEffect(()=>{
     <>
 
     <UserContext.Provider value={{connected, setConnected, siteData, setSiteData}}>
+    <ReportContext.Provider value={{reportData, setReportData}}>
         <QueryClientProvider client={queryClient}>
           <Header />
           <BrowserRouter>
@@ -135,6 +139,7 @@ useEffect(()=>{
     <Footer/>
     {/* <div className="absolute top-0 bottom-0 left-0 right-0 inset-0 w-full h-[100vh] overflow-hidden bg-no-repeat pointer-events-none -z-10 lg:block bg-gradient-to-b from-slate-50 to-slate-800 via-slate-500/80" /> */}
     </QueryClientProvider>
+    </ReportContext.Provider>
     </UserContext.Provider>
     </>
   );

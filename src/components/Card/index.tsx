@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import AnimateHeight from "react-animate-height";
-import { SettingsModal } from "../SettingsModal";
+import { ColumnsSettings } from "../ColumnsSettings";
 
 const Card = ({text, idx, bgColor}:{text:string, idx: number, bgColor: string}) => {
  
@@ -20,7 +20,7 @@ const Card = ({text, idx, bgColor}:{text:string, idx: number, bgColor: string}) 
         duration={500}
         height={height}
       >
-        <SettingsModal />
+        <ColumnsSettings id={text} />
       </AnimateHeight>
       </main>
       

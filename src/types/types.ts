@@ -19,7 +19,14 @@ interface TcolumnSettings {
     size: number;
   }
 export type TcolumnsSettings = TcolumnSettings[]
-  
+
+export interface TreportData {
+  reportConfig: TreportConfig;
+  columnsSettings: TcolumnsSettings;
+  selectedColumns: {[key: string]: string}[]
+} 
+
+
 export type Tloading = {
     fetching: boolean;
     building: boolean;
@@ -54,11 +61,15 @@ export interface TsiteData {
    siteCurrencyCode: string;
 }
 
-export interface Tconnector {
+export interface TCONTEXT_Connector {
   connected: boolean;
   setConnected: Dispatch<SetStateAction<boolean>>;
   siteData: TsiteData;
   setSiteData: Dispatch<SetStateAction<TsiteData>>;
+}
+export interface TCONTEXT_ReportData {
+  reportData: TreportData;
+  setReportData: Dispatch<SetStateAction<TreportData>>;
 }
 
 

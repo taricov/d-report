@@ -1,12 +1,14 @@
 import { Switch } from "@mantine/core";
 import { TreportConfig } from "../../types/types";
-import { ChangeEvent, Dispatch, SetStateAction, useEffect, useState } from "react";
+import { ChangeEvent, Dispatch, SetStateAction, useContext, useEffect, useState } from "react";
 import AnimateHeight from "react-animate-height";
+import { ReportContext } from "../../App";
 
 
 
 export const ReportConfig = ({config, setConfig}: {config:TreportConfig, setConfig: Dispatch<SetStateAction<TreportConfig>>}) => {
   
+  const reportInfo = useContext(ReportContext)
 
   // const AppSwitch = ({stateProp, label}:any)=> {
   //   return(
@@ -15,7 +17,7 @@ export const ReportConfig = ({config, setConfig}: {config:TreportConfig, setConf
   // }
 
   useEffect(()=>{
-    console.log(config)
+    reportInfo.setReportData(prev=>({...prev, reportConfig: config}))
   },[config])
 
   const toggleAdvancedFilters = (e:ChangeEvent<HTMLInputElement>) =>{

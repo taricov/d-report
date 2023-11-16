@@ -11,15 +11,16 @@ import {
   DraggableStateSnapshot,
 } from "react-beautiful-dnd";
 import { GET_tablesCols } from "../../api/api_funcs";
-import type { Tloading, TreportVariables, TtableVariables, TErrors } from "../../types/types";
+import type { Tloading, TreportVariables, TtableVariables, TErrors, TcolumnsSettings } from "../../types/types";
 import { Button } from "../Button";
 import CardsList from "../CardsList";
 import Spinner from "../Spinner";
 import Error from "../Error";
 import SnackBar from "../SanckBar";
-import { UserContext } from "../../App";
+import { ReportContext, UserContext } from "../../App";
 import { colors } from "../../data/colors";
 import { table } from "console";
+import { useCreateReportColumns } from "../../hooks/useCreateReportColumns.hooks";
 
 
 const Incorporate = () => {
@@ -197,12 +198,15 @@ const selectJoinTable = (e: ChangeEvent<HTMLInputElement>) => {
     }))
   }
 }
-
+const [headers, setHeaders] = useState<any>()
+const reportInfo = useContext(ReportContext)
+setHeaders(useCreateReportColumns(Object.keys(tablesVariables.selected)))
 useEffect(() => {
       console.log(tablesVariables)
       console.log(reportVariables)
       console.log(selectedTablesRows)
       console.log("joind", joinedTable)
+      reportInfo.setReportData(prev=>({...prev, columnsSettings: headers, selectedColumns: tablesVariables.selected}))
 
 
 },[reportVariables, tablesVariables, selectedTablesRows, joinedTable])
@@ -332,7 +336,6 @@ Now you can start building your report by checking the available variables (colu
                 )}
               </Draggable>
             ))}
-            <Card text={"col_1"} bgColor={"bg-slate-200"} idx={1} />
           </CardsList>
         </div>
 
