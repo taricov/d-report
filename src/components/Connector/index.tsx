@@ -104,20 +104,6 @@ useEffect(() => {
         setFormProps(prev=>({...prev, error: "Please check your Subdomain/API Key. The provided values may be invalid values.", submitting: false}))
       }
 
-    // if (DB_USER.total === 0 && !!userInfo.siteData.id.toString().length){
-    // try{
-    //   console.log("before creating workflow..", userInfo.siteData)
-    //   const creatReportWorkflow = await POSTreportsWorkflow({subdomain: userInfo.siteData.subdomain, apikey: userInfo.siteData.apikey})
-    //   const res = await creatReportWorkflow.json()
-    //   console.log(res)
-    //   if(creatReportWorkflow.status === 200) userInfo.setSiteData(prev=>({...prev, siteModuleKey: res.id}))
-      
-  //   }catch (err) {
-  //     console.log(err)
-  //   }
-  // }else{
-      // userInfo.setSiteData(prev => ({...prev, dreport_module_key: DB_USER.documents[0].dreport_module_key}))
-  // }
   }).then(()=>{
       cookieHandler.setter(userInfo.siteData.subdomain)
       setFormProps(prev=>({...prev, submitting: false}))
@@ -148,19 +134,19 @@ useEffect(() => {
                     <label className="block text-slate-700 font-bold mb-2" htmlFor="subdomain">
             Subdomain
           </label>
-                    <input autoComplete="subdomain" disabled={userInfo.connected && formProps.subdomain.length > 0} className="shadow appearance-none border rounded w-full py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline" id="subdomain" type="text" placeholder="Your Subdomain goes here..." value={formProps.subdomain.toLocaleLowerCase()} onChange={(e:ChangeEvent<HTMLInputElement>)=>setFormProps(prev=>({...prev, subdomain: e.target.value}))}/>
+                    <input autoComplete="subdomain" disabled={userInfo.connected} className="shadow appearance-none border rounded w-full py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline" id="subdomain" type="text" placeholder="Your Subdomain goes here..." value={userInfo.connected ? userInfo.siteData.subdomain : formProps.subdomain.toLocaleLowerCase()} onChange={(e:ChangeEvent<HTMLInputElement>)=>setFormProps(prev=>({...prev, subdomain: e.target.value}))}/>
                 </div>
                 <div className="mb-6">
                     <label className="block text-slate-700 font-bold mb-2" htmlFor="apikey">
             API Key
           </label>
-                    <input autoComplete="current-password" disabled={userInfo.connected && formProps.apikey.length > 0} className="shadow appearance-none border rounded w-full py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline" id="apikey" type="password" placeholder="API Key goes here..." value={formProps.apikey} onChange={(e:ChangeEvent<HTMLInputElement>)=>setFormProps(prev=>({...prev, apikey: e.target.value}))} />
+                    <input autoComplete="current-password" disabled={userInfo.connected} className="shadow appearance-none border rounded w-full py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline" id="apikey" type="password" placeholder="API Key goes here..." value={userInfo.connected ? userInfo.siteData.apikey : formProps.apikey} onChange={(e:ChangeEvent<HTMLInputElement>)=>setFormProps(prev=>({...prev, apikey: e.target.value}))} />
                 </div>
                 <div className="mb-6">
                     <label className="block text-slate-700 font-bold mb-2" htmlFor="workflow-title">
-            Workflow Title
+            {userInfo.connected ? "Workflow ID" : "Workflow Title"}
           </label>
-                    <input autoComplete="name" disabled={userInfo.connected && formProps.workflowTitle.length > 0} className="shadow appearance-none border rounded w-full py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline" id="workflow-title" type="text" placeholder="e.g. D-Report Module" value={formProps.workflowTitle.trim().split(" ").join("_").toLowerCase()} onChange={(e:ChangeEvent<HTMLInputElement>)=>setFormProps(prev=>({...prev, workflowTitle: e.target.value.trim().split(" ").join("_").toLowerCase()}))} />
+                    <input autoComplete="name" disabled={userInfo.connected} className="shadow appearance-none border rounded w-full py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline" id="workflow-title" type="text" placeholder="e.g. D-Report Module" value={userInfo.connected ? userInfo.siteData.dreport_module_key : formProps.workflowTitle.trim().split(" ").join("_").toLowerCase()} onChange={(e:ChangeEvent<HTMLInputElement>)=>setFormProps(prev=>({...prev, workflowTitle: e.target.value.trim().split(" ").join("_").toLowerCase()}))} />
                 </div>
                 <div className="flex gap-2">
                 <Button disabled={userInfo.connected} btnFor="submitting" loading={formProps.submitting}  type="submit" text={userInfo.connected ? "Connected!" : "Connect Now"} color={userInfo.connected ? "bg-emerald-600 hover:bg-emerald-600/90" : "bg-slate-500 hover:bg-slate-500/90"}/>
