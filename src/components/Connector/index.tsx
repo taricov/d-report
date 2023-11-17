@@ -8,16 +8,16 @@ import Error from "../Error";
 
 import NotificationContext from "../Notification/NotificationProvider";
 import { schedule } from "../../helpers/helpers";
+import { useNotify } from "../../hooks/useNotify";
 
 
 export default function Connector({showed}:{showed: boolean}){
 const userInfo = useContext(UserContext)
-const notify = useContext(NotificationContext)
-const [formProps, setFormProps] = useState<TformProps>({loading: false, error: "", disconnecting: false})
 
+const [formProps, setFormProps] = useState<TformProps>({loading: false, error: "", disconnecting: false})
+const { notify } = useNotify()
 useEffect(() => {
-  notify.success({title:"Successfully Connected!", text:"Your are now connected successfully 🎉"})
-  schedule(notify.clear, 3000)
+  notify({title:"Successfully Connected!", body: "Your are now connected successfully 🎉", xx:2000})
 },[])
 
 
