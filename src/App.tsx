@@ -115,7 +115,7 @@ useEffect(()=>{
 
 useEffect(()=>{
 
-if(connected && siteData.submitting && !!siteData.module_key){
+if(connected && siteData.submitting && !!siteData.dreport_module_key){
 
     setShowSnackBar(()=>connected)
     setTimeout(()=>{
