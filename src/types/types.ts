@@ -67,6 +67,10 @@ export interface TsiteData0 {
   currency_code: string;
 }
 
+export const TSNACKBAR_STATES = {
+    SUCCESS: 'success',
+    ERROR: 'error',
+}
 export interface TCONTEXT_Connector {
   connected: boolean;
   setConnected: Dispatch<SetStateAction<boolean>>;

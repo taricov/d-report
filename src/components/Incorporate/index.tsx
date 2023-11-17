@@ -16,7 +16,7 @@ import { Button } from "../Button";
 import CardsList from "../CardsList";
 import Spinner from "../Spinner";
 import Error from "../Error";
-import SnackBar from "../SanckBar";
+import SnackBar from "../Notification";
 import { ReportContext, UserContext } from "../../App";
 import { colors } from "../../data/colors";
 import { table } from "console";
@@ -208,7 +208,7 @@ useEffect(() => {
 },[reportVariables, tablesVariables, data, joinedTable])
   return (
     <>
-    <SnackBar showMe={showSnackBar} body={<><span className="font-medium">Successful Build!</span> Report URL is Copied to Clipbaord!</>}/>
+    {/* <SnackBar showMe={showSnackBar} body={<><span className="font-medium">Successful Build!</span> Report URL is Copied to Clipbaord!</>}/> */}
 <div className="w-[100%] m-auto flex justify-center items-start gap-1">
 <div className="flex flex-col">
   <h2 className="bg-slate-500/30 shadow m-auto rounded-md w-fit px-5 py-3 font-bold text-slate-600">Select 1st Table</h2>

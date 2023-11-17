@@ -5,13 +5,21 @@ import { cookieHandler } from "../../logic/cookies";
 import type { TformProps } from "../../types/types";
 import { Button } from "../Button";
 import Error from "../Error";
-import SnackBar from "../SanckBar";
+
+import NotificationContext from "../Notification/NotificationProvider";
+import { schedule } from "../../helpers/helpers";
 
 
 export default function Connector({showed}:{showed: boolean}){
 const userInfo = useContext(UserContext)
+const notify = useContext(NotificationContext)
 const [formProps, setFormProps] = useState<TformProps>({loading: false, error: "", disconnecting: false})
-  // const [formData, seTsiteData ] = useState<TsiteData>({subdomain: "", apikey: "", siteLogoURL: "", siteID: "", siteEmail: "", siteFirstName: "", siteLastName: "", siteBusinessName: ""})
+
+useEffect(() => {
+  notify.success({title:"Successfully Connected!", text:"Your are now connected successfully 🎉"})
+  schedule(notify.clear, 3000)
+},[])
+
 
   const disconnect = () => { 
     setFormProps(prev=>({...prev, disconnecting: true}))
@@ -25,19 +33,21 @@ const [formProps, setFormProps] = useState<TformProps>({loading: false, error: "
 
       setTimeout(() => {
         userInfo.setSiteData(prev=>({...prev, fromForm: false}))
-        console.log(userInfo.siteData.fromForm)
+        console.log(userInfo.siteData.submitting)
     }, 1000);
     }, 3000);
   }
 
-  const formControl = (e: React.FormEvent) =>{
+  const submitHandler = (e: React.FormEvent) =>{
     e.preventDefault()
     setFormProps(prev=>({...prev, error: "", loading: true}))
     userInfo.setSiteData(prev=>({...prev, fromForm: true}))
 
-    return new Promise<any>(async (resolve, reject) =>{
+    return new Promise<any>(async (resolve, _) =>{
       if(userInfo.siteData.apikey === "" || userInfo.siteData.apikey === "") setFormProps(prev=>({...prev, error: "Please Fill/Check The Subdomain and API Key Values.", loading: false}))
+      // If Empty Values...
       if(userInfo.siteData.subdomain.split(" ").length > 1) setFormProps(prev=>({...prev, error: "Please check your Subdomain. The provided value may be invalid value.", loading: false}))
+      // GET site info. request...
         const res = await GET_siteInfo({...userInfo.siteData})
         resolve(res)
       }).then(async(res) =>{
@@ -73,7 +83,7 @@ try{
   if(creatReportWorkflow.status === 200) userInfo.setSiteData(prev=>({...prev, siteModuleKey: res.id}))
   console.log(res)
 
-    const userCreated = await POSTnewUser({ daftra_site_id: userInfo.siteData.siteID, business_name: userInfo.siteData.siteBusinessName, first_name: userInfo.siteData.siteFirstName, last_name: userInfo.siteData.siteLastName, subdomain: userInfo.siteData.subdomain, address1: userInfo.siteData.siteAddress1, address2: userInfo.siteData.siteAddress2, city: userInfo.siteData.siteCity, state: userInfo.siteData.siteState, phone1: userInfo.siteData.sitePhone1, phone2: userInfo.siteData.sitePhone2, lang: 'en', country_code: userInfo.siteData.siteCountryCode, currency_code: userInfo.siteData.siteCurrencyCode, email: userInfo.siteData.siteEmail, bn1: userInfo.siteData.siteBn1, api_key: userInfo.siteData.apikey, note_module_key: userInfo.siteData.siteModuleKey, prefer_dark: null, site_logo: userInfo.siteData.siteLogoURL})
+    const userCreated = await POSTnewUser({...userInfo.siteData})
       console.log(userCreated)
 }catch (err) {
   console.log(err)
@@ -102,12 +112,7 @@ try{
   }
 
   
-  useEffect(() => {
-    console.log("siteData From App", userInfo.siteData)
-// console.log("from connector", userInfo);
 
-    // userInfo.siteData.siteID !== "" && userInfo.setConnected(true)
-  },[userInfo.siteData])
     return (
         <>
 
@@ -118,7 +123,7 @@ try{
             <p className="text-slate-600 mb-6 capitalize">Conncect your Daftra ERP account </p>
             {formProps.error !== "" && <Error text={formProps.error}/>}
 
-            <form onSubmit={formControl}>
+            <form onSubmit={submitHandler}>
                 <div className="mb-4">
                     <label className="block text-slate-700 font-bold mb-2" htmlFor="subdomain">
             Subdomain
