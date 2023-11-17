@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import AnimateHeight from "react-animate-height";
 import { ColumnsSettings } from "../ColumnsSettings";
 
-const Card = ({text, idx, bgColor}:{text:string, idx: number, bgColor: string}) => {
+const Card = ({text, idx, bgColor}:{text:string, idx: number, bgColor?: string}) => {
  
   const [tableTitle, setTableTitle] = useState<string>(text);
   const [editTableTitle, setEditTableTitle] = useState<boolean>(false);

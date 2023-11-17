@@ -10,33 +10,39 @@ import {
   DraggableProvided,
   DraggableStateSnapshot,
 } from "react-beautiful-dnd";
+import { ReportContext, UserContext } from "../../App";
 import { GET_tablesCols } from "../../api/api_funcs";
-import type { Tloading, TreportVariables, TtableVariables, TErrors, TcolumnsSettings } from "../../types/types";
+import { colors } from "../../data/colors";
+import type { TErrors, Tloading, TreportVariables, TtableVariables } from "../../types/types";
 import { Button } from "../Button";
 import CardsList from "../CardsList";
-import Spinner from "../Spinner";
 import Error from "../Error";
-import SnackBar from "../Notification";
-import { ReportContext, UserContext } from "../../App";
-import { colors } from "../../data/colors";
-import { table } from "console";
-import { useCreateReportColumns } from "../../hooks/useCreateReportColumns.hooks";
+import Spinner from "../Spinner";
 
 
 const Incorporate = () => {
 const reportInfo = useContext(ReportContext)
-  const userStatus = useContext(UserContext)
+const userInfo = useContext(UserContext)
+
   const [loading, setLoading] = useState<Tloading>({fetching: false, building: false})
   const [error, setErrors] = useState<TErrors>({fetching: false, reportTitle: false, building: false})
   const [clipboardValue, setClipboardValue] = useState<string | null>(null)
-  const [showSnackBar, setShowSnackBar] = useState<boolean>(false)
 const [tablesVariables, setTablesVariables] = useState<TtableVariables>({available:[], selected: []})
 const [reportVariables, setReportVariables] = useState<TreportVariables>({joins:{}, report_title: "", from_table: ""})
 const [data, setData] = useState<any>()
 const [joinedTable, setJoinedTable] = useState<any>()
 
 
-const userInfo = useContext(UserContext)
+useEffect(() => {
+  // console.log(tablesVariables)
+  // console.log(reportVariables)
+  // console.log(data)
+  // console.log("joind", joinedTable)
+
+
+},[reportVariables, tablesVariables, data, joinedTable])
+
+
 
 const colorRandomizer = () => {
   return colors[Math.floor(Math.random()*colors.length)]
@@ -83,7 +89,6 @@ const merge2Tables = async (foreignKey: string, table1:any, table2:any) => {
   // console.log("merge2Tables", joinedTable)
 // return table1.map((item:any, i:number) => Object.assign({}, item, table2[i]));
 }
-
 
 // const { colHeaders } = useCreateReportColumns(Object.keys(tablesVariables.selected))
 const buildReport = async (allSelected: any) => {
@@ -132,16 +137,7 @@ const buildReport = async (allSelected: any) => {
 //     console.error('Failed to copy: ', err);
 //   }
 // })
-.then((data)=>{
-  // setClipboardValue(data as string)
-  // console.log("clipboard val: ", clipboardValue)
-  setLoading(prev=>({...prev, building: false}))
-setReportVariables(prev=>({...prev, report_title: ""}))
-  setShowSnackBar(true)
-  setTimeout(()=>{
-    setShowSnackBar(false)
-  },3000)
-})
+
 
 }
 
@@ -183,9 +179,6 @@ setReportVariables(prev=>({...prev, report_title: ""}))
 const selectTable = (e: ChangeEvent<HTMLInputElement>) => {
 setReportVariables((prev:any)=> ({...prev, joins: {}, from_table: e.target.value}))
 }
-
-
-
 const selectJoinTable = (e: ChangeEvent<HTMLInputElement>) => {
   
   if(e.target.checked) {
@@ -198,17 +191,9 @@ const selectJoinTable = (e: ChangeEvent<HTMLInputElement>) => {
     }))
   }
 }
-useEffect(() => {
-      // console.log(tablesVariables)
-      // console.log(reportVariables)
-      // console.log(data)
-      // console.log("joind", joinedTable)
 
-
-},[reportVariables, tablesVariables, data, joinedTable])
   return (
     <>
-    {/* <SnackBar showMe={showSnackBar} body={<><span className="font-medium">Successful Build!</span> Report URL is Copied to Clipbaord!</>}/> */}
 <div className="w-[100%] m-auto flex justify-center items-start gap-1">
 <div className="flex flex-col">
   <h2 className="bg-slate-500/30 shadow m-auto rounded-md w-fit px-5 py-3 font-bold text-slate-600">Select 1st Table</h2>
@@ -233,7 +218,7 @@ useEffect(() => {
 
 <div className="flex flex-col">
 <h2 className="bg-slate-500/30 m-auto shadow rounded-md w-fit px-5 py-3 font-bold text-slate-600">Select Tables To Join</h2>
-<ul className="flex flex-col gap-2 min-w-full overflow-scroll h-[500px] border rounded-md px-3 py-4">
+<ul className="w-[40vw] flex flex-col gap-2 min-w-full overflow-scroll h-[500px] border rounded-md px-3 py-4">
   
     {tables[reportVariables?.from_table]?.rels.map((rel, idx) =>
 <li key={idx} className="flex">
@@ -261,7 +246,7 @@ You selected the&nbsp;<b>{reportVariables.from_table ? reportVariables.from_tabl
 <div className="flex items-center justify-center px-5 text-slate-200 w-fit bg-slate-500 rounded-full">
 Now you can start building your report by checking the available variables (columns)
 </div>
-<Button disabled={!userStatus.connected} color="bg-slate-500 hover:bg-slate-500/90" btnFor="fetching" onClickFunc={()=>GETtablesVariables()} loading={loading.fetching} text="Check Available Columns" />
+<Button disabled={!userInfo.connected} color="bg-slate-500 hover:bg-slate-500/90" btnFor="fetching" onClickFunc={()=>GETtablesVariables()} loading={loading.fetching} text="Check Available Columns" />
 {error.fetching && 
 <Error text={"Please Select A Table to See Avaialable Columns."}/>
 }
@@ -302,7 +287,6 @@ Now you can start building your report by checking the available variables (colu
           <List title="Available Columns" onDragEnd={onDragEnd} name="available">
           {loading.fetching && <Spinner size={"w-20"} />}
               {tablesVariables.available.map((col:any, idx:number) => (
-              // {tablesVariables.available.map((v:any,i:number) =>(
               <Draggable key={col.columnName+"-"+idx} draggableId={col.columnName+ "-"+idx} index={idx}>
                 {(
                   provided: DraggableProvided | any,
@@ -326,12 +310,12 @@ Now you can start building your report by checking the available variables (colu
               <Draggable draggableId={col.columnName+"-"+i} index={i} key={"selected-"+col.columnName}>
                 {(provided, snapshot) => (
                   <div
+                  className="w-[40vw]"
                     ref={provided.innerRef}
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
                   >
                     <Card text={col.columnName} bgColor={col.bgColor} idx={i} />
-                    {/* <Card text={v.name} /> */}
                   </div>
                 )}
               </Draggable>
@@ -349,10 +333,10 @@ Now you can start building your report by checking the available variables (colu
       { error.reportTitle && <Error text={"Please give a title to your report."}/> }
     <input type="text" id="default-input" value={reportVariables.report_title} onChange={(e:ChangeEvent<HTMLInputElement>)=>setReportVariables(prev=>({...prev, report_title: e.target.value}))}  placeholder="Give Your Report a Title" className="transition duration-200 placeholder:text-center bg-slate-100 ring-0 outline-0 shadow border-2 border-slate-300 text-center text-slate-700 font-bold text-sm rounded-lg  focus:border-slate-500/40 block w-full p-2.5"/>
 </div>
-      <Button disabled={!userStatus.connected} color="bg-emerald-600 hover:bg-emerald-600/90" btnFor="building" onClickFunc={()=>buildReport(tablesVariables.selected)} loading={loading.building} text="Build Report" /> 
+      <Button disabled={!userInfo.connected} color="bg-emerald-600 hover:bg-emerald-600/90" btnFor="building" onClickFunc={()=>buildReport(tablesVariables.selected)} loading={loading.building} text="Build Report" /> 
 </>
 }
-      {!!clipboardValue &&  <Button disabled={!userStatus.connected} color="bg-emerald-600 hover:bg-emerald-600/90" btnFor="go-to-reports" onClickFunc={()=>goToReport()} loading={loading.building} text="Go To Reports" /> }
+      {!!clipboardValue &&  <Button disabled={!userInfo.connected} color="bg-emerald-600 hover:bg-emerald-600/90" btnFor="go-to-reports" onClickFunc={()=>goToReport()} loading={loading.building} text="Go To Reports" /> }
       {error.building && <Error text={"Please Select Columns to build the report."}/> }
 
     </>
