@@ -49,12 +49,11 @@ e.stopPropagation()
               <div className="flex shrink-0">
               {userInfo.connected &&
                 <>
-                <img className="w-10" src={userInfo.siteData.site_logo} alt="your site logo" />
+                <img className="w-10" src={`https://`+userInfo.siteData.subdomain+`.daftra.com/files/images/site-logos/`+userInfo.siteData.site_logo} alt="your site logo" />
                 <span className="flex items-center px-2 py-1 text-sm font-medium text-slate-200 border-r border-r-white/60">Welcome, {userInfo.siteData.first_name+ " " + userInfo.siteData.last_name}</span>
                 </>
               }
                   <a aria-current="page" className="flex items-center rounded-lg px-3 py-1 text-sm font-medium text-slate-200 transition-all duration-200 hover:text-slate-50" href="/">
-                      {/* <img className="h-7 w-auto" src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" alt=""/> */}
                       <p className="sr-only">Website Title</p>
                       Home
                   </a>

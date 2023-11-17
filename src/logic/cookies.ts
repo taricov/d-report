@@ -19,9 +19,9 @@ const encrypteData = (data:string) => {
 //   };
 
 export const cookieHandler = {
-setter(siteSubdomain:string, siteAPIKey: string){
+setter(siteSubdomain:string){
     Cookies.set("site_subdomain", encrypteData(siteSubdomain), { expires: 90, secure: true });
-    Cookies.set("site_api_key", encrypteData(siteAPIKey), { expires: 90, secure: true })
+    // Cookies.set("site_api_key", encrypteData(siteAPIKey), { expires: 90, secure: true })
     return "cookie has been set";
 },
 getter(cookieName:string){

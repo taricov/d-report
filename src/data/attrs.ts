@@ -19,6 +19,5 @@ export const accountAttributes = [
   "currency_code",
   "prefer_dark",
   "dreport_module_key",
-  "submitting",
   "fetching",
 ] as const

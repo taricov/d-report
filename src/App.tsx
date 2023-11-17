@@ -8,7 +8,8 @@ import {
 } from 'react-query';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { GetUser } from "./api/api_funcs";
-import SnackBar from "./components/Notification";
+import Notification from "./components/Notification";
+import { NotificationProvider } from "./components/Notification/NotificationProvider";
 import { accountAttributes } from "./data/attrs";
 import { cookieHandler } from "./logic/cookies";
 import About from "./pages/About";
@@ -16,8 +17,6 @@ import Home from "./pages/Home";
 import Report from "./pages/Report";
 import Reports from "./pages/Reports";
 import type { TCONTEXT_Connector, TCONTEXT_ReportData, TreportData, TsiteData } from "./types/types";
-import { NotificationProvider } from "./components/Notification/NotificationProvider"
-import Notification from "./components/Notification";
 
 const queryClient = new QueryClient()
 
@@ -44,41 +43,24 @@ useEffect(()=>{
   checkCookie()
 },[]);
 
-// const [showSnackBar, setShowSnackBar] = useState<boolean>(false)
-// const [showSnackBarDisconnected, setShowSnackBarDisconnected] = useState<boolean>(false)
-// const [showSnackBarInternetConnection, setShowSnackBarInternetConnection] = useState<boolean>(false)
-// const [showSnackBarWorkflow, setShowSnackBarWorkflow] = useState<boolean>(false)
-
-// const [, setErrors] = useState<{[key:string]: boolean}>({internetConnection: false})
 
 const checkCookie = async() => {
   setSiteData(prev=>({...prev, fetching: true}));
   const sub = cookieHandler.getter("site_subdomain") || ""
-  const api = cookieHandler.getter("site_api_key") || ""
-setSiteData(prev => ({...prev, apikey: api, subdomain: sub}))
-if(sub.length < 1 || api.length < 1){
+setSiteData(prev => ({...prev, subdomain: sub}))
+if(sub.length < 1){
   setSiteData(prev=>({...prev, fetching: false}));
   setConnected(false);
-console.log("Fds")
 return;
 }
 if(!navigator.onLine){
   setSiteData(prev=>({...prev, fetching: false}));
-  // setErrors(prev=>({...prev, internetConnection: true}));
-  // setTimeout(()=>{
-    // setShowSnackBarInternetConnection(true)
-  // },1000)
-    // setTimeout(()=>{
-    //   setShowSnackBarInternetConnection(false)
-    // },3000)
   return;
 }
 
 const user: any = await GetUser('subdomain', siteData.subdomain)
 console.log('existing user: ', user)
 if(!user){
-  // const data = await res.json()
-  // const siteInfo = data.data.Site
   setConnected(false);
   setSiteData(prev=>({...prev, fetching: false}));
   return
@@ -108,9 +90,6 @@ if(user){
   setConnected(true);
   
 }
-// const res = await GET_siteInfo({subdomain: sub, apikey: api})
-// if(res.status !== 200) {
-  // return;};
 
 }
 
@@ -164,10 +143,7 @@ if(user){
 
 </BrowserRouter>
 <Notification />
-    {/* <SnackBar showMe={showSnackBar} body={<><span className="font-medium">Connected!</span> You are now connected successfully!</>}/>
-    <SnackBar color="!border-red-400 !text-red-800 !bg-red-100" showMe={showSnackBarDisconnected} body={<><span className="font-medium">Disconnected! ☹️</span> You have disconnected the service!</>}/>
-    <SnackBar color="!border-red-400 !text-red-800 !bg-red-100" showMe={showSnackBarInternetConnection} body={<><span className="font-medium">Check Your Internet!</span>You are NOT Connected to the internet!</>}/>
-    <SnackBar color="!border-green-400 !text-green-800 !bg-green-100" showMe={showSnackBarWorkflow} body={<><span className="font-medium">Sucess!</span>A Workflow has been created 👉 "D-Report App" 👈</>}/> */}
+
     <Footer/>
     {/* <div className="absolute top-0 bottom-0 left-0 right-0 inset-0 w-full h-[100vh] overflow-hidden bg-no-repeat pointer-events-none -z-10 lg:block bg-gradient-to-b from-slate-50 to-slate-800 via-slate-500/80" /> */}
     </QueryClientProvider>

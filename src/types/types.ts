@@ -34,38 +34,19 @@ export type Tloading = {
 }
 
 export interface TformProps {
-  loading: boolean;
+  submitting: boolean;
   disconnecting: boolean;
   error: string;
+  subdomain: string;
+  apikey: string;
+  workflowTitle: string;
 }
 
 
 type Td = typeof accountAttributes[number]
-export type TsiteData = {[K in Td]: K extends "fetching" | "submitting" ? boolean :  string}
+export type TsiteData = {[K in Td]: K extends "fetching" | "submitting" ? boolean : K extends "id" | "language_code" ? number :  string}
 
-export interface TsiteData0 {
-  subdomain: string;
-  apikey: string;
-  first_name: string;
-  last_name: string;
-  business_name: string;
-  id: string;
-  email: string;
-  logo_url: string;
-  submitting: boolean;
-  fetching: boolean;
-  phone1: string
-  phone2: string
-  address1: string
-  address2: string
-  bn1: string
-  module_key: string
-  city: string
-  state: string
-  country_code: string
-  country: string;
-  currency_code: string;
-}
+
 
 export const TSNACKBAR_STATES = {
     SUCCESS: 'success',
