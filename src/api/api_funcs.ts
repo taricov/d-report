@@ -1,4 +1,4 @@
-import { TDaftraWorkflow, TsiteData, TtableCol } from "../types/types";
+import { TDaftraWorkflow, TreportObj, TsiteData, TtableCol } from "../types/types";
 import { Client, Databases, ID, Query } from 'appwrite'
 
 
@@ -28,7 +28,7 @@ export async function GET_SITEINFO({subdomain, apikey}:Pick<TsiteData, "subdomai
 return req
 }
 
-export const POSTreportsWorkflow = async ({ subdomain, apikey, workflowTitle }: Pick<TsiteData, "subdomain" | "apikey"> & {workflowTitle: string}): Promise<Response> => {
+export const POSTcreateReportModule = async ({ subdomain, apikey, workflowTitle }: Pick<TsiteData, "subdomain" | "apikey"> & {workflowTitle: string}): Promise<Response> => {
 
 
   var myHeaders = new Headers();
@@ -51,6 +51,24 @@ export const POSTreportsWorkflow = async ({ subdomain, apikey, workflowTitle }: 
   const res = await fetch(`https://${subdomain}.daftra.com/v2/api/entity/workflow_type`, requestOptions)
   return res
   
+    }
+
+
+    export const POSTcreateRerport = async ({ subdomain, apikey, reportModuleKey}: Pick<TsiteData, "subdomain" | "apikey"> & {reportModuleKey: number}, data: TreportObj): Promise<Response> => {
+      // console.log(userSub, noteModuleKey, apikey)
+    
+      const res: Response = await fetch(`https://${subdomain}.daftra.com/v2/api/entity/${reportModuleKey}`, {
+        method: 'POST',
+        // mode: 'no-cors',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': apikey,
+        },
+        body: JSON.stringify(data),
+      })
+      // if (res.ok)
+      // return 'Note has been created successfully!'
+      return res
     }
     
 

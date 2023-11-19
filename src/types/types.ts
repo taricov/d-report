@@ -91,6 +91,15 @@ export type Ttable = {
 
     }
 }
+
+export interface TreportObj {
+  number: { code: string; generated: string }
+  title: string
+  start_date: string
+  description: string
+  staff_id: string
+}
+
 export interface TtableCol {
     subdomain: string;
     apikey: string;

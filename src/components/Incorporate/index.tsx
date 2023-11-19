@@ -11,7 +11,7 @@ import {
   DraggableStateSnapshot,
 } from "react-beautiful-dnd";
 import { ReportContext, UserContext } from "../../App";
-import { GET_tablesCols } from "../../api/api_funcs";
+import { GET_tablesCols, POSTcreateRerport } from "../../api/api_funcs";
 import { colors } from "../../data/colors";
 import type { TErrors, Tloading, TreportVariables, TtableVariables } from "../../types/types";
 import { Button } from "../Button";
@@ -123,9 +123,11 @@ const buildReport = async (allSelected: any) => {
         requiredTables.map(async(table:any, i:number)=>{
         const res: Response = await GET_tablesCols({subdomain: userInfo.siteData.subdomain, apikey: userInfo.siteData.apikey, table, limit:1000})
         const dataJSON = await res.json();
+        console.log("json:", dataJSON)
         tablesData[table] = dataJSON.data
       })).then(() => {
         setData(tablesData)
+        console.log("data", data)
         const merged = merge2Tables(foreignKey, Object.entries(data)[0][1], Object.entries(data)[1][1])
 
       })
@@ -137,7 +139,7 @@ const buildReport = async (allSelected: any) => {
 //     console.error('Failed to copy: ', err);
 //   }
 // })
-
+// POSTcreateRerport({ subdomain, apikey, reportModuleKey},data)
 
 }
 
@@ -248,7 +250,7 @@ Now you can start building your report by checking the available variables (colu
 </div>
 <Button disabled={!userInfo.connected} color="bg-slate-500 hover:bg-slate-500/90" btnFor="fetching" onClickFunc={()=>GETtablesVariables()} loading={loading.fetching} text="Check Available Columns" />
 {error.fetching && 
-<Error text={"Please Select A Table to See Avaialable Columns."}/>
+<Error text={"Please select a table to see the avaialable columns."}/>
 }
 </div>
 
@@ -256,7 +258,7 @@ Now you can start building your report by checking the available variables (colu
 <div className="flex gap-3 py-2 mx-auto w-10/12 items-center justify-center rounded-md">
   {tablesVariables.available.filter((col1, i) => tablesVariables.available.findIndex((col2) => col1.tableName === col2.tableName) === i).reverse().map(col =>(
 
-    <div className="flex items-center gap-1">
+    <div key={col.tableName} className="flex items-center gap-1">
     <span className={`${col.bgColor} w-4 h-4 rounded shadow`}></span>
     <span className="capitalize">{col.tableName.split("_").join(" ")}</span>
     </div>

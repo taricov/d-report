@@ -9,15 +9,20 @@ export const ColumnsSettings = ({id}:{id:string}) => {
   
   useEffect(() => {
   
-reportInfo.setReportData(prev=>({...prev, columnsSettings: [...prev.columnsSettings, ...prev.columnsSettings.map(t=>{
+reportInfo.setReportData(prev=>({
+  ...prev, 
+  columnsSettings: [...prev.columnsSettings, 
+    ...prev.columnsSettings.map(t=>{
   if(t.accessorKey === id){
+    console.log("true:", t)
     return {...t, [t.filterVariant]: filterMode}
   } else{
+    console.log("false:", t)
     return {...t}
   } 
 })]
 }))
-console.log("fromColumnsSettings", reportInfo)
+console.log("fromColumnsSettings", reportInfo.reportData)
 
   },[filterMode])
 

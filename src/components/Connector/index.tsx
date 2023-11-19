@@ -1,6 +1,6 @@
 import { ChangeEvent, useContext, useEffect, useState } from "react";
 import { UserContext } from "../../App";
-import { GET_SITEINFO, GetUser, POSTnewUser, POSTreportsWorkflow } from "../../api/api_funcs";
+import { GET_SITEINFO, GetUser, POSTcreateReportModule, POSTnewUser } from "../../api/api_funcs";
 import { cookieHandler } from "../../logic/cookies";
 import type { TformProps } from "../../types/types";
 import { Button } from "../Button";
@@ -73,7 +73,7 @@ useEffect(() => {
       if (DB_USER.total === 0){
         
         // POST new report workflow...
-        const creatReportWorkflow = await POSTreportsWorkflow({...formProps})
+        const creatReportWorkflow = await POSTcreateReportModule({...formProps})
         const WORKFLOW_RES = await creatReportWorkflow.json()
         console.log(WORKFLOW_RES)
         if(creatReportWorkflow.status === 200) {
