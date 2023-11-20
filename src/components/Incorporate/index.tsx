@@ -25,7 +25,7 @@ const reportInfo = useContext(ReportContext)
 const userInfo = useContext(UserContext)
 
   const [loading, setLoading] = useState<Tloading>({fetching: false, building: false})
-  const [error, setErrors] = useState<TErrors>({fetching: false, reportTitle: false, building: false})
+  const [error, setErrors] = useState<TErrors>({fetching: false, reportTitle: false, building: false, creatingReport: false})
   const [clipboardValue, setClipboardValue] = useState<string | null>(null)
 const [tablesVariables, setTablesVariables] = useState<TtableVariables>({available:[], selected: []})
 const [data, setData] = useState<any>()
@@ -92,13 +92,12 @@ const merge2Tables = async (foreignKey: string, table1:any, table2:any) => {
 // return table1.map((item:any, i:number) => Object.assign({}, item, table2[i]));
 }
 
-const buildReport = async (allSelected: any) => {
+const buildReport = async () => {
   
 
   console.log(reportInfo.reportData)
 
-
-  setErrors(({fetching: false, building: false, reportTitle: false})); 
+  setErrors(prev=>({...prev, fetching: false, building: false, reportTitle: false})); 
   setLoading(prev=>({...prev, building: true}))
   if(tablesVariables.selected.length < 1) {
     setErrors(prev=>({...prev, building: true}))
@@ -112,26 +111,35 @@ const buildReport = async (allSelected: any) => {
 }
   let tablesData: any = {}
   const baseURL = "http://localhost:8080/reports/"
-  const reportID = "2"
-  const requiredTables: any[] = [...new Set(allSelected.map((selected: any) => selected.tableName))]
-  const foreignKey = tables[requiredTables[0] as string]["foreign_key"]
-        
+  const reportID = "2" // comes from the index of the reports in module
+  const requiredTables: string[] = [reportInfo.reportData.fromTable, ...Object.keys(reportInfo.reportData.joins)] 
+  const foreignKey = reportInfo.reportData.foreignKey
       //build the report
   
-      // const requiredTables = [...new Map(allSelected.map((selected:any)=>[selected["tableName"], selected])).values()];
       return await Promise.all(
         requiredTables.map(async(table:any, i:number)=>{
         const res: Response = await GET_tablesCols({subdomain: userInfo.siteData.subdomain, apikey: userInfo.siteData.apikey, table, limit:1000})
         const dataJSON = await res.json();
         console.log("json:", dataJSON)
         tablesData[table] = dataJSON.data
-      })).then(() => {
         setData(tablesData)
+      })).then(() => {
         console.log("data", data)
-        const merged = merge2Tables(foreignKey, Object.entries(data)[0][1], Object.entries(data)[1][1])
+        // const merged = merge2Tables(foreignKey, Object.entries(data)[0][1], Object.entries(data)[1][1])
+
+      }).then(async() => {
+        const reportRES = await POSTcreateRerport({subdomain: userInfo.siteData.subdomain, apikey: userInfo.siteData.apikey, title: reportInfo.reportData.reportTitle , reportModuleKey: +userInfo.siteData.dreport_module_key, data: JSON.stringify(reportInfo.reportData)})
+        console.log("report", reportRES)
+        if(!reportRES.ok){
+          setErrors(prev=>({...prev, creatingReport: true})); 
+          setLoading(prev=>({...prev, building: false}))
+        }
+        const result = await reportRES.json()
+        console.log("result", result)
 
       })
 
+      
 
       // await navigator.clipboard.writeText(baseURL + reportID)
       // resolve(baseURL + reportID)
@@ -139,7 +147,7 @@ const buildReport = async (allSelected: any) => {
 //     console.error('Failed to copy: ', err);
 //   }
 // })
-// POSTcreateRerport({ subdomain, apikey, reportModuleKey},data)
+
 
 }
 
@@ -179,7 +187,7 @@ const buildReport = async (allSelected: any) => {
     reportInfo.setReportData(prev=>({...prev, selectedColumns: listCopy.selected}))
   };
 const selectTable = (e: ChangeEvent<HTMLInputElement>) => {
-  reportInfo.setReportData(prev=> ({...prev, joins: {}, fromTable: e.target.value}))
+  reportInfo.setReportData(prev=> ({...prev, joins: {}, fromTable: e.target.value, foreignKey: tables[e.target.value].foreign_key }))
 }
 const selectJoinTable = (e: ChangeEvent<HTMLInputElement>) => {
   console.log()
@@ -336,11 +344,12 @@ Now you can start building your report by checking the available variables (colu
       { error.reportTitle && <Error text={"Please give a title to your report."}/> }
     <input type="text" id="default-input" value={reportInfo.reportData.reportTitle} onChange={(e:ChangeEvent<HTMLInputElement>)=>reportInfo.setReportData(prev=>({...prev, reportTitle: e.target.value}))}  placeholder="Give Your Report a Title" className="transition duration-200 placeholder:text-center bg-slate-100 ring-0 outline-0 shadow border-2 border-slate-300 text-center text-slate-700 font-bold text-sm rounded-lg  focus:border-slate-500/40 block w-full p-2.5"/>
 </div>
-      <Button disabled={!userInfo.connected} color="bg-emerald-600 hover:bg-emerald-600/90" btnFor="building" onClickFunc={()=>buildReport(tablesVariables.selected)} loading={loading.building} text="Build Report" /> 
+      <Button disabled={!userInfo.connected} color="bg-emerald-600 hover:bg-emerald-600/90" btnFor="building" onClickFunc={()=>buildReport()} loading={loading.building} text="Build Report" /> 
 </>
 }
       {!!clipboardValue &&  <Button disabled={!userInfo.connected} color="bg-emerald-600 hover:bg-emerald-600/90" btnFor="go-to-reports" onClickFunc={()=>goToReport()} loading={loading.building} text="Go To Reports" /> }
       {error.building && <Error text={"Please Select Columns to build the report."}/> }
+      {error.creatingReport && <Error text={"Something wrong happened while building your report."}/> }
 
     </>
   );

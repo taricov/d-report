@@ -69,6 +69,7 @@ export type TErrors = {
     fetching: boolean;
     reportTitle: boolean;
     building: boolean;
+    creatingReport: boolean;
 }
   export interface TtableVariables {
     available: {[key: string]: string}[];
@@ -78,6 +79,7 @@ export type TErrors = {
     joins: {[key: string]: string};
     reportTitle: string;
     fromTable: string
+    foreignKey: string
   }
 
 export type Ttable = {
@@ -97,7 +99,7 @@ export interface TreportObj {
   number: { code: string; generated: string }
   title: string
   start_date: string
-  description: string
+  description: TreportData & TreportVariables
   staff_id: string
 }
 

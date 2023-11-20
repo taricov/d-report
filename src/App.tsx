@@ -23,7 +23,7 @@ const queryClient = new QueryClient()
 
 
 
-export const ReportContext = createContext<TCONTEXT_ReportData>({reportData: {selectedColumns: [],columnsSettings: [], reportConfig: {}, joins: {} , reportTitle: "", fromTable: ""}, setReportData: () => {}})
+export const ReportContext = createContext<TCONTEXT_ReportData>({reportData: {selectedColumns: [],columnsSettings: [], reportConfig: {}, joins: {} , reportTitle: "", fromTable: "", foreignKey: ""}, setReportData: () => {}})
 
 export const UserContext = createContext<TCONTEXT_Connector>({
   connected: false, 
@@ -35,7 +35,7 @@ export const UserContext = createContext<TCONTEXT_Connector>({
 
 function App() {
 
-  const [reportData, setReportData ] = useState<TreportData & TreportVariables>({selectedColumns: [],columnsSettings: [], reportConfig: {}, joins:{}, reportTitle: "", fromTable: ""})
+  const [reportData, setReportData ] = useState<TreportData & TreportVariables>({selectedColumns: [],columnsSettings: [], reportConfig: {}, joins:{}, reportTitle: "", fromTable: "", foreignKey: ""})
   const [siteData, setSiteData ] = useState<TsiteData>(accountAttributes.reduce((acc,curr)=>({...acc, [curr]: ["fetching", "submitting"].includes(curr) ? false : ""}),{} as TsiteData))
 const [connected, setConnected] = useState<boolean>(false)
 const { notifyError } = useNotify()
