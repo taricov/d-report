@@ -7,10 +7,12 @@ import { Button } from "../Button";
 import Error from "../Error";
 
 import { useNotify } from "../../hooks/useNotify";
+import { Checkbox } from "@mantine/core";
 
 
 export default function Connector({showed}:{showed: boolean}){
 const userInfo = useContext(UserContext)
+const [firstTimeToConnect, setFirstTimeToConnect] = useState<boolean>(false)
 const [formProps, setFormProps] = useState<TformProps>({submitting: false, error: "", disconnecting: false, apikey: "", subdomain: "", workflowTitle: ""})
 const { notifyError, notifySuccess } = useNotify()
 
@@ -143,10 +145,11 @@ useEffect(() => {
                     <input autoComplete="current-password" disabled={userInfo.connected} className="shadow appearance-none border rounded w-full py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline" id="apikey" type="password" placeholder="API Key goes here..." value={userInfo.connected ? userInfo.siteData.apikey : formProps.apikey} onChange={(e:ChangeEvent<HTMLInputElement>)=>setFormProps(prev=>({...prev, apikey: e.target.value}))} />
                 </div>
                 <div className="mb-6">
+          {!userInfo.connected && <Checkbox className=""  classNames={{root:"my-5",label:"px-2", input:"checked:bg-slate-700 border-0"}} checked={firstTimeToConnect} onChange={(event) => setFirstTimeToConnect(event.currentTarget.checked)} label="First time to connect?"/>}
                     <label className="block text-slate-700 font-bold mb-2" htmlFor="workflow-title">
             {userInfo.connected ? "Workflow ID" : "Workflow Title"}
           </label>
-                    <input autoComplete="name" disabled={userInfo.connected} className="shadow appearance-none border rounded w-full py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline" id="workflow-title" type="text" placeholder="e.g. D-Report Module" value={userInfo.connected ? userInfo.siteData.dreport_module_key : formProps.workflowTitle.trim().split(" ").join("_").toLowerCase()} onChange={(e:ChangeEvent<HTMLInputElement>)=>setFormProps(prev=>({...prev, workflowTitle: e.target.value.trim().split(" ").join("_").toLowerCase()}))} />
+                    <input autoComplete="name" disabled={userInfo.connected || !firstTimeToConnect} className="shadow appearance-none border rounded w-full py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline" id="workflow-title" type="text" placeholder="e.g. D-Report Module" value={userInfo.connected ? userInfo.siteData.dreport_module_key : formProps.workflowTitle.trim().split(" ").join("_").toLowerCase()} onChange={(e:ChangeEvent<HTMLInputElement>)=>setFormProps(prev=>({...prev, workflowTitle: e.target.value.trim().split(" ").join("_").toLowerCase()}))} />
                 </div>
                 <div className="flex gap-2">
                 <Button disabled={userInfo.connected} btnFor="submitting" loading={formProps.submitting}  type="submit" text={userInfo.connected ? "Connected!" : "Connect Now"} color={userInfo.connected ? "bg-emerald-600 hover:bg-emerald-600/90" : "bg-slate-500 hover:bg-slate-500/90"}/>
