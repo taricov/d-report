@@ -11,18 +11,18 @@ const Card = ({text, idx, bgColor}:{text:string, idx: number, bgColor?: string})
   const reportInfo = useContext(ReportContext)
 
   useEffect(() => {
-    console.log("title", tableTitle);
     if(tableTitle.length < 1) setEditTableTitle(true)
   },[tableTitle])
 
-  const changeTableTitle = (e:ChangeEvent<HTMLInputElement>) =>{
+  const changeTableTitle = (e:any) =>{
     setTableTitle(e.target.value)
+    // console.log("title" + e.target.value)
     reportInfo.setReportData(prev =>(
-      {...prev, columnsSettings: [...prev.columnsSettings.map(column => 
-          column.header === text 
+      {...prev, columnsSettings: [...prev.columnsSettings.map(column =>
+          column.accessorKey === text
           ? {...column, header: e.target.value} 
           : {...column}
-          )]}
+      )]}
       ))
 
   }
