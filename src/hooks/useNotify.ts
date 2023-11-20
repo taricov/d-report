@@ -8,11 +8,11 @@ export const useNotify = () => {
     return {
         notifySuccess: ({title, body, xx}:{title: string, body: string, xx:number}) =>{
         notificationCtx.success({title, body})
-        schedule(notificationCtx.clear, xx)
+        schedule(notificationCtx.clear, xx+1000)
     },
     notifyError: ({title, body, xx}:{title: string, body: string, xx:number}) =>{
     notificationCtx.error({title, body})
-    schedule(notificationCtx.clear, xx)
+    schedule(notificationCtx.clear, xx+1000)
 }
 }
     // return notify;

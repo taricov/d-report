@@ -19,12 +19,12 @@ const List = ({ children, title, onDragEnd, name }: ListProps) => {
     <>
 {/* <SettingsModal /> */}
     <div className="flex flex-col w-6/12 relative"> 
-      <h2 className="relative text-xl mx-auto font-bold shadow-md w-fit text-slate-100 rounded-md px-5 py-4 bg-slate-600">{title}</h2>
+      <h2 className="relative text-xl mx-auto font-bold shadow-md w-fit text-slate-100 rounded-md px-5 py-4 text-center bg-slate-600">{title}</h2>
 
-      <div className="">
+      <div className="flex-1">
         <Droppable droppableId={name}>
           {(provided: DroppableProvided, snapshot: DroppableStateSnapshot) => (
-            <div ref={provided.innerRef} className="h-screen">
+            <div ref={provided.innerRef} className="h-full">
               <div className="shadow p-5 items-center overflow-scroll rounded-md h-full bg-slate-300/40 flex flex-col gap-y-1">
                 {children}
                 {provided.placeholder}

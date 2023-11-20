@@ -205,7 +205,7 @@ const selectJoinTable = (e: ChangeEvent<HTMLInputElement>) => {
 
   return (
     <>
-<div className="w-[100%] m-auto flex justify-center items-start gap-1">
+<div className="lg:w-[100%] w-11/12 m-auto flex justify-center items-start gap-1">
 <div className="flex flex-col">
   <h2 className="bg-slate-500/30 shadow m-auto rounded-md w-fit px-5 py-3 font-bold text-slate-600">Select 1st Table</h2>
 <ul className="flex flex-col gap-2 w-full overflow-scroll h-[500px] border rounded-md px-3 py-4">
@@ -251,10 +251,10 @@ const selectJoinTable = (e: ChangeEvent<HTMLInputElement>) => {
 
 
 <div className="mt-9 py-4 bg-slate-200/60 w-10/12 flex flex-col items-center justify-center rounded-md">
-<div className="w-full flex items-center justify-center rounded-md">
+<div className="block text-center w-full lg:flex items-center justify-center rounded-md">
 You selected the&nbsp;<b>{reportInfo.reportData.fromTable ? reportInfo.reportData.fromTable.split("_").join(" ").toUpperCase() : "..."}</b>&nbsp;table in joint with the&nbsp;<b>{!!Object.keys(reportInfo.reportData.joins).length ? Object.keys(reportInfo.reportData.joins).map(j=>j.split("_").join(" ").toUpperCase()).map((t,i,arr)=> arr[i+1] ? t : " and " + t).join(", "): "..."}</b>&nbsp;
 </div>
-<div className="flex items-center justify-center px-5 text-slate-200 w-fit bg-slate-500 rounded-full">
+<div className="flex items-center text-center justify-center px-5 text-slate-200 w-fit bg-slate-500 rounded-full">
 Now you can start building your report by checking the available variables (columns)
 </div>
 <Button disabled={!userInfo.connected} color="bg-slate-500 hover:bg-slate-500/90" btnFor="fetching" onClickFunc={()=>GETtablesVariables()} loading={loading.fetching} text="Check Available Columns" />
@@ -276,7 +276,7 @@ Now you can start building your report by checking the available variables (colu
 ))
     }
       </div>
-  <span className="block text-sm text-center px-6"><sup className="mx-1">1</sup><b>color:</b> the available variables are color labeled as below so you can pick a variable that belongs to the desired table easily.</span>
+  <span className="hidden lg:block text-sm text-center px-6"><sup className="mx-1">1</sup><b>Colors:</b> the available variables are color labeled as below so you can pick a variable that belongs to the desired table easily.</span>
  
   <span className="block text-sm text-center px-6"><sup className="mx-1">2</sup><b>Relation Direction:</b> please note that the relations in the selected section is going from top to bottom. 
   <span className="block text-xs text-center px-6">(e.g. if you arranged the invoice ID column before the client ID that means the report will display clients regarding the invoices and not the other way around.)</span>
@@ -294,7 +294,7 @@ Now you can start building your report by checking the available variables (colu
       </div>
 
       <DragDropContext onDragEnd={onDragEnd}>
-        <div className="flex row w-full pb-8 pt-4 gap-x-4">
+        <div className="flex row w-11/12 mx-auto pb-8 pt-4 gap-x-4">
           <List title="Available Columns" onDragEnd={onDragEnd} name="available">
           {loading.fetching && <Spinner size={"w-20"} />}
               {tablesVariables.available.map((col:any, idx:number) => (

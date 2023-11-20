@@ -31,7 +31,7 @@ useEffect(() => {
     
     // Disconnecting...
     setTimeout(() => {
-      setFormProps(prev=>({...prev, disconnecting: false}))
+      setFormProps(prev=>({...prev, disconnecting: false, apikey: "", subdomain: "", workflowTitle: ""}))
       userInfo.setConnected(false)
       notifyError({title:"Disconnected! ☹️", body: "You have disconnected the service! ", xx:3000})
     }, 3000);
@@ -40,8 +40,17 @@ useEffect(() => {
 
   const submitHandler = (e: React.FormEvent) =>{
     e.preventDefault()
+    // userInfo.setSiteData(prev=>({...prev, apikey: formProps.apikey, subdomain: formProps.subdomain}))
     setFormProps(prev=>({...prev, error: "", submitting: true}))
 
+
+    if(!navigator.onLine){
+      notifyError({title:"Network is Out!", body: "Please check your internet connection!", xx:1000})
+      userInfo.setConnected(false)
+      setFormProps(prev=>({...prev, error: "", submitting: false}))
+      
+      return;
+    }
 
     return new Promise<any>(async (resolve, reject) =>{
       // If Empty Values...
@@ -60,7 +69,7 @@ useEffect(() => {
         // GET site info. request...
         const res = await GET_SITEINFO({...formProps})
         if(res.status === 401){
-          setFormProps(prev=>({...prev, error: "Please check your API. The provided value may be invalid value.", submitting: false}))
+          setFormProps(prev=>({...prev, error: "Please check your API Key. The provided value may be invalid value.", submitting: false}))
           return;
         }
         const data = await res.json() 
@@ -70,7 +79,7 @@ useEffect(() => {
       }))
       
       // GET user from DB...
-      const DB_USER: any = await GetUser('subdomain', userInfo.siteData.subdomain)
+      const DB_USER: any = await GetUser('subdomain', formProps.subdomain)
       console.log('existing user: ', DB_USER.documents)
       if (DB_USER.total === 0){
         
@@ -78,27 +87,33 @@ useEffect(() => {
         const creatReportWorkflow = await POSTcreateReportModule({...formProps})
         const WORKFLOW_RES = await creatReportWorkflow.json()
         console.log(WORKFLOW_RES)
-        if(creatReportWorkflow.status === 200) {
+        if(WORKFLOW_RES.id) {
           userInfo.setSiteData(prev=>({...prev, dreport_module_key: WORKFLOW_RES.id}))
-        }
-          if(WORKFLOW_RES.errors.name[0] === "هذا الحقل موجود من قبل"){
+          userInfo.setConnected(true)
+          setFormProps(prev=>({...prev, error: "", submitting: false}))
+
+          notifySuccess({title:"Connected!", body: 'You are now connected successfully!', xx:3000})
+          setTimeout(() => {
+            notifySuccess({title:"Success!", body: 'A Workflow has been created 👉 "D-Report App" 👈', xx:3000})
+          }, 3000);
+        } else if(WORKFLOW_RES.errors.name[0] === "هذا الحقل موجود من قبل"){
           setFormProps(prev=>({...prev, error: "Please change the selected Title. the input value may be already in use.", submitting: false}))
         }
         
         // POST new USER in DB...
-        const userCreated = await POSTnewUser({...userInfo.siteData, id: +userInfo.siteData.id})
+        const userCreated = await POSTnewUser({...userInfo.siteData, id: +userInfo.siteData.id, language_code: +userInfo.siteData.language_code})
         console.log(userCreated)
+        // if(userCreated) notifySuccess({title:"Connected!", body: 'You are now connected successfully!', xx:3000})
         
       }else{
         userInfo.setSiteData(prev => ({...prev, dreport_module_key: DB_USER.documents[0].dreport_module_key}))
-        console.log(userInfo.siteData, ";p")
         setFormProps(prev=>({...prev, error: "", submitting: false}))
-        userInfo.setConnected(true)
-      cookieHandler.setter(userInfo.siteData.subdomain)
-        notifySuccess({title:"Connected!", body: 'You are now connected successfully!', xx:3000})
-        setTimeout(() => {
-          notifySuccess({title:"Success!", body: 'A Workflow has been created 👉 "D-Report App" 👈', xx:3000})
-        }, 3000);
+      cookieHandler.setter(formProps.subdomain)
+      userInfo.setConnected(true)
+        notifySuccess({title:"Welcome Back!", body: 'You are connected successfully!', xx:3000})
+        // setTimeout(() => {
+        //   notifySuccess({title:"Success!", body: 'A Workflow has been created 👉 "D-Report App" 👈', xx:3000})
+        // }, 2000);
         }
         
       }catch(err){  

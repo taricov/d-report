@@ -49,7 +49,9 @@ e.stopPropagation()
               <div className="flex shrink-0">
               {userInfo.connected &&
                 <>
+                <div className="rounded-full flex items-center justify-center bg-slate-200/20">
                 <img className="w-10" src={`https://`+userInfo.siteData.subdomain+`.daftra.com/files/images/site-logos/`+userInfo.siteData.site_logo} alt="your site logo" />
+                </div>
                 <span className="flex items-center px-2 py-1 text-sm font-medium text-slate-200 border-r border-r-white/60">Welcome, {userInfo.siteData.first_name+ " " + userInfo.siteData.last_name}</span>
                 </>
               }

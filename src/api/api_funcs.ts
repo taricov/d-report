@@ -37,9 +37,11 @@ export const POSTcreateReportModule = async ({ subdomain, apikey, workflowTitle 
   myHeaders.append("apikey", apikey);
   
   const data: TDaftraWorkflow = {
-    name: workflowTitle,
+    name: workflowTitle+" ❌Don't Edit❌",
     status: 1,
-    singular_title: workflowTitle,
+    singular_title: "Report",
+    // singular_title: workflowTitle,
+    
   }
   
   var requestOptions = {

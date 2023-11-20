@@ -2,14 +2,17 @@ import { ChangeEvent, useContext, useEffect, useState } from "react";
 import AnimateHeight from "react-animate-height";
 import { ColumnsSettings } from "../ColumnsSettings";
 import { ReportContext } from "../../App";
+import { Checkbox } from "@mantine/core";
 
 const Card = ({text, idx, bgColor}:{text:string, idx: number, bgColor?: string}) => {
  
   const [tableTitle, setTableTitle] = useState<string>(text);
+  const [countable, setCountable] = useState<boolean>(false);
   const [editTableTitle, setEditTableTitle] = useState<boolean>(false);
   const [height, setHeight] = useState<string | number | any>(0);
   const reportInfo = useContext(ReportContext)
 
+  // useEffect(() => {
   useEffect(() => {
     if(tableTitle.length < 1) setEditTableTitle(true)
   },[tableTitle])
@@ -60,6 +63,7 @@ const Card = ({text, idx, bgColor}:{text:string, idx: number, bgColor?: string})
         duration={500}
         height={height}
       >
+        <Checkbox className="" classNames={{root:"my-1 opacity-50",label:"px-2 text-slate-900", input:"!border-slate-500 checked:bg-slate-700 border-2 bg-transparent disabled:bg-transparent"}} disabled={true} checked={countable} onChange={(event) => setCountable(event.currentTarget.checked)} label="Countable?"/>
         <ColumnsSettings id={text} />
       </AnimateHeight>
       </main>
