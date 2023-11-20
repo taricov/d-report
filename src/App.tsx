@@ -16,14 +16,14 @@ import About from "./pages/About";
 import Home from "./pages/Home";
 import Report from "./pages/Report";
 import Reports from "./pages/Reports";
-import type { TCONTEXT_Connector, TCONTEXT_ReportData, TreportData, TsiteData } from "./types/types";
+import type { TCONTEXT_Connector, TCONTEXT_ReportData, TreportData, TreportVariables, TsiteData } from "./types/types";
 import { useNotify } from "./hooks/useNotify";
 
 const queryClient = new QueryClient()
 
 
 
-export const ReportContext = createContext<TCONTEXT_ReportData>({reportData: {selectedColumns: [],columnsSettings: [], reportConfig: {}}, setReportData: () => {}})
+export const ReportContext = createContext<TCONTEXT_ReportData>({reportData: {selectedColumns: [],columnsSettings: [], reportConfig: {}, joins: {} , reportTitle: "", fromTable: ""}, setReportData: () => {}})
 
 export const UserContext = createContext<TCONTEXT_Connector>({
   connected: false, 
@@ -34,8 +34,8 @@ export const UserContext = createContext<TCONTEXT_Connector>({
 
 
 function App() {
-  const [reportData, setReportData ] = useState<TreportData>({selectedColumns: [],columnsSettings: [], reportConfig: {}})
-  
+
+  const [reportData, setReportData ] = useState<TreportData & TreportVariables>({selectedColumns: [],columnsSettings: [], reportConfig: {}, joins:{}, reportTitle: "", fromTable: ""})
   const [siteData, setSiteData ] = useState<TsiteData>(accountAttributes.reduce((acc,curr)=>({...acc, [curr]: ["fetching", "submitting"].includes(curr) ? false : ""}),{} as TsiteData))
 const [connected, setConnected] = useState<boolean>(false)
 const { notifyError } = useNotify()

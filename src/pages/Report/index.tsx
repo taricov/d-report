@@ -1,27 +1,25 @@
 /* eslint-disable react/jsx-pascal-case */
-import { useEffect, useMemo, useState } from 'react';
-import { useParams } from "react-router-dom";
-import { mkConfig, generateCsv, download } from 'export-to-csv'; //or use your library of choice here
+import { Button, Flex } from '@mantine/core';
+import { IconDownload } from '@tabler/icons-react';
+import { download, generateCsv, mkConfig } from 'export-to-csv'; //or use your library of choice here
 import { jsPDF } from 'jspdf'; //or use your library of choice here
 import autoTable from 'jspdf-autotable';
 import {
-  MantineReactTable,
-  useMantineReactTable,
-  type MRT_ColumnDef,
   MRT_GlobalFilterTextInput,
-  MRT_ToggleFiltersButton,
   MRT_ShowHideColumnsButton,
   MRT_ToggleDensePaddingButton,
-  MRT_TableHeadCellResizeHandle,
+  MRT_ToggleFiltersButton,
   MRT_ToggleFullScreenButton,
+  MantineReactTable,
+  useMantineReactTable,
+  type MRT_ColumnDef
 } from 'mantine-react-table';
-import { Box, Button, Flex, Menu, Text, Title } from '@mantine/core';
-import { IconUserCircle, IconSend, IconDownload } from '@tabler/icons-react';
-import { data } from './makeDate';
-import {ReportConfig } from '../../components/ReportConfig';
-import { TreportConfig } from '../../types/types';
+import { useEffect, useMemo, useState } from 'react';
+import { useParams } from "react-router-dom";
+import { ReportConfig } from '../../components/ReportConfig';
 import { localStorageHandler } from '../../logic/localStorageHandler';
-import { useCreateReportColumns } from '../../hooks/useCreateReportColumns.hooks';
+import { TreportConfig } from '../../types/types';
+import { data } from './makeDate';
 
 export type Employee = {
   firstName: string;
@@ -46,9 +44,6 @@ const Report = () => {
     columnSorting: true,
   })
   
-  const headers = ["invoice_id", "amount", "currency", "price", "work_order_id", "table"]
-  const x = useCreateReportColumns(headers)
-    console.log("xxxxxxxx", x)
   const {id} = useParams();
 
   const columns = useMemo<MRT_ColumnDef<any>[]>(

@@ -1,17 +1,31 @@
-import { useEffect, useState } from "react";
+import { ChangeEvent, useContext, useEffect, useState } from "react";
 import AnimateHeight from "react-animate-height";
 import { ColumnsSettings } from "../ColumnsSettings";
+import { ReportContext } from "../../App";
 
 const Card = ({text, idx, bgColor}:{text:string, idx: number, bgColor?: string}) => {
  
   const [tableTitle, setTableTitle] = useState<string>(text);
   const [editTableTitle, setEditTableTitle] = useState<boolean>(false);
   const [height, setHeight] = useState<string | number | any>(0);
+  const reportInfo = useContext(ReportContext)
 
   useEffect(() => {
     console.log("title", tableTitle);
     if(tableTitle.length < 1) setEditTableTitle(true)
   },[tableTitle])
+
+  const changeTableTitle = (e:ChangeEvent<HTMLInputElement>) =>{
+    setTableTitle(e.target.value)
+    reportInfo.setReportData(prev =>(
+      {...prev, columnsSettings: [...prev.columnsSettings.map(column => 
+          column.header === text 
+          ? {...column, header: e.target.value} 
+          : {...column}
+          )]}
+      ))
+
+  }
   return (
     <div className="relative shadow-lg flex w-full cursor-pointer">
       <button onClick={()=>setHeight(()=> height === 0 ? "auto" : 0 )} className="absolute top-0 right-0 transform translate-y-0 translate-x-0 transiton hover:bg-slate-400/20 hover:shadow duration-200 fill-slate-700 rounded-md rounded-tl-none rounded-br-none px-[6px] py-[3px]">
@@ -27,7 +41,7 @@ const Card = ({text, idx, bgColor}:{text:string, idx: number, bgColor?: string})
             className="rounded-md block bg-slate-100/20 underline text-center outline-0 border-0 mx-auto"
             type="text"
             value={tableTitle}
-            onChange={(e)=>setTableTitle(e.target.value)}
+            onChange={changeTableTitle}
             onBlur={()=>setEditTableTitle(tableTitle.length < 1 ? true : false)}
             onKeyDown={(e:React.KeyboardEvent)=>setEditTableTitle(()=>{
             if(tableTitle.length < 1) return true;

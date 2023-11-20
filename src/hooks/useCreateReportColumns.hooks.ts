@@ -1,10 +1,10 @@
-import { MRT_ColumnDef } from "mantine-react-table"
+import { MRT_ColumnDef } from "mantine-react-table";
 import { useMemo, useState } from "react";
 
 
 export const useCreateReportColumns = (headers:any) => {
 const [colHeaders, setColHeaders] = useState<any>()
-  const cols = useMemo<MRT_ColumnDef<any>[]>(
+  const cols = useMemo<MRT_ColumnDef<{accessorKey: string, header: string, size: number, filterVariant: string}>[]>(
     () => headers.map((header:string) => ({ 
       accessorKey: header,
       header: header

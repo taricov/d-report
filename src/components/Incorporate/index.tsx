@@ -28,19 +28,21 @@ const userInfo = useContext(UserContext)
   const [error, setErrors] = useState<TErrors>({fetching: false, reportTitle: false, building: false})
   const [clipboardValue, setClipboardValue] = useState<string | null>(null)
 const [tablesVariables, setTablesVariables] = useState<TtableVariables>({available:[], selected: []})
-const [reportVariables, setReportVariables] = useState<TreportVariables>({joins:{}, report_title: "", from_table: ""})
 const [data, setData] = useState<any>()
 const [joinedTable, setJoinedTable] = useState<any>()
 
 
 useEffect(() => {
-  // console.log(tablesVariables)
+  console.log(tablesVariables)
   // console.log(reportVariables)
   // console.log(data)
   // console.log("joind", joinedTable)
+  // reportInfo.setReportData(prev=>({...prev,
+  // selectedColumns: [...tablesVariables.selected]
+  // }))
+  console.log(reportInfo.reportData)
 
-
-},[reportVariables, tablesVariables, data, joinedTable])
+},[reportInfo.reportData, tablesVariables, data, joinedTable])
 
 
 
@@ -55,7 +57,7 @@ const GETtablesVariables = async () => {
   setLoading((prev:Tloading) => ({...prev, fetching: true}))
 
 
-  const tables: string[]= [reportVariables.from_table, ...Object.keys(reportVariables.joins)]
+  const tables: string[]= [reportInfo.reportData.fromTable, ...Object.keys(reportInfo.reportData.joins)]
 
   return await Promise.all(tables.map(async(table) =>{
     const res = await GET_tablesCols({subdomain: userInfo.siteData.subdomain, apikey: userInfo.siteData.apikey, table})
@@ -90,10 +92,8 @@ const merge2Tables = async (foreignKey: string, table1:any, table2:any) => {
 // return table1.map((item:any, i:number) => Object.assign({}, item, table2[i]));
 }
 
-// const { colHeaders } = useCreateReportColumns(Object.keys(tablesVariables.selected))
 const buildReport = async (allSelected: any) => {
   
-  // reportInfo.setReportData(prev=>({...prev, columnsSettings: colHeaders, selectedColumns: tablesVariables.selected}))
 
   console.log(reportInfo.reportData)
 
@@ -105,7 +105,7 @@ const buildReport = async (allSelected: any) => {
     setLoading(prev=>({...prev, building: false}))
     return;
   }
-  if(!reportVariables.report_title.length) {
+  if(!reportInfo.reportData.reportTitle.length) {
     setErrors(prev=>({...prev, reportTitle: true})); 
     setLoading(prev=>({...prev, building: false}))
     return;
@@ -176,19 +176,20 @@ const buildReport = async (allSelected: any) => {
       removedElement
     );
     setTablesVariables(listCopy);
-
+    reportInfo.setReportData(prev=>({...prev, selectedColumns: listCopy.selected}))
   };
 const selectTable = (e: ChangeEvent<HTMLInputElement>) => {
-setReportVariables((prev:any)=> ({...prev, joins: {}, from_table: e.target.value}))
+  reportInfo.setReportData(prev=> ({...prev, joins: {}, fromTable: e.target.value}))
 }
 const selectJoinTable = (e: ChangeEvent<HTMLInputElement>) => {
+  console.log()
   
   if(e.target.checked) {
-  setReportVariables((prev:TreportVariables)=> ({...prev, joins: {...prev.joins, [e.target.value]: "left"}})) }
+    reportInfo.setReportData(prev=> ({...prev, joins: {...prev.joins, [e.target.value]: "left"}})) }
   else{ 
     // const {[e.target.value], ...rest} = reportVariables.joins
-    delete reportVariables.joins[e.target.value]
-    setReportVariables((prev:TreportVariables)=> ({...prev, joins:reportVariables.joins
+    delete reportInfo.reportData.joins[e.target.value]
+    reportInfo.setReportData((prev)=> ({...prev, joins:reportInfo.reportData.joins
       // {...prev.joins.filter((j:string)=> j !== e.target.value)}
     }))
   }
@@ -209,7 +210,7 @@ const selectJoinTable = (e: ChangeEvent<HTMLInputElement>) => {
                 <div className="w-full text-sm">{table[1].description}</div>
 
             </div>
-                {reportVariables.from_table === table[0] && <svg xmlns="http://www.w3.org/2000/svg" width="24" viewBox="0 0 24 24"><path fill="currentColor" d="m9 20.42l-6.21-6.21l2.83-2.83L9 14.77l9.88-9.89l2.83 2.83L9 20.42Z"/></svg>
+                {reportInfo.reportData.fromTable === table[0] && <svg xmlns="http://www.w3.org/2000/svg" width="24" viewBox="0 0 24 24"><path fill="currentColor" d="m9 20.42l-6.21-6.21l2.83-2.83L9 14.77l9.88-9.89l2.83 2.83L9 20.42Z"/></svg>
 }
         </label>
     </li>
@@ -222,13 +223,13 @@ const selectJoinTable = (e: ChangeEvent<HTMLInputElement>) => {
 <h2 className="bg-slate-500/30 m-auto shadow rounded-md w-fit px-5 py-3 font-bold text-slate-600">Select Tables To Join</h2>
 <ul className="w-[40vw] flex flex-col gap-2 min-w-full overflow-scroll h-[500px] border rounded-md px-3 py-4">
   
-    {tables[reportVariables?.from_table]?.rels.map((rel, idx) =>
+    {tables[reportInfo.reportData?.fromTable]?.rels.map((rel, idx) =>
 <li key={idx} className="flex">
-        <input type="checkbox" data-foreignkey={rel.foreign_key} checked={Object.keys(reportVariables.joins).includes(rel.table)} id={rel.table} value={rel.table} onChange={selectJoinTable} className="hidden peer" />
+        <input type="checkbox" data-foreignkey={rel.foreign_key} checked={Object.keys(reportInfo.reportData.joins).includes(rel.table)} id={rel.table} value={rel.table} onChange={selectJoinTable} className="hidden peer" />
         <label htmlFor={rel.table} className="inline-flex items-center justify-between w-full p-5 text-gray-500 bg-white border-2 border-gray-200 rounded-lg cursor-pointer dark:hover:text-gray-300 dark:border-gray-700 peer-checked:bg-slate-600 peer-checked:text-slate-200 hover:text-gray-600 dark:peer-checked:text-gray-300hover:bg-gray-50 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700">                           
             <div className="block">
                 <div className="w-full text-lg font-semibold capitalize">{rel.table.split("_").join(" ")}</div>
-                <div className="w-full text-xs">Join the <b>{reportVariables.from_table.split("_").join(" ").toUpperCase()}</b> table with the <b>{rel.table.split("_").join(" ").toUpperCase()}</b> table.</div>
+                <div className="w-full text-xs">Join the <b>{reportInfo.reportData.fromTable.split("_").join(" ").toUpperCase()}</b> table with the <b>{rel.table.split("_").join(" ").toUpperCase()}</b> table.</div>
 
             </div>
             </label>
@@ -243,7 +244,7 @@ const selectJoinTable = (e: ChangeEvent<HTMLInputElement>) => {
 
 <div className="mt-9 py-4 bg-slate-200/60 w-10/12 flex flex-col items-center justify-center rounded-md">
 <div className="w-full flex items-center justify-center rounded-md">
-You selected the&nbsp;<b>{reportVariables.from_table ? reportVariables.from_table.split("_").join(" ").toUpperCase() : "..."}</b>&nbsp;table in joint with the&nbsp;<b>{!!Object.keys(reportVariables.joins).length ? Object.keys(reportVariables.joins).map(j=>j.split("_").join(" ").toUpperCase()).map((t,i,arr)=> arr[i+1] ? t : " and " + t).join(", "): "..."}</b>&nbsp;
+You selected the&nbsp;<b>{reportInfo.reportData.fromTable ? reportInfo.reportData.fromTable.split("_").join(" ").toUpperCase() : "..."}</b>&nbsp;table in joint with the&nbsp;<b>{!!Object.keys(reportInfo.reportData.joins).length ? Object.keys(reportInfo.reportData.joins).map(j=>j.split("_").join(" ").toUpperCase()).map((t,i,arr)=> arr[i+1] ? t : " and " + t).join(", "): "..."}</b>&nbsp;
 </div>
 <div className="flex items-center justify-center px-5 text-slate-200 w-fit bg-slate-500 rounded-full">
 Now you can start building your report by checking the available variables (columns)
@@ -333,7 +334,7 @@ Now you can start building your report by checking the available variables (colu
   <svg width="100" viewBox="0 0 24 24" className="transform rotate-90 self-center fill-slate-600"><path  d="M4 15V9h8V4.16L19.84 12L12 19.84V15H4Z"/></svg>
 
       { error.reportTitle && <Error text={"Please give a title to your report."}/> }
-    <input type="text" id="default-input" value={reportVariables.report_title} onChange={(e:ChangeEvent<HTMLInputElement>)=>setReportVariables(prev=>({...prev, report_title: e.target.value}))}  placeholder="Give Your Report a Title" className="transition duration-200 placeholder:text-center bg-slate-100 ring-0 outline-0 shadow border-2 border-slate-300 text-center text-slate-700 font-bold text-sm rounded-lg  focus:border-slate-500/40 block w-full p-2.5"/>
+    <input type="text" id="default-input" value={reportInfo.reportData.reportTitle} onChange={(e:ChangeEvent<HTMLInputElement>)=>reportInfo.setReportData(prev=>({...prev, reportTitle: e.target.value}))}  placeholder="Give Your Report a Title" className="transition duration-200 placeholder:text-center bg-slate-100 ring-0 outline-0 shadow border-2 border-slate-300 text-center text-slate-700 font-bold text-sm rounded-lg  focus:border-slate-500/40 block w-full p-2.5"/>
 </div>
       <Button disabled={!userInfo.connected} color="bg-emerald-600 hover:bg-emerald-600/90" btnFor="building" onClickFunc={()=>buildReport(tablesVariables.selected)} loading={loading.building} text="Build Report" /> 
 </>

@@ -1,37 +1,60 @@
 import { CheckIcon, Group, Radio } from '@mantine/core';
-import { useContext, useEffect, useState } from 'react';
+import { ChangeEvent, useContext, useEffect, useState } from 'react';
 import { ReportContext } from '../../App';
 
 export const ColumnsSettings = ({id}:{id:string}) => {
 
   const reportInfo = useContext(ReportContext)
   const [filterMode, setFilterMode] = useState<string>("text");
-  
+
   useEffect(() => {
   
-reportInfo.setReportData(prev=>({
-  ...prev, 
-  columnsSettings: [...prev.columnsSettings, 
-    ...prev.columnsSettings.map(t=>{
-  if(t.accessorKey === id){
-    console.log("true:", t)
-    return {...t, [t.filterVariant]: filterMode}
-  } else{
-    console.log("false:", t)
-    return {...t}
-  } 
-})]
-}))
-console.log("fromColumnsSettings", reportInfo.reportData)
 
-  },[filterMode])
+    reportInfo.setReportData(prev=>({...prev, columnsSettings: [...reportInfo.reportData.selectedColumns.map(c=> c.columnName).map((header:string) => ({ 
+      accessorKey: header,
+      header: header
+      .split("_")
+      .map((word) => word.charAt(0).toUpperCase() + word.substring(1))
+      .join(" "),
+      filterVariant: "text",
+      size: 200}))]}))
+  
+
+  },[]);
+    // useEffect(() => {
+
+// reportInfo.setReportData(prev=>({
+//   ...prev, 
+//   columnsSettings: [...prev.columnsSettings, 
+//     {...reportInfo.reportData.selectedColumns.map(t=>{
+//       console.log("true:", t.columnName)
+//   if(t.accessorKey === t.columnName){
+//     return {...t, filterVariant: filterMode}
+//   } else{
+//     return {...t}
+//   } 
+// })}]
+// }))
+// console.log("fromColumnsSettings", reportInfo.reportData)
+// console.log(filterMode)
+
+//   },[filterMode])
+
+
+  const changeColumnsSettings:any = (e:any) =>{
+    
+    reportInfo.setReportData(prev=>({...prev, columnsSettings: [...prev.columnsSettings.map(s => s.accessorKey === id ? {...s, filterMode: e} : {...s})]}))
+    
+    setFilterMode(e)
+
+  }
 
     return (
 
         <>
         <Radio.Group
         value={filterMode}
-        onChange={setFilterMode}
+        onChange={changeColumnsSettings}
       name={id}
       label="Select Filter Mode:"
       description="How you will be able to filter on the column."

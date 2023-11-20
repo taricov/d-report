@@ -24,7 +24,8 @@ export type TcolumnsSettings = TcolumnSettings[]
 export interface TreportData {
   reportConfig: TreportConfig;
   columnsSettings: TcolumnsSettings;
-  selectedColumns: {[key: string]: string}[]
+  // selectedColumns: {[key: string]: string}[]
+  selectedColumns: {columnName: string, bgColor: string, tableName: string}[]
 } 
 
 
@@ -59,8 +60,8 @@ export interface TCONTEXT_Connector {
   setSiteData: Dispatch<SetStateAction<TsiteData>>;
 }
 export interface TCONTEXT_ReportData {
-  reportData: TreportData;
-  setReportData: Dispatch<SetStateAction<TreportData>>;
+  reportData: TreportData & TreportVariables;
+  setReportData: Dispatch<SetStateAction<TreportData & TreportVariables>>;
 }
 
 
@@ -75,8 +76,8 @@ export type TErrors = {
 }
   export interface TreportVariables {
     joins: {[key: string]: string};
-    report_title: string;
-    from_table: string
+    reportTitle: string;
+    fromTable: string
   }
 
 export type Ttable = {
