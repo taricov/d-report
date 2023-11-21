@@ -11,25 +11,30 @@ import {
   DraggableStateSnapshot,
 } from "react-beautiful-dnd";
 import { ReportContext, UserContext } from "../../App";
-import { GET_tablesCols, POSTcreateRerport } from "../../api/api_funcs";
+import { GET_tablesCols, GETallReports, POSTcreateRerport } from "../../api/api_funcs";
 import { colors } from "../../data/colors";
 import type { TErrors, Tloading, TreportVariables, TtableVariables } from "../../types/types";
 import { Button } from "../Button";
 import CardsList from "../CardsList";
 import Error from "../Error";
 import Spinner from "../Spinner";
+import { useNotify } from "../../hooks/useNotify";
+import { merge2Tables } from "../../helpers/helpers";
 
 
 const Incorporate = () => {
 const reportInfo = useContext(ReportContext)
 const userInfo = useContext(UserContext)
 
+const [newReportMetadata, setReportMetadata] = useState<{reportID: string, reportURL: string}>({reportID: "", reportURL: ""})
   const [loading, setLoading] = useState<Tloading>({fetching: false, building: false})
   const [error, setErrors] = useState<TErrors>({fetching: false, reportTitle: false, building: false, creatingReport: false})
   const [clipboardValue, setClipboardValue] = useState<string | null>(null)
 const [tablesVariables, setTablesVariables] = useState<TtableVariables>({available:[], selected: []})
 const [data, setData] = useState<any>()
 const [joinedTable, setJoinedTable] = useState<any>()
+const { notifyError, notifySuccess } = useNotify()
+
 
 
 useEffect(() => {
@@ -81,16 +86,16 @@ const GETtablesVariables = async () => {
 
   }
 
+
   const goToReport = async () => {
-    window.open("/reports")
+    window.open(newReportMetadata.reportURL)
     setClipboardValue(null)
 }
 
-const merge2Tables = async (foreignKey: string, table1:any, table2:any) => {
-  setJoinedTable(()=>table1.map((row1:any) => ({...row1, ...table2.find((row2:any)=> row2[foreignKey] === row1.id)})))
-  // console.log("merge2Tables", joinedTable)
-// return table1.map((item:any, i:number) => Object.assign({}, item, table2[i]));
-}
+
+
+
+
 
 const buildReport = async () => {
   
@@ -110,8 +115,7 @@ const buildReport = async () => {
     return;
 }
   let tablesData: any = {}
-  const baseURL = "http://localhost:8080/reports/"
-  const reportID = "2" // comes from the index of the reports in module
+  // eslint-disable-next-line no-restricted-globals
   const requiredTables: string[] = [reportInfo.reportData.fromTable, ...Object.keys(reportInfo.reportData.joins)] 
   const foreignKey = reportInfo.reportData.foreignKey
       //build the report
@@ -123,6 +127,10 @@ const buildReport = async () => {
         console.log("json:", dataJSON)
         tablesData[table] = dataJSON.data
       })).then(() => {
+        // const rez = merge2Tables(tablesData[Object.keys(tablesData)[0]], tablesData[Object.keys(tablesData)[1]], "ii_", "p_", foreignKey);
+        const rez = merge2Tables(tablesData[Object.keys(tablesData)[0]], tablesData[Object.keys(tablesData)[1]], "ii_", "p_", foreignKey, "id");
+// console.log(rez);
+        console.log(rez);
         setData(tablesData)
         console.log("data", data)
         // const merged = merge2Tables(foreignKey, Object.entries(data)[0][1], Object.entries(data)[1][1])
@@ -136,13 +144,25 @@ const buildReport = async () => {
         }
         const result = await reportRES.json()
         console.log("result", result)
+        // GETallReports(userInfo.siteData.subdomain, userInfo.siteData.apikey, userInfo.siteData.dreport_module_key).then(res=>res.json()).then(async(data) =>{
+        //   // eslint-disable-next-line no-restricted-globals
+        //   const baseURL = location.href+"reports/"
+        //   const id = JSON.stringify(data.data.length)
+        //   setReportMetadata(()=>({reportURL: baseURL+id, reportID: id}))
+        //   await navigator.clipboard.writeText(newReportMetadata.reportURL)
+        //   setErrors(prev=>({...prev, creatingReport: false})); 
+        //   setLoading(prev=>({...prev, building: false}))
+        //   setClipboardValue(()=> baseURL+id)
+        //   notifySuccess({title:"Successful Build!", body: "Report URL was copied to your clipboard!", xx:3000})
+        // })
+
+        
 
       })
 
       
 
-      // await navigator.clipboard.writeText(baseURL + reportID)
-      // resolve(baseURL + reportID)
+     
 //   .catch (err) {
 //     console.error('Failed to copy: ', err);
 //   }
@@ -294,7 +314,8 @@ Now you can start building your report by checking the available variables (colu
       </div>
 
       <DragDropContext onDragEnd={onDragEnd}>
-        <div className="flex row w-11/12 mx-auto pb-8 pt-4 gap-x-4">
+        <div className="relative flex row w-11/12 mx-auto pb-8 pt-4 gap-x-4">
+            <div className="absolute top-[55px] left-[160px] text-xs italic text-slate-200 block">{tablesVariables.available.length} Columns available</div>
           <List title="Available Columns" onDragEnd={onDragEnd} name="available">
           {loading.fetching && <Spinner size={"w-20"} />}
               {tablesVariables.available.map((col:any, idx:number) => (

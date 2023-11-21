@@ -61,7 +61,8 @@ export const POSTcreateReportModule = async ({ subdomain, apikey, workflowTitle 
 
       const today = new Date();
       const formatedToday = today.toISOString().split("T")[0].split("-").join("/")
-console.log(formatedToday)
+      const formatedToday2 = today.toISOString().split("T")[0]
+console.log(formatedToday, formatedToday2)
 
       var myHeaders = new Headers();
       myHeaders.append("Accept", "application/json");
@@ -71,7 +72,7 @@ console.log(formatedToday)
   const d = {
         number: { code: "1", generated: "1" },
         title: title,
-        start_date: formatedToday,
+        start_date: formatedToday2,
         description: data,
         budget: {
           currency: "USD"
