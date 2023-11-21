@@ -1,11 +1,29 @@
 import { Link } from "react-router-dom";
 import { UserContext } from "../../App";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import Spinner from "../../components/Spinner";
+import { GETallReports } from "../../api/api_funcs";
+
+// interface TreportMetaData {
+// [key: string]: string;
+// }
 
 const Reports = () => {
   const userInfo = useContext(UserContext)
-
+  const [allReports, setReports] = useState<Array<any>>([])
+  useEffect(() => {
+    
+    if(userInfo.siteData.subdomain.length && userInfo.siteData.apikey.length && userInfo.siteData.dreport_module_key){
+  console.log(userInfo.siteData)
+  GETallReports(userInfo.siteData.subdomain, userInfo.siteData.apikey, userInfo.siteData.dreport_module_key).then((res:Response) => {
+       return res.json()
+  }).then(data=>{
+    setReports(data.data)
+  })
+    
+  }
+  }, [userInfo.siteData.subdomain, userInfo.siteData.dreport_module_key, userInfo.siteData.apikey])
+  
 
     return (
       <div className="min-h-screen py-8 px-4 mt-20">
@@ -22,14 +40,14 @@ Your Reports
 </h5>
 <p className="text-sm font-normal text-center text-gray-500 dark:text-gray-400">This list contains all the reports you created.</p>
 <ul className="my-4 space-y-3">
-  {Array(10).join().split(",").map((report,i) =>(
+  {allReports.reverse().map((report,i) =>(
     
-    <li>
+    <li key={i+1}>
 <Link to={"/reports/"+ (i+1)} className="transition duration-200 flex items-center p-3 text-base font-bold text-slate-700 rounded-lg bg-slate-300 hover:bg-slate-600 hover:text-slate-100 group hover:shadow dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-white">
 
-<span className="px-2 py-1 bg-slate-400/80 rounded-md mr-1 text-sm whitespace-nowrap">{i+1}</span>
-<span className="flex-1 ms-3 whitespace-nowrap">Report: How Many I sold in a certain month?</span>
-<span className="inline-flex items-center justify-center px-2 py-0.5 ms-3 text-xs font-medium text-gray-500 bg-gray-200 rounded dark:bg-gray-700 dark:text-gray-400">Created at: {"21/11/2023"}</span>
+<span className="px-3 py-1 bg-slate-400/80 rounded-md mr-1 text-sm whitespace-nowrap">{i+1}</span>
+<span className="flex-1 ms-3 whitespace-nowrap">Report: {report.title}</span>
+<span className="inline-flex items-center justify-center px-2 py-0.5 ms-3 text-xs font-medium text-gray-500 bg-gray-200 rounded dark:bg-gray-700 dark:text-gray-400">Created at: {report.workflow_type.created.split(" ")[0].split("-").join("/")}</span>
 
 </Link>
 </li>

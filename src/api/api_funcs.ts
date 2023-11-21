@@ -91,6 +91,22 @@ console.log(formatedToday)
       return res
     }
     
+    
+    export const GETallReports = async (subdomain: string, apikey: string, reportModuleKey: string):Promise<Response> => {
+
+      var myHeaders = new Headers();
+      myHeaders.append("Accept", "application/json");
+      myHeaders.append("Content-Type", "application/json");
+      myHeaders.append("apikey", apikey);
+
+      var requestOptions = {
+        method: 'GET',
+        headers: myHeaders,
+      };
+      // console.log(subdomain, apikey, reportModuleKey);
+      const res: Response = await fetch(`https://${subdomain}.daftra.com/v2/api/entity/le_workflow-type-entity-${reportModuleKey}/list/1`, requestOptions)
+      return res
+    }
 
 
     // Appwrite DB 
