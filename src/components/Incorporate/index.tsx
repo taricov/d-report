@@ -122,8 +122,8 @@ const buildReport = async () => {
         const dataJSON = await res.json();
         console.log("json:", dataJSON)
         tablesData[table] = dataJSON.data
-        setData(tablesData)
       })).then(() => {
+        setData(tablesData)
         console.log("data", data)
         // const merged = merge2Tables(foreignKey, Object.entries(data)[0][1], Object.entries(data)[1][1])
 
@@ -298,7 +298,7 @@ Now you can start building your report by checking the available variables (colu
           <List title="Available Columns" onDragEnd={onDragEnd} name="available">
           {loading.fetching && <Spinner size={"w-20"} />}
               {tablesVariables.available.map((col:any, idx:number) => (
-              <Draggable key={col.columnName+"-"+idx} draggableId={col.columnName+ "-"+idx} index={idx}>
+              <Draggable key={"available-"+col.tableName+"-"+col.columnName} draggableId={col.columnName+ "-"+idx} index={idx}>
                 {(
                   provided: DraggableProvided | any,
                   snapshot: DraggableStateSnapshot
@@ -318,7 +318,7 @@ Now you can start building your report by checking the available variables (colu
           </List>
           <CardsList title="Selected Columns" onDragEnd={onDragEnd} name="selected">
           {tablesVariables.selected.map((col, i) => (
-              <Draggable draggableId={col.columnName+"-"+i} index={i} key={"selected-"+col.columnName}>
+              <Draggable draggableId={col.columnName+"-"+i} index={i} key={"selected-"+col.tableName+"-"+col.columnName}>
                 {(provided, snapshot) => (
                   <div
                   className="w-[40vw]"

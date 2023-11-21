@@ -21,32 +21,12 @@ export const ColumnsSettings = ({id}:{id:string}) => {
   
 
   },[]);
-    // useEffect(() => {
-
-// reportInfo.setReportData(prev=>({
-//   ...prev, 
-//   columnsSettings: [...prev.columnsSettings, 
-//     {...reportInfo.reportData.selectedColumns.map(t=>{
-//       console.log("true:", t.columnName)
-//   if(t.accessorKey === t.columnName){
-//     return {...t, filterVariant: filterMode}
-//   } else{
-//     return {...t}
-//   } 
-// })}]
-// }))
-// console.log("fromColumnsSettings", reportInfo.reportData)
-// console.log(filterMode)
-
-//   },[filterMode])
-
 
   const changeColumnsSettings:any = (e:any) =>{
-    
-    reportInfo.setReportData(prev=>({...prev, columnsSettings: [...prev.columnsSettings.map(s => s.accessorKey === id ? {...s, filterMode: e} : {...s})]}))
-    
     setFilterMode(e)
-
+    
+    reportInfo.setReportData(prev=>({...prev, columnsSettings: [...prev.columnsSettings.map(s => s.accessorKey === id ? {...s, filterVariant: e} : {...s})]}))
+    
   }
 
     return (

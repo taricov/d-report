@@ -19,6 +19,25 @@ export const tables: Ttable = {
                 {table: "requisition", foreign_key: "requisition_id"},
             ]
         },
+    invoice_item:{
+        description: "This table contains all Invoice Items.", 
+        from_table: "invoice_item", 
+        model_name:"Invoice", 
+        alias: "ii", 
+        primary_key: "id",
+        foreign_key: "product_id",
+        rels:
+            [
+                {table: "product", foreign_key: "product_id",}, 
+                {table: "work_order", foreign_key: "work_order_id"}, 
+                {table: "client", foreign_key: "client_id"}, 
+                {table: "invoice_item", foreign_key: "invoice_item_id"},
+                {table: "staff", foreign_key: "staff_id"},
+                {table: "branch", foreign_key: "branch_id"},
+                {table: "store", foreign_key: "store_id"},
+                {table: "requisition", foreign_key: "requisition_id"},
+            ]
+        },
         work_order: {
             description: "This table contains all the Work Orders.", 
             from_table: "work_order", 
