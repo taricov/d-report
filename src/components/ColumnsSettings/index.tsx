@@ -1,11 +1,12 @@
 import { CheckIcon, Group, Radio } from '@mantine/core';
 import { ChangeEvent, useContext, useEffect, useState } from 'react';
 import { ReportContext } from '../../App';
+import {  TfilterVariant } from '../../types/types';
 
 export const ColumnsSettings = ({id}:{id:string}) => {
 
   const reportInfo = useContext(ReportContext)
-  const [filterMode, setFilterMode] = useState<string>("text");
+  const [filterMode, setFilterMode] = useState<TfilterVariant>("text");
 
   useEffect(() => {
   
@@ -16,7 +17,7 @@ export const ColumnsSettings = ({id}:{id:string}) => {
       .split("_")
       .map((word) => word.charAt(0).toUpperCase() + word.substring(1))
       .join(" "),
-      filterVariant: "text",
+      filterVariant: "text" as TfilterVariant,
       size: 200}))]}))
   
 

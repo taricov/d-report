@@ -2,6 +2,8 @@ import { TDaftraWorkflow, TreportData, TreportObj, TreportVariables, TsiteData, 
 import { Client, Databases, ID, Query } from 'appwrite'
 
 
+
+
 export async function GET_tablesCols({subdomain, apikey, method="GET", table, limit=1}:TtableCol ): Promise<Response>{
     const req = await fetch(`https://${subdomain}.daftra.com/v2/api/entity/${table}/list/1?per_page=${limit}`, {
         method,
@@ -106,6 +108,23 @@ console.log(formatedToday, formatedToday2)
       };
       // console.log(subdomain, apikey, reportModuleKey);
       const res: Response = await fetch(`https://${subdomain}.daftra.com/v2/api/entity/le_workflow-type-entity-${reportModuleKey}/list/1`, requestOptions)
+      return res
+    }
+
+
+    export const GETcurrentReport = async (subdomain: string, apikey: string, reportModuleKey: string, id: string):Promise<Response> => {
+
+      var myHeaders = new Headers();
+      myHeaders.append("Accept", "application/json");
+      myHeaders.append("Content-Type", "application/json");
+      myHeaders.append("apikey", apikey);
+
+      var requestOptions = {
+        method: 'GET',
+        headers: myHeaders,
+      };
+      console.log("currentReport", subdomain, apikey, reportModuleKey);
+      const res: Response = await fetch(`https://${subdomain}.daftra.com/v2/api/entity/le_workflow-type-entity-${reportModuleKey}/${id}`, requestOptions)
       return res
     }
 

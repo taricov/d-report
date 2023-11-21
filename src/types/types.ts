@@ -16,7 +16,7 @@ export interface TDaftraWorkflow {
 interface TcolumnSettings {
     accessorKey: string;
     header: string;
-    filterVariant: string;
+    filterVariant: TfilterVariant;
     size: number;
   }
 export type TcolumnsSettings = TcolumnSettings[]
@@ -75,6 +75,9 @@ export type TErrors = {
     available: {[key: string]: string}[];
     selected: {[key: string]: string}[];
 }
+
+export type TfilterVariant = "select" | "text" | "checkbox" | "date" | "autocomplete" | "date-range" | "multi-select" | "range" | "range-slider" | undefined
+
   export interface TreportVariables {
     joins: {[key: string]: string};
     reportTitle: string;

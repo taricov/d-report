@@ -45,11 +45,11 @@ Your Reports
   {allReports.map((report,i) =>(
     
     <li key={i+1}>
-<Link to={"/reports/"+ (i+1)} className="transition duration-200 flex items-center p-2 text-base font-bold text-slate-700 rounded-lg bg-slate-300 hover:bg-slate-600 hover:text-slate-100 group hover:shadow dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-white">
+<Link to={"/reports/"+ (i+1)+ "?id="+report.id} className="transition duration-200 flex items-center p-2 text-base font-bold text-slate-700 rounded-lg bg-slate-300 hover:bg-slate-600 hover:text-slate-100 group hover:shadow dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-white">
 
 <span className="px-3 py-1 bg-slate-400/80 rounded-md mr-1.5 text-sm whitespace-nowrap">{i+1}</span>
 <span className="flex-1 ms-3 whitespace-nowrap">Report: {report.title}</span>
-<span className="inline-flex items-center justify-center px-2 py-0.5 ms-3 text-xs font-medium text-gray-500 bg-gray-200 rounded dark:bg-gray-700 dark:text-gray-400">Created at: {report.workflow_type.created.split(" ")[0].split("-").join("/")}</span>
+<span className="inline-flex items-center justify-center px-2 py-0.5 ms-3 text-xs font-medium text-gray-500 bg-gray-200 rounded dark:bg-gray-700 dark:text-gray-400">Created at: {report.start_date.split(" ")[0].split("-").join("/")}</span>
 
 </Link>
 </li>

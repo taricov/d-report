@@ -128,11 +128,10 @@ const buildReport = async () => {
         tablesData[table] = dataJSON.data
       })).then(() => {
         // const rez = merge2Tables(tablesData[Object.keys(tablesData)[0]], tablesData[Object.keys(tablesData)[1]], "ii_", "p_", foreignKey);
-        const rez = merge2Tables(tablesData[Object.keys(tablesData)[0]], tablesData[Object.keys(tablesData)[1]], "ii_", "p_", foreignKey, "id");
 // console.log(rez);
-        console.log(rez);
-        setData(tablesData)
-        console.log("data", data)
+        // console.log(rez);
+        // setData(tablesData)
+        // console.log("data", data)
         // const merged = merge2Tables(foreignKey, Object.entries(data)[0][1], Object.entries(data)[1][1])
 
       }).then(async() => {

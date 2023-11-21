@@ -1,3 +1,6 @@
+import { useMemo } from "react";
+import { useLocation } from "react-router-dom";
+
 export const schedule = (something:()=>void, xx:number): Promise<void> => {
     return new Promise(resolve => setTimeout(something,xx))
 }
@@ -48,6 +51,11 @@ export const responseStatusHandler = (status:number) => {
 //     return result;
 //   }
 
+export function useQueryParams(key: string) {
+    const { search } = useLocation();
+    const paramsObj = useMemo(() => new URLSearchParams(search), [search]);
+    return paramsObj.get(key)
+  }
 
 
 export function mergeObjectsWithPrefix(obj1: any, obj2: any, prefix1: any, prefix2: any) {
@@ -61,13 +69,13 @@ export function mergeObjectsWithPrefix(obj1: any, obj2: any, prefix1: any, prefi
     return result;
 }
 
-export function merge2Tables(arr1: any, arr2: any, prefix1: any, prefix2: any, commonKey1: any, commonKey2: any) {
+export function merge2Tables(arr1: {[key:string]:any}[], arr2: {[key:string]:any}[], prefix1: string, prefix2: string, commonKey1: string, commonKey2: string) {
     const result = [];
     const allKeys = new Set([...Object.keys(arr1[0]), ...Object.keys(arr2[0])]);
 
     for (const item1 of arr1) {
         const commonValue = item1[commonKey1];
-        const matchingItem = arr2.find((item2: any) => item2[commonKey2] === commonValue) || {};
+        const matchingItem = arr2.find((item2: {[key:string]: any}) => item2[commonKey2] === commonValue) || {};
         const mergedObj = mergeObjectsWithPrefix(item1, matchingItem, prefix1, prefix2);
         
         // Repeat all keys to ensure the same size
@@ -85,10 +93,10 @@ export function merge2Tables(arr1: any, arr2: any, prefix1: any, prefix2: any, c
 
     for (const item2 of arr2) {
         const commonValue = item2[commonKey2];
-        const matchingItem = arr1.find((item1: any) => item1[commonKey1] === commonValue) || {};
+        const matchingItem = arr1.find((item1: {[key:string]: any}) => item1[commonKey1] === commonValue) || {};
         
         // Only add items from arr2 that are not in arr1 to avoid duplication
-        if (!arr1.find((item: any) => item[commonKey1] === commonValue)) {
+        if (!arr1.find((item: {[key:string]: any}) => item[commonKey1] === commonValue)) {
             const mergedObj = mergeObjectsWithPrefix(matchingItem, item2, prefix1, prefix2);
 
             // Repeat all keys to ensure the same size

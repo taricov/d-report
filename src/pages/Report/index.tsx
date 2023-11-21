@@ -14,87 +14,96 @@ import {
   useMantineReactTable,
   type MRT_ColumnDef
 } from 'mantine-react-table';
-import { useEffect, useMemo, useState } from 'react';
-import { useParams } from "react-router-dom";
+import { useContext, useEffect, useMemo, useState } from 'react';
+import { useLocation, useParams } from "react-router-dom";
 import { ReportConfig } from '../../components/ReportConfig';
-import { localStorageHandler } from '../../logic/localStorageHandler';
-import { TreportConfig } from '../../types/types';
-import { data } from './makeDate';
-
-export type Employee = {
-  firstName: string;
-  lastName: string;
-  email: string;
-  jobTitle: string;
-  salary: number;
-  startDate: string;
-  signatureCatchPhrase: string;
-  avatar: string;
-};
+import { ReportContext, UserContext } from '../../App';
+import { GET_tablesCols, GETcurrentReport } from '../../api/api_funcs';
+import { merge2Tables, useQueryParams } from '../../helpers/helpers';
 
 const Report = () => {
-  const [reportConfig, setReportConfig] = useState<TreportConfig>({
-    rowSelection: true, 
-    basicColumnFilters: false,
-    advancedColumnFilters: false,
-    columnReorder: false,
-    globalSearchBar: true,
-    columnPinning: true,
-    columnGrouping: true,
-    columnSorting: true,
-  })
-  
-  const {id} = useParams();
+  const userInfo = useContext(UserContext)
+  const reportInfo = useContext(ReportContext)
+const [data, setData] = useState<any[]>([])
+  // const {id} = useParams();
+  const id: any = useQueryParams("id")
+
+  console.log(id)
+  useEffect(() => {
+  let tablesData: any = {}
+  const foreignKey = reportInfo.reportData.foreignKey
+  const requiredTables: string[] = [reportInfo.reportData.fromTable, ...Object.keys(reportInfo.reportData.joins)] 
+
+
+    GETcurrentReport(userInfo.siteData.subdomain, userInfo.siteData.apikey, userInfo.siteData.dreport_module_key, id as string)
+    .then(response => response.json())
+    .then(data => console.log("report data", data)
+    ).then(() =>{
+      requiredTables.map(async(table:any, i:number)=>{
+      GET_tablesCols({subdomain: userInfo.siteData.subdomain, apikey: userInfo.siteData.apikey, table, limit:1000}).then(res => res.json()).then(data => {
+        tablesData[table] = data.data
+        console.log("json:", tablesData)})
+      })
+    }).then(() =>{
+      const rez = merge2Tables(tablesData[Object.keys(tablesData)[0]], tablesData[Object.keys(tablesData)[1]], "ii_", "p_", foreignKey, "id");
+      console.log(rez);
+      setData(tablesData)
+      console.log("data", data)
+
+    })
+
+
+
+  },[userInfo.siteData.subdomain, userInfo.siteData.apikey, userInfo.siteData.dreport_module_key, id])
+
+
+
+
+
+
 
   const columns = useMemo<MRT_ColumnDef<any>[]>(
-    () => [
-         {
-          accessorKey: 'firstName',
-          header: 'Employee',
-          filterVariant: "checkbox",
-          size: 200,
-         },
-         {
-          accessorKey: 'firstNamee',
-          header: 'E',
-          filterVariant: "autocomplete",
-          size: 200,
-         },
-          {
-            accessorKey: 'email',
-            enableClickToCopy: true,
-            header: 'Email',
-            size: 200,
-          },
-      {
-            accessorKey: 'salary',
-            header: 'Salary',
-            size: 200,
-            filterVariant: 'range-slider',
-          },
-          {
-            accessorKey: 'jobTitle', //hey a simple column for once
-            header: 'Job Title',
-            filterVariant: 'multi-select',
-            size: 350,
-          },
-          {
-            id: 'startDate',
-            header: 'Start Date',
-            filterVariant: 'date-range',
-            sortingFn: 'datetime',
-      },
-    ],
+    () => reportInfo.reportData.columnsSettings,
+    // () => [
+    //      {
+    //       accessorKey: 'firstName',
+    //       header: 'Employee',
+    //       filterVariant: "checkbox",
+    //       size: 200,
+    //      },
+    //      {
+    //       accessorKey: 'firstNamee',
+    //       header: 'E',
+    //       filterVariant: "autocomplete",
+    //       size: 200,
+    //      },
+    //       {
+    //         accessorKey: 'email',
+    //         enableClickToCopy: true,
+    //         header: 'Email',
+    //         size: 200,
+    //       },
+    //   {
+    //         accessorKey: 'salary',
+    //         header: 'Salary',
+    //         size: 200,
+    //         filterVariant: 'range-slider',
+    //       },
+    //       {
+    //         accessorKey: 'jobTitle', //hey a simple column for once
+    //         header: 'Job Title',
+    //         filterVariant: 'multi-select',
+    //         size: 350,
+    //       },
+    //       {
+    //         id: 'startDate',
+    //         header: 'Start Date',
+    //         filterVariant: 'date-range',
+    //         sortingFn: 'datetime',
+    //   },
+    // ],
     [],
   );
-  useEffect(() => {
-    const storedConfig = localStorageHandler.read("report-config")
-    setReportConfig(storedConfig);
-  },[])
-  useEffect(() => {
-    console.log(reportConfig)
-    localStorageHandler.write("report-config", reportConfig)
-  },[reportConfig])
 
 
   const csvConfig = mkConfig({
@@ -127,21 +136,21 @@ const Report = () => {
     columns,
     data,
     enableFilterMatchHighlighting: true,
-    enableColumnFilterModes: reportConfig.advancedColumnFilters,
-    enableFilters: reportConfig.basicColumnFilters,
-    enableColumnOrdering: reportConfig.columnReorder,
+    enableColumnFilterModes: reportInfo.reportData.reportConfig.advancedColumnFilters,
+    enableFilters: reportInfo.reportData.reportConfig.basicColumnFilters,
+    enableColumnOrdering: reportInfo.reportData.reportConfig.columnReorder,
     enableFacetedValues: true, 
-    enableGrouping: reportConfig.columnGrouping,
-    enablePinning: reportConfig.columnPinning,
+    enableGrouping: reportInfo.reportData.reportConfig.columnGrouping,
+    enablePinning: reportInfo.reportData.reportConfig.columnPinning,
     enableRowActions: false,
-    enableRowSelection: reportConfig.rowSelection,
-    enableSorting: reportConfig.columnSorting,
+    enableRowSelection: reportInfo.reportData.reportConfig.rowSelection,
+    enableSorting: reportInfo.reportData.reportConfig.columnSorting,
     enableTopToolbar:true,
     // enableGlobalFilter: true,
     enableFullScreenToggle: true,
     initialState:{
       density: 'xs',
-      showGlobalFilter: reportConfig.globalSearchBar,
+      showGlobalFilter: reportInfo.reportData.reportConfig.globalSearchBar,
     },
     mantineSearchTextInputProps:{
       placeholder: `Search ${data.length} rows`,
@@ -207,7 +216,9 @@ const Report = () => {
   });
 
   return <>
-  <ReportConfig config={reportConfig} setConfig={setReportConfig}/>
+  <ReportConfig 
+  // config={reportConfig} setConfig={setReportConfig}
+  />
   <div className={`my-10 py-4 px-10 mx-auto bg-slate-200/60 w-10/12 flex flex-col items-center justify-center rounded-md`}>
   <h1 className='text-2xl font-bold'>Report Title Goes Here!</h1>
   <p className='text-md'>Created at: </p>

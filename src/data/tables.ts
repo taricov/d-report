@@ -118,7 +118,7 @@ export const tables: Ttable = {
         description: "This table contains all the Stores/Warehouses.", 
         from_table: "stores", 
         model_name:"Store",
-        alias: "store", 
+        alias: "s", 
         primary_key: "id",
         foreign_key: "store_id",
         rels:
