@@ -19,10 +19,10 @@ const Card = ({text, idx, bgColor, aliasedName}:{text:string, idx: number, bgCol
 
   const changeTableTitle = (e:any) =>{
     setTableTitle(e.target.value)
-    // console.log("title" + e.target.value)
+    console.log("title" + e.target.value)
     reportInfo.setReportData(prev =>(
       {...prev, columnsSettings: [...prev.columnsSettings.map(column =>
-          column.accessorKey === text
+          column.accessorKey === column.alias+"_"+text
           ? {...column, header: e.target.value} 
           : {...column}
       )]}

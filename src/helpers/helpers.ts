@@ -9,7 +9,25 @@ export const responseStatusHandler = (status:number) => {
 
 }
 
+export const extractDataObj = (inputArray:any[], keysToExtract:string[]) =>
+inputArray.map((obj) =>
+  keysToExtract.reduce((acc, key) => ({ ...acc, [key]: obj[key] }), {})
+);
 
+
+export type FlattenObject = Record<string, any>;
+
+export const flattenObject = (obj: any, prefix: string = ''): FlattenObject => {
+  return Object.keys(obj).reduce((acc, key) => {
+    const newKey = `${prefix}${key}`;
+    if (typeof obj[key] === 'object' && obj[key] !== null) {
+      Object.assign(acc, flattenObject(obj[key], `${newKey}_`));
+    } else {
+      acc[newKey] = obj[key];
+    }
+    return acc;
+  }, {} as FlattenObject);
+};
 
 
 

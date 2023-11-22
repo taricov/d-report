@@ -18,6 +18,7 @@ interface TcolumnSettings {
     header: string;
     filterVariant: TfilterVariant;
     size: number;
+    alias: string;
   }
 export type TcolumnsSettings = TcolumnSettings[]
 

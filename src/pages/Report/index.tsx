@@ -14,57 +14,113 @@ import {
   useMantineReactTable,
   type MRT_ColumnDef
 } from 'mantine-react-table';
-import { useContext, useEffect, useMemo, useState } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { ReportConfig } from '../../components/ReportConfig';
 import { ReportContext, UserContext } from '../../App';
 import { GET_tablesCols, GETcurrentReport } from '../../api/api_funcs';
-import { merge2Tables, useQueryParams } from '../../helpers/helpers';
+import { extractDataObj, flattenObject, merge2Tables, useQueryParams } from '../../helpers/helpers';
 import Spinner from '../../components/Spinner';
 import { localStorageHandler } from '../../logic/localStorageHandler';
 
 const Report = () => {
   const userInfo = useContext(UserContext)
   const reportInfo = useContext(ReportContext)
-const [metadata, setMetadata] = useState<any>()
+const [metadata, setMetadata] = useState<any>(null)
+const [allData, setAllData] = useState<any>({})
 const [data, setData] = useState<any[]>([])
+const [reportTables, setTables] = useState<any[]>([])
 const [fetchingData, setFetchingData] = useState<boolean>(true)
   const id: string | null = useQueryParams("id")
 
-  useEffect(() => {
-
-  let tablesData: any = {}
-  const foreignKey = reportInfo.reportData.foreignKey
-  const requiredTables: string[] = [reportInfo.reportData.fromTable, ...Object.keys(reportInfo.reportData.joins)] 
 
 
-    GETcurrentReport(userInfo.siteData.subdomain, userInfo.siteData.apikey, userInfo.siteData.dreport_module_key, id as string)
-    .then(response => response.json())
-    .then(data =>{ 
-    console.log("report data", data)
-      reportInfo.setReportData(JSON.parse(data.description))
-    setMetadata(data)
-  }
-    ).then(() =>{
-      requiredTables.map(async(table:any, i:number)=>{
-      GET_tablesCols({subdomain: userInfo.siteData.subdomain, apikey: userInfo.siteData.apikey, table, limit:1000}).then(res => res.json()).then(data => {
+  async function r(){
+    let tablesData: any = {}
+    // if(!!reportInfo.reportData.fromTable){
+      const requiredTables: string[] = [reportInfo.reportData.fromTable, ...Object.keys(reportInfo.reportData.joins)] 
+      console.log(requiredTables)
+    // }
+      try{
+
+   Promise.allSettled(requiredTables.reverse().map(async(table:any, i:number)=> GET_tablesCols({subdomain: userInfo.siteData.subdomain, apikey: userInfo.siteData.apikey, table, limit:1000})
+    .then(res => res.json())
+    .then(data => {    
         tablesData[table] = data.data
-        console.log("json:", tablesData)})
-      })
-    }).then(() =>{
-      const rez = merge2Tables(tablesData[Object.keys(tablesData)[0]], tablesData[Object.keys(tablesData)[1]], "ii_", "p_", foreignKey, "id");
-      console.log(rez);
-      setData(tablesData)
-      console.log("data", data)
-      setFetchingData(true)
+    console.log(table, "json:", tablesData)
+  })
+  )).then((data) => {
+      setAllData(tablesData)
+      console.log("alldata: ", allData)
+      console.log("metadata: ", metadata)
+      console.log("data: ", data)
+
     })
+  }catch(err) {console.log(err)}
+  }
 
 
+  async function s(){
+    
+    const firstRes = await GETcurrentReport(userInfo.siteData.subdomain, userInfo.siteData.apikey, userInfo.siteData.dreport_module_key, id as string)
+    const fData = await firstRes.json()
+    reportInfo.setReportData(JSON.parse(fData.description))
+    if(!metadata)setMetadata(fData)
+  }
 
-  },[userInfo.siteData.subdomain, userInfo.siteData.apikey, userInfo.siteData.dreport_module_key, metadata, id])
+// eslint-disable-next-line react-hooks/exhaustive-deps
+const ss = async () =>{
+  // setTables([...new Set([reportInfo.reportData.fromTable, ...reportInfo.reportData.selectedColumns.map(c=>c.tableName)])])
+
+  return await Promise.all([...new Set([reportInfo.reportData.fromTable, ...reportInfo.reportData.selectedColumns.map(c=>c.tableName)])].map(async (table) => {
+    try {
+      const response:any = await GET_tablesCols({subdomain: userInfo.siteData.subdomain, apikey: userInfo.siteData.apikey, table, limit:1})
+      const data:any = await response.json()
+      const flattenData = data.data.map((record:any)=>flattenObject(record))
+      setAllData((prev: any) =>({...prev, [table]: flattenData}))
+
+      // [...new Set([reportInfo.reportData.fromTable, ...reportInfo.reportData.selectedColumns.map(c=>c.tableName)])].map(table=>{
+        // const r = 
+
+      
+      // return [table, flattenData]
+    } catch (error) {
+      console.error(`Error fetching data for ${table}:`, error);
+    }
+    
+  }))
+}
+  // Wait for all promises to resolve
+    // if(Object.keys(allData).length === requiredTables.length) return;
+//     await Promise.all(promises).then(()=>{
+//       setData(rez)
+//       console.log(rez);
+//       console.log("data", data)
+//       setFetchingData(false)
+//     })
+  
 
 
+  
+  useEffect(() => {
+    s()
+    ss().then(async () => {
+      const foreignKey = await reportInfo.reportData.foreignKey
+      console.log(allData)
+      console.log("satisfied", foreignKey)
+            const rez = await merge2Tables(allData[reportInfo.reportData.fromTable], allData[Object.keys(reportInfo.reportData.joins)[0]], [...new Map(reportInfo.reportData.selectedColumns.map(c=>([c.tableName, c]))).values()][1]?.alias+"_", [...new Map(reportInfo.reportData.selectedColumns.map(c=>([c.tableName, c]))).values()][0]?.alias+"_", foreignKey, "id");
+            // setData(rez)
+            const filteredData = await extractDataObj(rez, reportInfo.reportData.columnsSettings.map(c=> c.accessorKey))
+
+            setData(filteredData)
+            setFetchingData(false)
+            console.log(filteredData, data)
+          })
+
+console.log("metadata: ", metadata)
 
 
+  },[userInfo.siteData, reportInfo.reportData.fromTable, metadata, id])
+      
 
 
 
@@ -188,7 +244,7 @@ const [fetchingData, setFetchingData] = useState<boolean>(true)
             <MRT_ShowHideColumnsButton table={table} />
             </div>
             <div className="w-full bg-slate-200/70 text-slate-100 hover:bg-slate-200/70 rounded-md transition duration-200">
-            <MRT_ToggleFiltersButton classNames={{root:""}} table={table} />
+            <MRT_ToggleFiltersButton  table={table} />
             </div>
           </Flex>
           <Flex sx={{ gap: '8px' }}>
@@ -239,14 +295,14 @@ const [fetchingData, setFetchingData] = useState<boolean>(true)
 
 <div className="flex items-center justify-center my-2">
 
-{[...new Map(reportInfo.reportData.selectedColumns.map(c=>([c.tableName, c]))).values()].map((t,i)=>{
+{[...new Map(reportInfo.reportData.selectedColumns.map(c=>([c.tableName, c]))).values()].reverse().map((t,i)=>{
   return i===0 ?
-<>
+<div key={t.tableName} className='flex items-center justify-center'>
   <div className={`${t.bgColor} inline-flex items-center px-5 py-1.5 text-xs font-bold text-center rounded-lg shadow`}>{t.tableName.split("_").map((word) => word.charAt(0).toUpperCase() + word.substring(1)).join(" ")}</div>
-  <svg className="w-6 fill-slate-500" viewBox="0 0 24 24"><title>arrow-right-thin</title><path d="M14 16.94V12.94H5.08L5.05 10.93H14V6.94L19 11.94Z" /></svg> 
-</>
+  <svg  className="w-6 fill-slate-500" viewBox="0 0 24 24"><title>arrow-right-thin</title><path d="M14 16.94V12.94H5.08L5.05 10.93H14V6.94L19 11.94Z" /></svg> 
+</div>
   :
-  <div className={`${t.bgColor} inline-flex items-center px-5 py-1.5 text-xs font-bold text-center rounded-lg shadow`}>{t.tableName.split("_").map((word) => word.charAt(0).toUpperCase() + word.substring(1)).join(" ")}</div>
+  <div key={t.tableName} className={`${t.bgColor} inline-flex items-center px-5 py-1.5 text-xs font-bold text-center rounded-lg shadow`}>{t.tableName.split("_").map((word) => word.charAt(0).toUpperCase() + word.substring(1)).join(" ")}</div>
 })}
 </div>
 </>

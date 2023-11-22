@@ -1,7 +1,7 @@
 import Footer from "./components/Footer";
 import Header from "./components/Header";
 
-import { createContext, useEffect, useState } from "react";
+import { createContext, useEffect, useMemo, useState } from "react";
 import {
   QueryClient,
   QueryClientProvider
@@ -40,15 +40,15 @@ function App() {
 const [connected, setConnected] = useState<boolean>(false)
 const { notifyError } = useNotify()
 
-useEffect(()=>{
-  checkCookie()
-},[]);
+// useEffect(()=>{
+//   checkCookie()
+// },[]);
 // useEffect(()=>{
 // console.log("data", siteData)
 // },[connected]);
 
 
-const checkCookie = async() => {
+const checkCookie:any = useMemo(async() => {
   setSiteData(prev=>({...prev, fetching: true}));
   const sub = cookieHandler.getter("site_subdomain") || ""
 setSiteData(prev => ({...prev, subdomain: sub}))
@@ -75,7 +75,7 @@ if(USER_DB){
 }))
   setConnected(true);
   
-}}
+}}, [])
   return (
     <>
 <NotificationProvider>
