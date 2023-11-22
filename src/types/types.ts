@@ -25,7 +25,7 @@ export interface TreportData {
   reportConfig: TreportConfig;
   columnsSettings: TcolumnsSettings;
   // selectedColumns: {[key: string]: string}[]
-  selectedColumns: {columnName: string, bgColor: string, tableName: string}[]
+  selectedColumns: {columnName: string, bgColor: string, tableName: string, alias: string}[]
 } 
 
 

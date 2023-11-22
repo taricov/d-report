@@ -1,4 +1,3 @@
-import { tables } from "../../data/tables";
 import Card from "../Card/index";
 import Chip from "../Chip/index";
 import List from "../List/index";
@@ -19,7 +18,7 @@ import CardsList from "../CardsList";
 import Error from "../Error";
 import Spinner from "../Spinner";
 import { useNotify } from "../../hooks/useNotify";
-import { merge2Tables } from "../../helpers/helpers";
+import { tables } from "../../data/tables";
 
 
 const Incorporate = () => {
@@ -62,13 +61,13 @@ const GETtablesVariables = async () => {
   setLoading((prev:Tloading) => ({...prev, fetching: true}))
 
 
-  const tables: string[]= [reportInfo.reportData.fromTable, ...Object.keys(reportInfo.reportData.joins)]
+  const tablesArr: string[]= [reportInfo.reportData.fromTable, ...Object.keys(reportInfo.reportData.joins)]
 
-  return await Promise.all(tables.map(async(table) =>{
+  return await Promise.all(tablesArr.map(async(table) =>{
     const res = await GET_tablesCols({subdomain: userInfo.siteData.subdomain, apikey: userInfo.siteData.apikey, table})
     const data = await res.json()
   const currentColor: string = colorRandomizer()
-    allVars = [...allVars, ...Object.keys(data.data[0]).map(c=>({columnName: c, tableName: table, bgColor: currentColor}))]
+    allVars = [...allVars, ...Object.keys(data.data[0]).map(c=>({columnName: c, tableName: table, bgColor: currentColor, alias: tables[table].alias}))]
 
   })
   ).then(() => {
@@ -313,9 +312,11 @@ Now you can start building your report by checking the available variables (colu
       </div>
 
       <DragDropContext onDragEnd={onDragEnd}>
-        <div className="relative flex row w-11/12 mx-auto pb-8 pt-4 gap-x-4">
-            <div className="absolute top-[55px] left-[160px] text-xs italic text-slate-200 block">{tablesVariables.available.length} Columns available</div>
-          <List title="Available Columns" onDragEnd={onDragEnd} name="available">
+        <div className="flex row w-11/12 mx-auto pb-8 pt-4 gap-x-4">
+          <List title="Available Columns" onDragEnd={onDragEnd} name="available" availableColumnsLen={tablesVariables.available.length}>
+            {/* <div className="relative w-full h-2">
+
+            </div> */}
           {loading.fetching && <Spinner size={"w-20"} />}
               {tablesVariables.available.map((col:any, idx:number) => (
               <Draggable key={"available-"+col.tableName+"-"+col.columnName} draggableId={col.columnName+ "-"+idx} index={idx}>
@@ -346,7 +347,7 @@ Now you can start building your report by checking the available variables (colu
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
                   >
-                    <Card text={col.columnName} bgColor={col.bgColor} idx={i} />
+                    <Card text={col.columnName} bgColor={col.bgColor} idx={i} aliasedName={col.alias+"_"+col.columnName} />
                   </div>
                 )}
               </Draggable>

@@ -24,8 +24,8 @@ const List = ({ children, title, onDragEnd, name }: ListProps) => {
       <div className="flex-1">
         <Droppable droppableId={name}>
           {(provided: DroppableProvided, snapshot: DroppableStateSnapshot) => (
-            <div ref={provided.innerRef} className="h-full">
-              <div className="shadow p-5 items-center overflow-scroll rounded-md h-full bg-slate-300/40 flex flex-col gap-y-1">
+            <div ref={provided.innerRef} className="h-screen">
+              <div className="shadow p-5 items-center h-full overflow-scroll rounded-md bg-slate-300/40 flex flex-col gap-y-1">
                 {children}
                 {provided.placeholder}
               </div>

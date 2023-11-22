@@ -1,7 +1,7 @@
 import { CheckIcon, Group, Radio } from '@mantine/core';
 import { ChangeEvent, useContext, useEffect, useState } from 'react';
 import { ReportContext } from '../../App';
-import {  TfilterVariant } from '../../types/types';
+import {  TfilterVariant, TreportData } from '../../types/types';
 
 export const ColumnsSettings = ({id}:{id:string}) => {
 
@@ -11,13 +11,16 @@ export const ColumnsSettings = ({id}:{id:string}) => {
   useEffect(() => {
   
 
-    reportInfo.setReportData(prev=>({...prev, columnsSettings: [...reportInfo.reportData.selectedColumns.map(c=> c.columnName).map((header:string) => ({ 
-      accessorKey: header,
-      header: header
+    reportInfo.setReportData(prev=>({...prev, columnsSettings: [...reportInfo.reportData.selectedColumns
+      // .map(c=> c.columnName)
+      .map((header: typeof reportInfo.reportData.selectedColumns[0]) => ({ 
+      accessorKey: header.alias+"_"+header.columnName,
+      header: header.columnName
       .split("_")
       .map((word) => word.charAt(0).toUpperCase() + word.substring(1))
       .join(" "),
       filterVariant: "text" as TfilterVariant,
+      alias: header.alias,
       size: 200}))]}))
   
 

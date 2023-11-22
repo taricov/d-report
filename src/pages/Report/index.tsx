@@ -26,7 +26,7 @@ const Report = () => {
   const reportInfo = useContext(ReportContext)
 const [data, setData] = useState<any[]>([])
   // const {id} = useParams();
-  const id: any = useQueryParams("id")
+  const id: string | null = useQueryParams("id")
 
   console.log(id)
   useEffect(() => {

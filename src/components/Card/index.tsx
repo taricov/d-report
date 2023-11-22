@@ -4,7 +4,7 @@ import { ColumnsSettings } from "../ColumnsSettings";
 import { ReportContext } from "../../App";
 import { Checkbox } from "@mantine/core";
 
-const Card = ({text, idx, bgColor}:{text:string, idx: number, bgColor?: string}) => {
+const Card = ({text, idx, bgColor, aliasedName}:{text:string, idx: number, bgColor?: string, aliasedName: string}) => {
  
   const [tableTitle, setTableTitle] = useState<string>(text);
   const [countable, setCountable] = useState<boolean>(false);
@@ -64,7 +64,7 @@ const Card = ({text, idx, bgColor}:{text:string, idx: number, bgColor?: string})
         height={height}
       >
         <Checkbox className="" classNames={{root:"my-1 opacity-50",label:"px-2 text-slate-900", input:"!border-slate-500 checked:bg-slate-700 border-2 bg-transparent disabled:bg-transparent"}} disabled={true} checked={countable} onChange={(event) => setCountable(event.currentTarget.checked)} label="Countable?"/>
-        <ColumnsSettings id={text} />
+        <ColumnsSettings id={aliasedName} />
       </AnimateHeight>
       </main>
       
