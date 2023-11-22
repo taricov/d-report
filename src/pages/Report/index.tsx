@@ -15,21 +15,23 @@ import {
   type MRT_ColumnDef
 } from 'mantine-react-table';
 import { useContext, useEffect, useMemo, useState } from 'react';
-import { useLocation, useParams } from "react-router-dom";
 import { ReportConfig } from '../../components/ReportConfig';
 import { ReportContext, UserContext } from '../../App';
 import { GET_tablesCols, GETcurrentReport } from '../../api/api_funcs';
 import { merge2Tables, useQueryParams } from '../../helpers/helpers';
+import Spinner from '../../components/Spinner';
+import { localStorageHandler } from '../../logic/localStorageHandler';
 
 const Report = () => {
   const userInfo = useContext(UserContext)
   const reportInfo = useContext(ReportContext)
+const [metadata, setMetadata] = useState<any>()
 const [data, setData] = useState<any[]>([])
-  // const {id} = useParams();
+const [fetchingData, setFetchingData] = useState<boolean>(true)
   const id: string | null = useQueryParams("id")
 
-  console.log(id)
   useEffect(() => {
+
   let tablesData: any = {}
   const foreignKey = reportInfo.reportData.foreignKey
   const requiredTables: string[] = [reportInfo.reportData.fromTable, ...Object.keys(reportInfo.reportData.joins)] 
@@ -37,7 +39,11 @@ const [data, setData] = useState<any[]>([])
 
     GETcurrentReport(userInfo.siteData.subdomain, userInfo.siteData.apikey, userInfo.siteData.dreport_module_key, id as string)
     .then(response => response.json())
-    .then(data => console.log("report data", data)
+    .then(data =>{ 
+    console.log("report data", data)
+      reportInfo.setReportData(JSON.parse(data.description))
+    setMetadata(data)
+  }
     ).then(() =>{
       requiredTables.map(async(table:any, i:number)=>{
       GET_tablesCols({subdomain: userInfo.siteData.subdomain, apikey: userInfo.siteData.apikey, table, limit:1000}).then(res => res.json()).then(data => {
@@ -49,12 +55,12 @@ const [data, setData] = useState<any[]>([])
       console.log(rez);
       setData(tablesData)
       console.log("data", data)
-
+      setFetchingData(true)
     })
 
 
 
-  },[userInfo.siteData.subdomain, userInfo.siteData.apikey, userInfo.siteData.dreport_module_key, id])
+  },[userInfo.siteData.subdomain, userInfo.siteData.apikey, userInfo.siteData.dreport_module_key, metadata, id])
 
 
 
@@ -135,6 +141,7 @@ const [data, setData] = useState<any[]>([])
   const table = useMantineReactTable({
     columns,
     data,
+    state:{isLoading: fetchingData},
     enableFilterMatchHighlighting: true,
     enableColumnFilterModes: reportInfo.reportData.reportConfig.advancedColumnFilters,
     enableFilters: reportInfo.reportData.reportConfig.basicColumnFilters,
@@ -219,11 +226,36 @@ const [data, setData] = useState<any[]>([])
   <ReportConfig 
   // config={reportConfig} setConfig={setReportConfig}
   />
-  <div className={`my-10 py-4 px-10 mx-auto bg-slate-200/60 w-10/12 flex flex-col items-center justify-center rounded-md`}>
-  <h1 className='text-2xl font-bold'>Report Title Goes Here!</h1>
-  <p className='text-md'>Created at: </p>
+      <div className={`my-10 py-4 px-10 mx-auto bg-slate-200/60 w-10/12 flex flex-col items-center justify-center rounded-md`}>
+  {!metadata &&
+      <div className="w-screen flex align-center justify-center">
+      <Spinner size="w-10" />
+      </div>
+}
+{metadata &&
+<>
+  <h1 className='text-2xl font-bold text-slate-600'>{metadata?.title}</h1>
+  <p className='text-sm text-slate-600'>Created at: {metadata?.start_date}</p>
+
+<div className="flex items-center justify-center my-2">
+
+{[...new Map(reportInfo.reportData.selectedColumns.map(c=>([c.tableName, c]))).values()].map((t,i)=>{
+  return i===0 ?
+<>
+  <div className={`${t.bgColor} inline-flex items-center px-5 py-1.5 text-xs font-bold text-center rounded-lg shadow`}>{t.tableName.split("_").map((word) => word.charAt(0).toUpperCase() + word.substring(1)).join(" ")}</div>
+  <svg className="w-6 fill-slate-500" viewBox="0 0 24 24"><title>arrow-right-thin</title><path d="M14 16.94V12.94H5.08L5.05 10.93H14V6.94L19 11.94Z" /></svg> 
+</>
+  :
+  <div className={`${t.bgColor} inline-flex items-center px-5 py-1.5 text-xs font-bold text-center rounded-lg shadow`}>{t.tableName.split("_").map((word) => word.charAt(0).toUpperCase() + word.substring(1)).join(" ")}</div>
+})}
+</div>
+</>
+}
+</div>
+
+  <div className="mt-10 !w-screen">
+    <MantineReactTable table={table} />
   </div>
-  <div className="mt-10 !w-screen"><MantineReactTable table={table} /></div>
   </>
 };
 

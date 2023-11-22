@@ -123,7 +123,7 @@ console.log(formatedToday, formatedToday2)
         method: 'GET',
         headers: myHeaders,
       };
-      console.log("currentReport", subdomain, apikey, reportModuleKey);
+      // console.log("currentReport", subdomain, apikey, reportModuleKey);
       const res: Response = await fetch(`https://${subdomain}.daftra.com/v2/api/entity/le_workflow-type-entity-${reportModuleKey}/${id}`, requestOptions)
       return res
     }

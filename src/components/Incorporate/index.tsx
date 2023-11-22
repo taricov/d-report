@@ -125,15 +125,7 @@ const buildReport = async () => {
         const dataJSON = await res.json();
         console.log("json:", dataJSON)
         tablesData[table] = dataJSON.data
-      })).then(() => {
-        // const rez = merge2Tables(tablesData[Object.keys(tablesData)[0]], tablesData[Object.keys(tablesData)[1]], "ii_", "p_", foreignKey);
-// console.log(rez);
-        // console.log(rez);
-        // setData(tablesData)
-        // console.log("data", data)
-        // const merged = merge2Tables(foreignKey, Object.entries(data)[0][1], Object.entries(data)[1][1])
-
-      }).then(async() => {
+      })).then(async() => {
         const reportRES = await POSTcreateRerport({subdomain: userInfo.siteData.subdomain, apikey: userInfo.siteData.apikey, title: reportInfo.reportData.reportTitle , reportModuleKey: +userInfo.siteData.dreport_module_key, data: JSON.stringify(reportInfo.reportData)})
         console.log("report", reportRES)
         if(!reportRES.ok){
@@ -142,17 +134,17 @@ const buildReport = async () => {
         }
         const result = await reportRES.json()
         console.log("result", result)
-        // GETallReports(userInfo.siteData.subdomain, userInfo.siteData.apikey, userInfo.siteData.dreport_module_key).then(res=>res.json()).then(async(data) =>{
-        //   // eslint-disable-next-line no-restricted-globals
-        //   const baseURL = location.href+"reports/"
-        //   const id = JSON.stringify(data.data.length)
-        //   setReportMetadata(()=>({reportURL: baseURL+id, reportID: id}))
-        //   await navigator.clipboard.writeText(newReportMetadata.reportURL)
-        //   setErrors(prev=>({...prev, creatingReport: false})); 
-        //   setLoading(prev=>({...prev, building: false}))
-        //   setClipboardValue(()=> baseURL+id)
-        //   notifySuccess({title:"Successful Build!", body: "Report URL was copied to your clipboard!", xx:3000})
-        // })
+        GETallReports(userInfo.siteData.subdomain, userInfo.siteData.apikey, userInfo.siteData.dreport_module_key).then(res=>res.json()).then(async(data) =>{
+          // eslint-disable-next-line no-restricted-globals
+          const baseURL = location.href+"reports/"
+          const id = JSON.stringify(data.data.length)
+          setReportMetadata(()=>({reportURL: baseURL+id, reportID: id}))
+          await navigator.clipboard.writeText(newReportMetadata.reportURL)
+          setErrors(prev=>({...prev, creatingReport: false})); 
+          setLoading(prev=>({...prev, building: false}))
+          setClipboardValue(()=> baseURL+id)
+          notifySuccess({title:"Successful Build!", body: "Report URL was copied to your clipboard!", xx:3000})
+        })
 
         
 
