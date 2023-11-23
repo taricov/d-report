@@ -335,7 +335,7 @@ Now you can start building your report by checking the available variables (colu
             ))
             }
           </List>
-          <CardsList title="Selected Columns" onDragEnd={onDragEnd} name="selected">
+          <CardsList title="Selected Columns" onDragEnd={onDragEnd} name="selected" selectedColumnsLen={tablesVariables.selected.length}>
           {tablesVariables.selected.map((col, i:number) => (
               <Draggable draggableId={col.columnName+"-"+i} index={i} key={"selected-"+col.alias+"_"+col.columnName}>
                 {(provided, snapshot) => (

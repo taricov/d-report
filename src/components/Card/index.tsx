@@ -66,7 +66,7 @@ const Card = ({...colData}: any) => {
         height={height}
       >
         <Checkbox className="" classNames={{root:"my-1 opacity-50",label:"px-2 text-slate-900", input:"!border-slate-500 checked:bg-slate-700 border-2 bg-transparent disabled:bg-transparent"}} disabled={true} checked={currency} onChange={(event) => setCurrency(event.currentTarget.checked)} label="Currency?"/>
-        <ColumnsSettings id={colData.alias} />
+        <ColumnsSettings id={colData.alias+"_"+colData.columnName} />
       </AnimateHeight>
       </main>
       

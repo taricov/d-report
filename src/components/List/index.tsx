@@ -11,7 +11,7 @@ type ListProps = {
   title: string;
   onDragEnd: (data: any) => void;
   name: string;
-  availableColumnsLen: number;
+  availableColumnsLen?: number;
 };
 
 const List = ({ children, title, onDragEnd, name, availableColumnsLen}: ListProps) => {
