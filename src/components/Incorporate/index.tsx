@@ -19,6 +19,7 @@ import Error from "../Error";
 import Spinner from "../Spinner";
 import { useNotify } from "../../hooks/useNotify";
 import { tables } from "../../data/tables";
+import { flattenObject } from "../../helpers/helpers";
 
 
 const Incorporate = () => {
@@ -65,9 +66,12 @@ const GETtablesVariables = async () => {
 
   return await Promise.all(tablesArr.map(async(table) =>{
     const res = await GET_tablesCols({subdomain: userInfo.siteData.subdomain, apikey: userInfo.siteData.apikey, table})
-    const data = await res.json()
+    const rawData = await res.json()
+    const data = rawData.data.map((record:any)=>flattenObject(record, tables[table].alias+"_")) 
+    console.log("data", rawData.data)
+    console.log("fllaten", data)
   const currentColor: string = colorRandomizer()
-    allVars = [...allVars, ...Object.keys(data.data[0]).map(c=>({columnName: c, tableName: table, bgColor: currentColor, alias: tables[table].alias}))]
+    allVars = [...allVars, ...Object.keys(data[0]).map(c=>({columnName: c.split("_").slice(1).join("_"), tableName: table, bgColor: currentColor, alias: tables[table].alias}))]
 
   })
   ).then(() => {
