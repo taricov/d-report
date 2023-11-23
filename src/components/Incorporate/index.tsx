@@ -26,11 +26,10 @@ const Incorporate = () => {
 const reportInfo = useContext(ReportContext)
 const userInfo = useContext(UserContext)
 
-const [newReportMetadata, setReportMetadata] = useState<{reportID: string, reportURL: string}>({reportID: "", reportURL: ""})
+const [newReportMetadata, setReportMetadata] = useState<{reportID: string, reportURL: string, localEntityID: string}>({reportID: "", reportURL: "", localEntityID: ""})
   const [loading, setLoading] = useState<Tloading>({fetching: false, building: false})
   const [error, setErrors] = useState<TErrors>({fetching: false, reportTitle: false, building: false, creatingReport: false})
   const [clipboardValue, setClipboardValue] = useState<string | null>(null)
-  const [newReportID, serNewReportID] = useState<string | null | number>(null)
 const [tablesVariables, setTablesVariables] = useState<TtableVariables>({available:[], selected: []})
 const [data, setData] = useState<any>()
 const [joinedTable, setJoinedTable] = useState<any>()
@@ -47,8 +46,9 @@ useEffect(() => {
   // selectedColumns: [...tablesVariables.selected]
   // }))
   console.log(reportInfo.reportData)
+  console.log("id", newReportMetadata.localEntityID)
 
-},[reportInfo.reportData, tablesVariables, data, joinedTable])
+},[reportInfo.reportData, tablesVariables, data, joinedTable, newReportMetadata, clipboardValue])
 
 
 
@@ -92,8 +92,12 @@ const GETtablesVariables = async () => {
 
 
   const goToReport = async () => {
-    window.open(newReportMetadata.reportURL+"?id="+newReportID)
+    const goTo = newReportMetadata.reportURL+"?id="+newReportMetadata.localEntityID
+    console.log(goTo);
+    setTimeout(() =>{
+    window.open(goTo)
     setClipboardValue(null)
+  },500)
 }
 
 
@@ -132,28 +136,24 @@ const buildReport = async () => {
         tablesData[table] = dataJSON.data
       })).then(async() => {
         const reportRES = await POSTcreateRerport({subdomain: userInfo.siteData.subdomain, apikey: userInfo.siteData.apikey, title: reportInfo.reportData.reportTitle , reportModuleKey: +userInfo.siteData.dreport_module_key, data: JSON.stringify(reportInfo.reportData)})
-        console.log("report", reportRES)
         if(!reportRES.ok){
           setErrors(prev=>({...prev, creatingReport: true})); 
           setLoading(prev=>({...prev, building: false}))
         }
         const result = await reportRES.json()
-        serNewReportID(result.id)
+        setReportMetadata(prev=>({...prev, localEntityID: result.id}))
         console.log("result", result)
         GETallReports(userInfo.siteData.subdomain, userInfo.siteData.apikey, userInfo.siteData.dreport_module_key).then(res=>res.json()).then(async(data) =>{
           // eslint-disable-next-line no-restricted-globals
           const baseURL = location.href+"reports/"
           const id = JSON.stringify(data.data.length)
-          setReportMetadata(()=>({reportURL: baseURL+id, reportID: id}))
-          await navigator.clipboard.writeText(newReportMetadata.reportURL+"?id="+newReportID)
+          setReportMetadata(prev=>({...prev, reportURL: baseURL+id+"/?id="+result.id, reportID: id}))
+          setClipboardValue(()=> newReportMetadata.reportURL)
+          await navigator.clipboard.writeText(clipboardValue as string)
           setErrors(prev=>({...prev, creatingReport: false})); 
           setLoading(prev=>({...prev, building: false}))
-          setClipboardValue(()=> baseURL+id)
           notifySuccess({title:"Successful Build!", body: "Report URL was copied to your clipboard!", xx:3000})
-        })
-
-        
-
+      })
       })
 
       
@@ -206,7 +206,6 @@ const selectTable = (e: ChangeEvent<HTMLInputElement>) => {
   reportInfo.setReportData(prev=> ({...prev, joins: {}, fromTable: e.target.value, foreignKey: tables[e.target.value].foreign_key }))
 }
 const selectJoinTable = (e: ChangeEvent<HTMLInputElement>) => {
-  console.log()
   
   if(e.target.checked) {
     reportInfo.setReportData(prev=> ({...prev, joins: {...prev.joins, [e.target.value]: "left"}})) }

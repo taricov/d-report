@@ -19,7 +19,7 @@ const Card = ({...colData}: any) => {
 
   const changeTableTitle = (e:any) =>{
     setTableTitle(e.target.value)
-    console.log("title" + e.target.value)
+
     reportInfo.setReportData(prev =>(
       {...prev, columnsSettings: [...prev.columnsSettings.map(column =>
           column.accessorKey === column.alias+"_"+colData.text
@@ -29,7 +29,6 @@ const Card = ({...colData}: any) => {
       ))
 
   }
-  console.log(colData)
   return (
     <div className="relative shadow-lg flex w-full cursor-pointer">
       <button onClick={()=>setHeight(()=> height === 0 ? "auto" : 0 )} className="absolute top-0 right-0 transform translate-y-0 translate-x-0 transiton hover:bg-slate-400/20 hover:shadow duration-200 fill-slate-700 rounded-md rounded-tl-none rounded-br-none px-[6px] py-[3px]">

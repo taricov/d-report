@@ -45,7 +45,7 @@ Your Reports
   {allReports.map((report,i) =>(
     
     <li key={i+1}>
-<Link to={"/reports/"+ (i+1)+ "?id="+report.id} className="transition duration-200 flex sm:flex-row flex-col items-center p-2 text-base font-bold text-slate-700 rounded-lg bg-slate-300 hover:bg-slate-600 hover:text-slate-100 group hover:shadow dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-white">
+<Link to={"/reports/"+ (allReports.length-i)+ "?id="+report.id} className="transition duration-200 flex sm:flex-row flex-col items-center p-2 text-base font-bold text-slate-700 rounded-lg bg-slate-300 hover:bg-slate-600 hover:text-slate-100 group hover:shadow dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-white">
 
 <span className="self-start sm:self-auto px-3 py-1 bg-slate-400/80 rounded-md mr-1.5 text-sm whitespace-nowrap">{i+1}</span>
 <span className="flex-1 ms-3 whitespace-nowrap">Report: {report.title}</span>

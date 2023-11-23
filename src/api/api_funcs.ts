@@ -107,7 +107,7 @@ console.log(formatedToday, formatedToday2)
         headers: myHeaders,
       };
       // console.log(subdomain, apikey, reportModuleKey);
-      const res: Response = await fetch(`https://${subdomain}.daftra.com/v2/api/entity/le_workflow-type-entity-${reportModuleKey}/list/1`, requestOptions)
+      const res: Response = await fetch(`https://${subdomain}.daftra.com/v2/api/entity/le_workflow-type-entity-${reportModuleKey}/list/1?per_page=10000`, requestOptions)
       return res
     }
 

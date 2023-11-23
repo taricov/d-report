@@ -275,14 +275,18 @@ const Report = () => {
 
 <div className="flex items-center justify-center my-2">
 
-{[...new Map(reportInfo.reportData.selectedColumns.map(c=>([c.tableName, c]))).values()].reverse().map((t,i)=>{
+{
+[...new Map(reportInfo.reportData.selectedColumns.map(c=>([c.tableName, c]))).values()].reverse().map((t,i)=>{
   return i===0 ?
 <div key={t.tableName} className='flex items-center justify-center'>
   <div className={`${t.bgColor} inline-flex items-center px-5 py-1.5 text-xs font-bold text-center rounded-lg shadow`}>{t.tableName.split("_").map((word) => word.charAt(0).toUpperCase() + word.substring(1)).join(" ")}</div>
+  {
+  [...new Map(reportInfo.reportData.selectedColumns.map(c=>([c.tableName, c]))).values()].length > 1 &&
   <svg  className="w-6 fill-slate-500" viewBox="0 0 24 24"><title>arrow-right-thin</title><path d="M14 16.94V12.94H5.08L5.05 10.93H14V6.94L19 11.94Z" /></svg> 
+  }
 </div>
   :
-  <div key={t.tableName} className={`${t.bgColor} inline-flex items-center px-5 py-1.5 text-xs font-bold text-center rounded-lg shadow mx-[2px]`}>{t.tableName.split("_").map((word) => word.charAt(0).toUpperCase() + word.substring(1)).join(" ")}</div>
+  <div key={t.tableName} className={`${t.bgColor} !z-2 inline-flex items-center px-5 py-1.5 text-xs font-bold text-center rounded-lg shadow mx-[2px]`}>{t.tableName.split("_").map((word) => word.charAt(0).toUpperCase() + word.substring(1)).join(" ")}</div>
 })}
 </div>
 </>

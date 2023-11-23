@@ -28,6 +28,16 @@
 - HTML
 - CSS
 
+## Todo:
+
+- Deeper check for null/empty properties
+- Delete report from the /reports page
+- About page 
+- [Docs] for how to apikey in Daftra
+- Add pagination in the /reports page
+
+
+
 ## How To Use:
 
 ```bash
