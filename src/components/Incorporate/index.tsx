@@ -71,7 +71,7 @@ const GETtablesVariables = async () => {
     console.log("data", rawData.data)
     console.log("fllaten", data)
   const currentColor: string = colorRandomizer()
-    allVars = [...allVars, ...Object.keys(data[0]).map(c=>({columnName: c.split("_").slice(1).join("_"), tableName: table, bgColor: currentColor, alias: tables[table].alias}))]
+    allVars = [...allVars, ...Object.entries(data[0]).map(([c,v])=>({columnName: c.split("_").slice(1).join("_"), tableName: table, bgColor: currentColor, alias: tables[table].alias, isNull: v === null || v === ""}))]
 
   })
   ).then(() => {
@@ -315,7 +315,7 @@ Now you can start building your report by checking the available variables (colu
             </div> */}
           {loading.fetching && <Spinner size={"w-20"} />}
               {tablesVariables.available.map((col:any, idx:number) => (
-              <Draggable key={"available-"+col.tableName+"-"+col.columnName} draggableId={col.columnName+ "-"+idx} index={idx}>
+              <Draggable key={"available-"+col.alias+"_"+col.columnName} draggableId={col.columnName+ "-"+idx} index={idx}>
                 {(
                   provided: DraggableProvided | any,
                   snapshot: DraggableStateSnapshot
@@ -326,7 +326,7 @@ Now you can start building your report by checking the available variables (colu
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
                     >
-                      <Chip text={col.columnName} tableColor={col.bgColor} />
+                      <Chip {...col} />
                     </div>
                 )}
               </Draggable>
@@ -334,8 +334,8 @@ Now you can start building your report by checking the available variables (colu
             }
           </List>
           <CardsList title="Selected Columns" onDragEnd={onDragEnd} name="selected">
-          {tablesVariables.selected.map((col, i) => (
-              <Draggable draggableId={col.columnName+"-"+i} index={i} key={"selected-"+col.tableName+"-"+col.columnName}>
+          {tablesVariables.selected.map((col, i:number) => (
+              <Draggable draggableId={col.columnName+"-"+i} index={i} key={"selected-"+col.alias+"_"+col.columnName}>
                 {(provided, snapshot) => (
                   <div
                   className="w-[40vw]"
@@ -343,7 +343,7 @@ Now you can start building your report by checking the available variables (colu
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
                   >
-                    <Card text={col.columnName} bgColor={col.bgColor} idx={i} aliasedName={col.alias+"_"+col.columnName} />
+                    <Card {...col} idx={i} />
                   </div>
                 )}
               </Draggable>
