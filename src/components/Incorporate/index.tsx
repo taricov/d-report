@@ -30,6 +30,7 @@ const [newReportMetadata, setReportMetadata] = useState<{reportID: string, repor
   const [loading, setLoading] = useState<Tloading>({fetching: false, building: false})
   const [error, setErrors] = useState<TErrors>({fetching: false, reportTitle: false, building: false, creatingReport: false})
   const [clipboardValue, setClipboardValue] = useState<string | null>(null)
+  const [newReportID, serNewReportID] = useState<string | null | number>(null)
 const [tablesVariables, setTablesVariables] = useState<TtableVariables>({available:[], selected: []})
 const [data, setData] = useState<any>()
 const [joinedTable, setJoinedTable] = useState<any>()
@@ -91,7 +92,7 @@ const GETtablesVariables = async () => {
 
 
   const goToReport = async () => {
-    window.open(newReportMetadata.reportURL)
+    window.open(newReportMetadata.reportURL+"?id="+newReportID)
     setClipboardValue(null)
 }
 
@@ -137,13 +138,14 @@ const buildReport = async () => {
           setLoading(prev=>({...prev, building: false}))
         }
         const result = await reportRES.json()
+        serNewReportID(result.id)
         console.log("result", result)
         GETallReports(userInfo.siteData.subdomain, userInfo.siteData.apikey, userInfo.siteData.dreport_module_key).then(res=>res.json()).then(async(data) =>{
           // eslint-disable-next-line no-restricted-globals
           const baseURL = location.href+"reports/"
           const id = JSON.stringify(data.data.length)
           setReportMetadata(()=>({reportURL: baseURL+id, reportID: id}))
-          await navigator.clipboard.writeText(newReportMetadata.reportURL)
+          await navigator.clipboard.writeText(newReportMetadata.reportURL+"?id="+newReportID)
           setErrors(prev=>({...prev, creatingReport: false})); 
           setLoading(prev=>({...prev, building: false}))
           setClipboardValue(()=> baseURL+id)
@@ -364,7 +366,7 @@ Now you can start building your report by checking the available variables (colu
       <Button disabled={!userInfo.connected} color="bg-emerald-600 hover:bg-emerald-600/90" btnFor="building" onClickFunc={()=>buildReport()} loading={loading.building} text="Build Report" /> 
 </>
 }
-      {!!clipboardValue &&  <Button disabled={!userInfo.connected} color="bg-emerald-600 hover:bg-emerald-600/90" btnFor="go-to-reports" onClickFunc={()=>goToReport()} loading={loading.building} text="Go To Reports" /> }
+      {!!clipboardValue &&  <Button disabled={!userInfo.connected} color="bg-emerald-600 hover:bg-emerald-600/90" btnFor="go-to-reports" onClickFunc={()=>goToReport()} loading={loading.building} text="Go To Report" /> }
       {error.building && <Error text={"Please Select Columns to build the report."}/> }
       {error.creatingReport && <Error text={"Something wrong happened while building your report."}/> }
 

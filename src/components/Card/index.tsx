@@ -8,7 +8,7 @@ import { TtableVariables } from "../../types/types";
 const Card = ({...colData}: any) => {
  
   const [tableTitle, setTableTitle] = useState<string>(colData.columnName);
-  const [countable, setCountable] = useState<boolean>(false);
+  const [currency, setCurrency] = useState<boolean>(false);
   const [editTableTitle, setEditTableTitle] = useState<boolean>(false);
   const [height, setHeight] = useState<string | number | any>(0);
   const reportInfo = useContext(ReportContext)
@@ -65,7 +65,7 @@ const Card = ({...colData}: any) => {
         duration={500}
         height={height}
       >
-        <Checkbox className="" classNames={{root:"my-1 opacity-50",label:"px-2 text-slate-900", input:"!border-slate-500 checked:bg-slate-700 border-2 bg-transparent disabled:bg-transparent"}} disabled={true} checked={countable} onChange={(event) => setCountable(event.currentTarget.checked)} label="Countable?"/>
+        <Checkbox className="" classNames={{root:"my-1 opacity-50",label:"px-2 text-slate-900", input:"!border-slate-500 checked:bg-slate-700 border-2 bg-transparent disabled:bg-transparent"}} disabled={true} checked={currency} onChange={(event) => setCurrency(event.currentTarget.checked)} label="Currency?"/>
         <ColumnsSettings id={colData.alias} />
       </AnimateHeight>
       </main>
