@@ -80,7 +80,7 @@ useEffect(() => {
       
       // GET user from DB...
       const DB_USER: any = await GetUser('subdomain', formProps.subdomain)
-      console.log('existing user: ', DB_USER.documents)
+      console.log('existing user: ', DB_USER)
       if (DB_USER.total === 0){
         
         // POST new report workflow...

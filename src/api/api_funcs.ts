@@ -41,7 +41,7 @@ export const POSTcreateReportModule = async ({ subdomain, apikey, workflowTitle 
   const data: TDaftraWorkflow = {
     name: workflowTitle+" ❌Don't Edit❌",
     status: 1,
-    singular_title: "Report",
+    singular_title: workflowTitle,
     // singular_title: workflowTitle,
     
   }

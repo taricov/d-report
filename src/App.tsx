@@ -36,6 +36,7 @@ export const UserContext = createContext<TCONTEXT_Connector>({
 function App() {
 
   const [reportData, setReportData ] = useState<TreportData & TreportVariables>({selectedColumns: [],columnsSettings: [], reportConfig: {}, joins:{}, reportTitle: "", fromTable: "", foreignKey: ""})
+
   const [siteData, setSiteData ] = useState<TsiteData>(accountAttributes.reduce((acc,curr)=>({...acc, [curr]: ["fetching", "submitting"].includes(curr) ? false : ""}),{} as TsiteData))
 const [connected, setConnected] = useState<boolean>(false)
 const { notifyError } = useNotify()
@@ -63,13 +64,13 @@ if(!navigator.onLine){
 }
 const USER_DB: any = await GetUser('subdomain', sub)
 console.log('existing user: ', USER_DB)
-if(!USER_DB){
+if(!USER_DB.documents[0].apikey){
   setConnected(false);
   setSiteData(prev=>({...prev, fetching: false}));
   return
   
 }
-if(USER_DB){
+if(USER_DB.total && USER_DB.documents[0].apikey){
   const USER_DB_DATA = USER_DB.documents[0]
   setSiteData(prev=>({...prev, ...Object.keys(siteData).reduce((acc,curr)=>({...acc, [curr]: ["id", "language_code"].includes(curr) ? +USER_DB_DATA[curr] : curr === "subdomain" ? USER_DB_DATA[curr].split(".")[0] : USER_DB_DATA[curr] }),{})
 }))
